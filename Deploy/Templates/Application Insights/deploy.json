@@ -1,0 +1,65 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appInsightsName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of App Insights instance"
+      }
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "InstrumentationKey": "InstrumentationKey",
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[toUpper(parameters('appInsightsName'))]",
+      "comments": "Creates app insights instance for Self Service",
+      "type": "Microsoft.Insights/components",
+      "location": "[variables('location')]",
+      "properties": {
+        "applicationId": "[toUpper(parameters('appInsightsName'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "ou_instrumentationKey": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', toUpper(parameters('appInsightsName'))), '2014-04-01').InstrumentationKey]"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+variables:  
+  - template: ./Templates/Variables/package.yml
+  - template: ./Templates/Variables/infra.yml
+
+trigger: none
+pr: none
+
+stages:
+- template: ./Templates/Stage/app.purge.build.yml
+- template: ./Templates/Stage/app.purge.yml

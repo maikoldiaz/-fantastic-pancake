@@ -1,0 +1,38 @@
+steps:
+- task: AzurePowerShell@3
+  displayName: AKS - Base64 Encode TLS Certificate
+  condition:  and(succeeded(), eq(variables['akscert'], 'true'))
+  inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Convert-ToBase64Encoded.ps1'
+     ScriptArguments: '-CertificateFilePath $(System.ArtifactsDirectory)/Drop/$(aksCertName).crt -VariableName tlscertvalue'
+     azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@3
+  displayName: AKS - Base64 Encode TLS Key
+  condition:  and(succeeded(), eq(variables['akscert'], 'true'))
+  inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Convert-ToBase64Encoded.ps1'
+     ScriptArguments: '-CertificateFilePath $(System.ArtifactsDirectory)/Drop/$(aksCertName).key -VariableName tlskeyvalue'
+     azurePowerShellVersion: LatestVersion
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: AKS - Replace TLS Values
+  condition:  and(succeeded(), eq(variables['akscert'], 'true'))
+  inputs:
+      targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/aks-ingress-tls.yml'
+      actionOnMissing: fail
+
+- task: Kubernetes@1
+  displayName: AKS - Create TLS Secret
+  condition:  and(succeeded(), eq(variables['akscert'], 'true'))
+  inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscriptionEndpoint: '$(serviceConnection)'
+      azureResourceGroup: "$(sharedResourceGroupName)"
+      kubernetesCluster: '$(aksManagedClustersName)'
+      useClusterAdmin: true
+      command: apply
+      useConfigurationFile: true
+      configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/aks-ingress-tls.yml'

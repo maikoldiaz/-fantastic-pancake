@@ -1,0 +1,786 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Ecp.True.DI.Sql</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{bb8cc728-fbd1-4246-a0f6-b3fcf55a9efa}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath />
+    <RootNamespace>Ecp.True.DI.Sql</RootNamespace>
+    <AssemblyName>Ecp.True.DI.Sql</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetFrameworkProfile />
+    <GenerateCreateScript>True</GenerateCreateScript>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatTSqlWarningsAsErrors>True</TreatTSqlWarningsAsErrors>
+    <SuppressTSqlWarnings>71558,70588</SuppressTSqlWarnings>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Admin" />
+    <Folder Include="Admin\Tables" />
+    <Folder Include="Admin\Stored Procedures" />
+    <Folder Include="Schemas" />
+    <Folder Include="Admin\User Defined Types" />
+    <Folder Include="Admin\Triggers" />
+    <Folder Include="Admin\Views" />
+    <Folder Include="Admin\Functions" />
+    <Folder Include="Scripts" />
+    <Folder Include="Offchain" />
+    <Folder Include="Offchain\Tables" />
+    <Folder Include="Scripts\PreDeployment" />
+    <Folder Include="Scripts\PostDeployment" />
+    <Folder Include="Scripts\PreDeployment\OneTimerScripts" />
+    <Folder Include="Admin\Stored Procedures\OperationalDataAndConfiguration" />
+    <Folder Include="Scripts\PostDeployment\OneTimerScripts" />
+    <Folder Include="Scripts\UsefulScripts" />
+    <Folder Include="Admin\Views\ReportViews" />
+    <Folder Include="Analytics" />
+    <Folder Include="Analytics\Tables" />
+    <Folder Include="Admin\Views\AdfViews" />
+    <Folder Include="Audit" />
+    <Folder Include="Audit\Tables" />
+    <Folder Include="Audit\Stored Procedures" />
+    <Folder Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff" />
+    <Folder Include="Analytics\Stored Procedures" />
+    <Folder Include="Analytics\Stored Procedures\ADF" />
+    <Folder Include="Analytics\Tables\ADF" />
+    <Folder Include="Admin\Stored Procedures\GraphicalNodes" />
+    <Folder Include="Admin\Stored Procedures\TicketNodeStatus" />
+    <Folder Include="Admin\Stored Procedures\Event_ContractDetails" />
+    <Folder Include="Admin\Stored Procedures\NodeConfigurationDetails" />
+    <Folder Include="Admin\Stored Procedures\SapMappingDetails" />
+    <Folder Include="Admin\Tables\ReportTables" />
+    <Folder Include="Admin\Tables\ReportTables\BeforeCutOffReport" />
+    <Folder Include="Admin\Tables\ReportTables\OfficialReport" />
+    <Folder Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff" />
+    <Folder Include="Admin\Stored Procedures\OfficialDelta" />
+    <Folder Include="Admin\Stored Procedures\WithOwner" />
+    <Folder Include="Admin\Stored Procedures\WithoutOwner" />
+    <Folder Include="Admin\Tables\ReportTables\WithoutOwner" />
+    <Folder Include="Admin\Tables\ReportTables\WithOwner" />
+    <Folder Include="Admin\Stored Procedures\WithOwner\NonSonSegments" />
+    <Folder Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments" />
+    <Folder Include="Report" />
+    <Folder Include="Report\Tables" />
+    <Folder Include="Report\Stored Procedures" />
+    <Folder Include="Admin\Tables\ReportTables\Role" />
+    <Folder Include="Admin\Stored Procedures\Role" />
+    <Folder Include="Scripts\PostDeployment\Operations" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Admin\Tables\Category.sql" />
+    <Build Include="Admin\Tables\CategoryElement.sql" />
+    <Build Include="Schemas\Admin.sql" />
+    <Build Include="Admin\Tables\LogisticCenter.sql" />
+    <Build Include="Admin\Tables\Node.sql" />
+    <Build Include="Admin\Tables\Product.sql" />
+    <Build Include="Admin\Tables\StorageLocation.sql" />
+    <Build Include="Admin\Tables\NodeStorageLocation.sql" />
+    <Build Include="Admin\Tables\StorageLocationProduct.sql" />
+    <Build Include="Admin\User Defined Types\udt_AdminStorageLocationProductType.sql" />
+    <Build Include="Admin\User Defined Types\udt_AdminNodeStorageLocationType.sql" />
+    <Build Include="Schemas\Audit.sql" />
+    <Build Include="Admin\Tables\Homologation.sql" />
+    <Build Include="Admin\Tables\HomologationGroup.sql" />
+    <Build Include="Admin\Tables\SystemType.sql" />
+    <Build Include="Admin\Tables\HomologationDataMapping.sql" />
+    <Build Include="Admin\Tables\HomologationObject.sql" />
+    <Build Include="Admin\Tables\NodeConnection.sql" />
+    <Build Include="Admin\Tables\MessageType.sql" />
+    <Build Include="Admin\Tables\PendingTransaction.sql" />
+    <Build Include="Admin\User Defined Types\udt_HomologationDataMappingType.sql" />
+    <Build Include="Admin\User Defined Types\udt_HomologationGroupType.sql" />
+    <Build Include="Admin\User Defined Types\udt_HomologationObjectType.sql" />
+    <Build Include="Admin\Triggers\tr_Homologation_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_HomologationGroup_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_HomologationObject_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_HomologationDataMapping_Changes.sql" />
+    <Build Include="Admin\Tables\HomologationObjectType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_CalculateUnbalance.sql" />
+    <Build Include="Admin\Views\view_StorageLocationProductWithProductName.sql" />
+    <Build Include="Admin\Views\view_MovementSourceWithNodeAndProductName.sql" />
+    <Build Include="Admin\Views\view_MovementDestinationWithNodeAndProductName.sql" />
+    <Build Include="Admin\Views\view_InventoryProductWithProductName.sql" />
+    <Build Include="Admin\Views\view_ReportExecution.sql" />
+    <Build Include="Admin\Tables\Version.sql" />
+    <Build Include="Admin\Tables\NodeTag.sql" />
+    <Build Include="Admin\Tables\FileRegistration.sql" />
+    <Build Include="Admin\Tables\FileRegistrationError.sql" />
+    <Build Include="Admin\Tables\NodeConnectionProduct.sql" />
+    <Build Include="Admin\Tables\NodeConnectionProductOwner.sql" />
+    <Build Include="Admin\Tables\StorageLocationProductOwner.sql" />
+    <Build Include="Admin\Tables\FileUploadState.sql" />
+    <Build Include="Admin\Tables\RegisterFileActionType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_NodeTag.sql" />
+    <Build Include="Admin\User Defined Types\udt_NodeTagType.sql" />
+    <Build Include="Admin\User Defined Types\udt_UploadIdErrorMessagesType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateUploadId.sql" />
+    <Build Include="Admin\User Defined Types\udt_StorageLocationProductOwnerType.sql" />
+    <Build Include="Admin\Views\view_NodeTagWithCategoryId.sql" />
+    <Build Include="Admin\Triggers\tr_NodeTag_Changes.sql" />
+    <Build Include="Admin\Tables\Feature.sql" />
+    <Build Include="Admin\Tables\Role.sql" />
+    <Build Include="Admin\Tables\Ticket.sql" />
+    <Build Include="Admin\Tables\PendingTransactionError.sql" />
+    <Build Include="Admin\Tables\UnbalanceComment.sql" />
+    <Build Include="Admin\Tables\VariableType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_SaveTicket.sql" />
+    <Build Include="Admin\User Defined Types\udt_PendingTransactionErrorMessagesType.sql" />
+    <Build Include="Admin\User Defined Types\udt_UnbalanceType.sql" />
+    <Build Include="Admin\Triggers\tr_Ticket_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_UnBalanceComment_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_PendingTransaction_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_PendingTransactionError_Changes.sql" />
+    <Build Include="Admin\Tables\Scenario.sql" />
+    <Build Include="Admin\Views\view_CalculationErrors.sql" />
+    <Build Include="Admin\Tables\FeatureRole.sql" />
+    <Build Include="Admin\Tables\StatusType.sql" />
+    <Build Include="Admin\Tables\FileRegistrationTransaction.sql" />
+    <PreDeploy Include="Scripts\PreDeployment\MasterScript.PreDeployment.sql" />
+    <PostDeploy Include="Scripts\PostDeployment\MasterScript.PostDeployment.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidateOwnershipInputs.sql" />
+    <None Include="Scripts\PostDeployment\TicketTypeSeed.sql" />
+    <Build Include="Admin\Tables\TicketType.sql" />
+    <Build Include="Offchain\Tables\Ownership.sql" />
+    <Build Include="Admin\Tables\OwnershipNode.sql" />
+    <Build Include="Admin\Tables\OwnershipNodeError.sql" />
+    <Build Include="Admin\Tables\OwnershipResult.sql" />
+    <Build Include="Admin\Tables\Transformation.sql" />
+    <Build Include="Admin\Tables\OwnershipCalculation.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetInventoryDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetMovementDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetNodeConfigurationDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetConnectionConfigurationDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetInitialInventoryPropertyDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetInputMovementPropertyDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_SaveOperationNode.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetSegmentIdValueInFileRegistration.sql" />
+    <Build Include="Admin\Views\view_FileRegistrationStatus.sql" />
+    <None Include="Scripts\PostDeployment\VersionSeed.sql" />
+    <Build Include="Admin\Tables\OwnershipCalculationResult.sql" />
+    <Build Include="Admin\Tables\ControlType.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetLogisticCenterIdInStorageLocation.sql" />
+    <Build Include="Admin\Tables\ControlScript.sql" />
+    <Build Include="Admin\Tables\StorageLocationProductMapping.sql" />
+    <Build Include="Admin\Tables\Algorithm.sql" />
+    <None Include="Scripts\PostDeployment\AlgorithmSeed.sql" />
+    <Build Include="Admin\Views\view_MovementInformation.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetLogisticMovementDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetEventDetails.sql" />
+    <Build Include="Admin\Tables\Event.sql" />
+    <Build Include="Admin\Views\AdfViews\view_OperativeMovementsPeriodic.sql" />
+    <Build Include="Admin\Views\AdfViews\view_OperativeMovementswithOwnerShipPeriodic.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetErrorDetails.sql" />
+    <Build Include="Admin\Views\view_Ticket.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetMovements.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetInventories.sql" />
+    <Build Include="Admin\User Defined Types\udt_NodeListType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetAllNodes.sql" />
+    <Build Include="Admin\Functions\udf_GetAllDates.sql" />
+    <Build Include="Audit\Tables\AuditStatus.sql" />
+    <Build Include="Audit\Tables\PipelineLog.sql" />
+    <Build Include="Audit\Tables\ErrorLog.sql" />
+    <Build Include="Audit\Tables\AuditLog.sql" />
+    <Build Include="Audit\Stored Procedures\usp_SaveADFLog.sql" />
+    <Build Include="Audit\Stored Procedures\usp_UpdateRunId.sql" />
+    <None Include="Scripts\PostDeployment\AuditStatusSeed.sql" />
+    <Build Include="Admin\Tables\User.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteExceptionsFeatureRole.sql" />
+    <Build Include="Admin\Tables\OwnershipNodeStatusType.sql" />
+    <None Include="Scripts\PostDeployment\OwnershipNodeStatusTypeSeed.sql" />
+    <Build Include="Admin\Tables\ApprovalRule.sql" />
+    <None Include="Scripts\PostDeployment\ApprovalRuleSeed.sql" />
+    <Build Include="Admin\Tables\SegmentOwnershipCalculation.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetInitialNodes.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetFinalNodes.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetNodesForSegment.sql" />
+    <Build Include="Admin\Tables\SegmentUnbalance.sql" />
+    <Build Include="Admin\Tables\SystemUnbalance.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetAllSystemInASegment.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetAllNodesInASystem.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteNodeApprovalFlowSettingsMenu.sql" />
+    <Build Include="Admin\Views\view_OwnerShipNode.sql" />
+    <Build Include="Admin\Stored Procedures\usp_BalanceSummaryWithOwnership.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\RestoreOwnershipNodeStatus.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateOwnershipNodeOwnershipStatusId.sql" />
+    <Build Include="Admin\Tables\Contract.sql" />
+    <Build Include="Admin\Stored Procedures\usp_OwnerShipNodeMovementInventoryDetails.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\OwnershipNodeStatusTypeMigration.sql" />
+    <Build Include="Admin\Functions\udf_PascalCase.sql" />
+    <Build Include="Analytics\Tables\ModelEvaluation.sql" />
+    <Build Include="Admin\Tables\Icon.sql" />
+    <Build Include="Admin\Stored Procedures\usp_BalanceSummaryAggregate.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalDataWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalDataWithoutCutOffForSystem.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalDataWithoutCutOffForReport.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryDetailsWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryDetailsWithoutCutOffForSystem.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryQualityDetailsWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryQualityDetailsWithoutCutOffForSystem.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteFeatureRow2.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteFeatureRowDev.sql" />
+    <Build Include="Admin\Views\view_InventoryInformation.sql" />
+    <None Include="Scripts\PostDeployment\IconSeed.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetLogisticNodeValidation.sql" />
+    <Build Include="Admin\Views\view_GetParsingErrors.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateOwnerIdForOtros.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\RenameExistingOwnerOtros.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetLogisticInventoryDetails.sql" />
+    <None Include="Scripts\UsefulScripts\FindDecimalColumns.sql" />
+    <Build Include="Admin\User Defined Types\udt_KeyValueType.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ModifyFeatureTablesAll.sql" />
+    <Build Include="Admin\Tables\NodeOwnershipRule.sql" />
+    <Build Include="Admin\Tables\NodeProductRule.sql" />
+    <Build Include="Admin\Tables\NodeConnectionProductRule.sql" />
+    <Build Include="Admin\Tables\OwnershipRuleRefreshHistory.sql" />
+    <Build Include="Admin\Views\view_NodeConnectionProductRule.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupContractDataAndTempDelete.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupEventDataAndTempDelete.sql" />
+    <Build Include="Admin\User Defined Types\udt_KeyType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_BulkUpdateRules.sql" />
+    <Build Include="Admin\Functions\udf_NodeTagWithCategoryId.sql" />
+    <Build Include="Admin\Functions\udf_GetTrueDate.sql" />
+    <Build Include="Admin\Views\ReportViews\ReportExecutionDate.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_Insert_OperativeMovements.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_Insert_OperativeMovementsWithOwnership.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_SaveADFLog.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_UpdateOperativeMovementsRunId.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_UpdateOperativeMovementsWithOwnershipRunId.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_UpdateOperativeNodeRelationshipRunId.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_UpdateOperativeNodeRelationshipWithOwnershipRunId.sql" />
+    <Build Include="Analytics\Tables\ADF\AuditStatus.sql" />
+    <Build Include="Analytics\Tables\ADF\ErrorLog.sql" />
+    <Build Include="Analytics\Tables\ADF\PipelineLog.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropModelEvaluationView.sql" />
+    <Build Include="Admin\Views\view_NodeRule.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameInOperativeNodeRelationshipWithOwnership.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupOperativeNodeRelationshipWithOwnershipAndTempDelete.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropRuleTables.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalDestinationNodeConnectionsDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalDestinationNodesDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalNode.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalNodeConnection.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalSourceNodeConnectionsDetails.sql" />
+    <Build Include="Admin\Stored Procedures\GraphicalNodes\usp_GetGraphicalSourceNodesDetails.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\HandleNodeOrderFix.sql" />
+    <Build Include="Admin\Tables\StorageLocationProductVariable.sql" />
+    <Build Include="Admin\Tables\DeadletteredMessage.sql" />
+    <Build Include="Admin\Tables\MovementContract.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateInventoryToInventoryProductPost.sql" />
+    <Build Include="Admin\Stored Procedures\TicketNodeStatus\usp_GetTicketNodeStatus.sql" />
+    <Build Include="Admin\Tables\TicketNodeStatus.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_UpsertOwnershipPercentageValuesHistory.sql" />
+    <Build Include="Analytics\Tables\ADF\OperativeMovements.sql" />
+    <Build Include="Analytics\Tables\ADF\OperativeMovementsWithOwnership.sql" />
+    <Build Include="Analytics\Tables\ADF\OperativeNodeRelationship.sql" />
+    <Build Include="Analytics\Tables\ADF\OperativeNodeRelationshipWithOwnership.sql" />
+    <Build Include="Analytics\Tables\ADF\OwnershipPercentageValues.sql" />
+    <Build Include="Analytics\Tables\ADF\Stage_OperativeMovements.sql" />
+    <Build Include="Analytics\Tables\ADF\Stage_OperativeMovementsWithOwnership.sql" />
+    <Build Include="Analytics\Tables\ADF\Stage_OwnershipPercentageValues.sql" />
+    <Build Include="Admin\Tables\NodeStatusIconUrl.sql" />
+    <None Include="Scripts\PostDeployment\NodeStatusIconUrlSeed.sql" />
+    <Build Include="Admin\Triggers\tr_Node_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_NodeConnectionProduct_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_StorageLocationProduct_Changes.sql" />
+    <Build Include="Admin\Triggers\tr_StorageLocationProductVariable_Changes.sql" />
+    <Build Include="Admin\Tables\MovementEvent.sql" />
+    <Build Include="Admin\Stored Procedures\usp_OperationalCutOffAndOwnershipCleanup.sql" />
+    <Build Include="Admin\Stored Procedures\usp_FailOwnershipTicket.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateInventoryToInventoryProductPre.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropRegistrationProgress.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropOwnershipAnalytics.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\RenameInventoryTable.sql" />
+    <Build Include="Admin\Tables\EventsInformation.sql" />
+    <Build Include="Admin\Tables\ContractsInformation.sql" />
+    <Build Include="Admin\Stored Procedures\Event_ContractDetails\usp_GetEventsInformation.sql" />
+    <Build Include="Admin\Stored Procedures\Event_ContractDetails\usp_GetContractsInformation.sql" />
+    <Build Include="Admin\Stored Procedures\Event_ContractDetails\usp_GetEventContractInformation.sql" />
+    <Build Include="Admin\Tables\NodeConnectionInfo.sql" />
+    <Build Include="Admin\Tables\NodeProductInfo.sql" />
+    <Build Include="Admin\Tables\NodeGeneralInfo.sql" />
+    <Build Include="Admin\Stored Procedures\NodeConfigurationDetails\usp_GetNodeDetailsInformationForReport.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameAuditLogTable.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupAuditLogDataAndTempDelete.sql" />
+    <Build Include="Admin\Tables\ScenarioType.sql" />
+    <Build Include="Admin\Tables\OriginType.sql" />
+    <Build Include="Admin\Tables\Annulation.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetScenarioIdInMovementAndInventory.sql" />
+    <None Include="Scripts\PostDeployment\OriginTypeSeed.sql" />
+    <None Include="Scripts\PostDeployment\ScenarioTypeSeed.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidateInitialInventoriesForOwnership.sql" />
+    <Build Include="Admin\Stored Procedures\usp_SaveOperativeMovementsWithOwnershipPercentage.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameOperatorToOperatorIdForMovement.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameOperatorToOperatorIdForInventory.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupOperatorInMovement.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupOperatorInInventory.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropReversalTable.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\BackupOperatorInInventoryInDev.sql" />
+    <Build Include="Admin\Tables\SapTracking.sql" />
+    <Build Include="Admin\Tables\SapMapping.sql" />
+    <Build Include="Admin\Tables\DeltaError.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetDeltaInventories.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetDeltaMovements .sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetTransferPoints.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetDeltaErrorDetailsForMovAndInventories.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementOwnerWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementOwnerWithoutCutOffForSystem.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidateTransferPoint.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryOwnerDetailsWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveInventoryOwnerDetailsWithoutCutOffForSystem.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetOriginalOrUpdatedMovements.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetOriginalOrUpdatedInventories.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetUploadDetailsSAP.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateCutOffComment.sql" />
+    <Build Include="Admin\User Defined Types\udt_SapTrackingType.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\InsertModelEvaluationValues.sql" />
+    <Build Include="Offchain\Tables\Node.sql" />
+    <Build Include="Offchain\Tables\NodeConnection.sql" />
+    <Build Include="Offchain\Tables\NodeStateType.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateMovementClassification.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetMovementsForConsolidation.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetInventoriesForConsolidation.sql" />
+    <Build Include="Admin\Tables\ConsolidatedMovement.sql" />
+    <Build Include="Admin\Tables\ConsolidatedInventoryProduct.sql" />
+    <Build Include="Admin\Tables\DeltaNode.sql" />
+    <Build Include="Admin\Tables\DeltaNodeError.sql" />
+    <Build Include="Admin\Tables\OfficialDeltaMessageType.sql" />
+    <None Include="Scripts\PostDeployment\OfficialDeltaMessageTypeSeed.sql" />
+    <Build Include="Admin\Tables\SapMappingDetail.sql" />
+    <Build Include="Admin\Tables\ConsolidatedOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\MovementInformationMovforSegmentReport.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\MovementInformationMovforSystemReport.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\NodeTagCalculationDateForSegmentReport.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\NodeTagCalculationDateForSystemReport.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\Operational.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalInventory.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalInventoryOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalInventoryQuality.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalMovement.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalMovementOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\BeforeCutOffReport\OperationalMovementQuality.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMonthlyBalance.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMonthlyInventoryDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMonthlyInventoryQualityDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMonthlyMovementDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMonthlyMovementQualityDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialMovementInformation.sql" />
+    <Build Include="Admin\Tables\ReportTables\OfficialReport\OfficialNodeTagCalculationDate.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ApproveOfficialNodeDelta.sql" />
+    <Build Include="Admin\Stored Procedures\usp_CompleteConsolidation.sql" />
+    <Build Include="Admin\Stored Procedures\SapMappingDetails\usp_GetSapMappingDetail.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetOfficialDeltaPeriod.sql" />
+    <Build Include="Admin\Functions\udf_GetPreviousLastModifiedDate.sql" />
+    <Build Include="Admin\Functions\udf_GetNodeElementID.sql" />
+    <Build Include="Admin\Views\view_DeltaNode.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialInventoryQualityDetailsWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialMovementQualityDetailsWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialMovementDetailsWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialInventoryDetailsWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialDataWithoutCutOffReport.sql" />
+    <Build Include="Admin\Stored Procedures\usp_DeleteMovements.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_SaveMonthlyOfficialDataWithoutCutOff.sql" />
+    <Build Include="Admin\Functions\udf_GetNodeName.sql" />
+    <Build Include="Admin\Functions\udf_GetProductName.sql" />
+    <Build Include="Admin\User Defined Types\udt_MovementNodeType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetMovementNodesForConsolidation.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidatePreviousOfficialPeriod.sql" />
+    <Build Include="Analytics\Tables\ADF\Stage_OperativeNodeRelationship.sql" />
+    <Build Include="Analytics\Tables\ADF\Stage_OperativeNodeRelationshipWithOwnership.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_Insert_OperativeNodeRelationshipWithOwnership.sql" />
+    <Build Include="Analytics\Stored Procedures\ADF\usp_Insert_OperativeNodeRelationship.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveMovementDetailsWithOwner.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateMovementInventoryOwnerViews.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropMovementInventoryDetailsWithOwnerViews.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveInventoryDetailsWithOwner.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetUnapprovedOfficialNodes.sql" />
+    <Build Include="Admin\Tables\DeltaNodeApprovalHistory.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\PostMigrateSystemNamePendingTransaction.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetOfficialDeltaErrorDetailsForNode.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetOfficialBalanceInventories.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetOfficialBalanceMovements.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_UpdateNodeAndGetDeltaMovements.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetDeltaOfficialInventory.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetDeltaOfficialMovements.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetDependentsOfOfficialNodeDelta.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateBackupMovementWithOwnerView.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveBackupMovementDetailsWithOwner.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropBackupMovementDetailsWithOwnerView.sql" />
+    <Build Include="Admin\Tables\DeltaNodeApproval.sql" />
+    <Build Include="Admin\Tables\ReportTables\ReportType.sql" />
+    <None Include="Scripts\PostDeployment\ReportTypeSeed.sql" />
+    <Build Include="Admin\Tables\ReportTables\ReportExecution.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveMovementDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveAttributeDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\MovementDetailsWithoutOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\InventoryDetailsWithoutOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\QualityDetailsWithoutOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\AttributeDetailsWithoutOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveInventoryDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveQualityDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveMovementsByProductWithoutOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveMovementsByProductWithOwner.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateMovementInventoryAttributeQualityBackupWithoutKPIWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\BackupMovementDetailsWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\InventoryDetailsWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\MovementDetailsWithOwner.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropMovementInventoryAttributeQualityBackupWithoutKPIWithOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveBackupMovementDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\MovementsByProductWithoutOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\MovementsByProductWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\BackupMovementDetailsWithoutOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveKPIDataByCategoryElementNodeWithOwnership.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\KPIPreviousDateDataByCategoryElementNodeWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\KPIDataByCategoryElementNodeWithOwnership.sql" />
+    <Build Include="Admin\Tables\PartnerOwnerMapping.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetOfficialLogisticsMovements.sql" />
+    <Build Include="Admin\Tables\Attribute.sql" />
+    <Build Include="Offchain\Tables\Unbalance.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropAdminUnbalanceOffchainAttributeTable.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\CorrectUnbalanceCommentAudits.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateOfficialMovementPendingApproval.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_SaveNonSonSegmentInventoryDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_SaveNonSonSegmentInventoryQualityDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_SaveNonSonSegmentMovementDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_SaveNonSonSegmentMovementQualityDetails.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments\OperationalInventoryOwnerNonSon.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments\OperationalInventoryQualityNonSon.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments\OperationalMovementOwnerNonSon.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments\OperationalMovementQualityNonSon.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\KPIDataByCategoryElementNode.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithoutOwner\KPIPreviousDateDataByCategoryElementNode.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_SaveKPIDataByCategoryElementNode.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\NonSonSegments\OperationalNonSon.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_SaveNonSonSegment.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\QualityDetailsWithOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveQualityDetailsWithOwner.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\AttributeDetailsWithOwner.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveAttributeDetailsWithOwner.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateAttributeQualityMovementsByProductViews.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropAttributeQualityMovementsByProductWithOwnerViews.sql" />
+    <None Include="Scripts\PostDeployment\KPIRelationshipSeed.sql" />
+    <Build Include="Admin\Tables\ReportTables\KPIRelationship.sql" />
+    <Build Include="Admin\Stored Procedures\usp_SaveBalanceControl.sql" />
+    <Build Include="Admin\Tables\ReportTables\BalanceControl.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropBalanceControlReportHeaderTemplateViews.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateBalanceControlReportHeaderTemplateViews.sql" />
+    <Build Include="Admin\Views\ReportViews\ReportTemplateDetails.sql" />
+    <Build Include="Admin\Views\ReportViews\ReportHeaderDetails.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\NonSonSegments\usp_Cleanup_NonSonSegmentDataWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_Cleanup_OperationalDataWithoutCutOff.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialMonthlyDataWithoutCutOff\usp_Cleanup_MonthlyOfficialDataWithoutCutOff.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropBeforeCutoffTables.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropBalancePerNodeandOfficialpernodeTables.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropNonSonBeforeCutoffTables.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\PreMigrateSystemNamePendingTransaction.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\PreMigrateUnitsPendingTransaction.sql" />
+    <Build Include="Admin\Tables\Stage_PartnerOwnerMapping.sql" />
+    <Build Include="Admin\Stored Procedures\usp_Insert_DataPartners.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteAttributeUnitCategoryAndRemoveDupElements.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\PrintInvalidAttribute.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DeleteAttributeUnitCategory.sql" />
+    <Build Include="Schemas\Report.sql" />
+    <Build Include="Report\Tables\DeltaBalance.sql" />
+    <Build Include="Report\Tables\OfficialDeltaInventory.sql" />
+    <Build Include="Report\Tables\OfficialDeltaMovements.sql" />
+    <Build Include="Report\Stored Procedures\usp_SaveOfficialDeltaInventoryDetails.sql" />
+    <Build Include="Report\Stored Procedures\usp_SaveOfficialDeltaMovementDetails.sql" />
+    <Build Include="Report\Tables\OfficialDeltaBalance.sql" />
+    <Build Include="Report\Stored Procedures\usp_SaveOfficialDeltaBalance.sql" />
+    <Build Include="Admin\Tables\SapTrackingError.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetFirstTimeNodes.sql" />
+    <Build Include="Admin\Triggers\tr_DeltaNode_Changes.sql" />
+    <Build Include="Admin\Tables\InventoryMovementIndex.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_Cleanup_InventoryMovementIndex.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\MigrateAttributeIdValueAttributeUnit.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\TruncateAndExecuteBackupMovementsDevUatQas.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\TruncateReportTables.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\TruncateOfficialDeltaReportTables.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropReportIntermitttentTables.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\PreMigrateUpdateForeignKey.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\FillAttributeQualityBalanceControlReportTables.sql" />
+    <None Include="Scripts\PostDeployment\DimDateSeed.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DropUnusedReportObjects.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetAutogrowthValue.sql" />
+    <Build Include="Admin\User Defined Types\udt_MovementType.sql" />
+    <Build Include="Admin\User Defined Types\udt_MovementOwnerType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_SaveDeltaBulkMovements.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateBlockchainStatus.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\RemigrateCutoffReportBalanceSheetTables.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DeleteBeforeCutoffReportData.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\DeleteNonSonOwnerReportData.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\RemigrateMovementsByProductWithOwner.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\RemigrateOrCleanupToFixIsDeleted.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetIsDeletedMovementInventory.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_DeleteMovementInformationForReport.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\FixScenarioIdThreeSystemUnbalance.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\FixBlockchainStatusBlockNumber.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetNameValueInSystemTypeTable.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetUploadContractDetailsSAP.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\UpdateDataHistoryContract.sql" />
+    <Build Include="Admin\Tables\NodeCostCenter.sql" />
+    <Build Include="Offchain\Tables\LogisticMovement.sql" />
+    <Build Include="Admin\Tables\TicketNode.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetLogisticMovementNodeValidations.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetLogisticMovementsForTicket.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateConfirmedLogisticMovements.sql" />
+    <Build Include="Admin\User Defined Types\udt_MovementListType.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetMovementSendSapInformation.sql" />
+    <Build Include="Admin\Tables\MovementSendSapInformation.sql" />
+    <Build Include="Admin\Functions\udf_NodeIsTransferPoint.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetTransferPointsForConciliationNodes.sql" />
+    <Build Include="Admin\User Defined Types\udt_AdminConciliationNodeList.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetConnectionConciliationNodes.sql" />
+    <Build Include="Admin\Tables\ReportTables\WithOwner\MovementDetailsWithOwnerOtherSegment.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_SaveMovementDetailsWithOwnerOtherSegment.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_CalculateDateForDeltaMovements.sql" />
+    <Build Include="Admin\Stored Procedures\OfficialDelta\usp_GetDeltaOfficialMovementsForNodes.sql" />
+    <Build Include="Admin\Tables\ReportTables\Role\FeatureRoleReport.sql" />
+    <Build Include="Admin\Stored Procedures\Role\usp_SaveMenusRolDetails.sql" />
+    <Build Include="Admin\Tables\NodeOficialStatus.sql" />
+    <Build Include="Admin\User Defined Types\UserRoleType.sql" />
+    <Build Include="Admin\Tables\ReportTables\Role\UserRoleReport.sql" />
+    <Build Include="Admin\Stored Procedures\Role\usp_GetUserGroup.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\UpdateStatusTicket.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetFailedLogisticMovement.sql" />
+    <Build Include="Offchain\Tables\MovementConciliation.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetNodeOficialStatus.sql" />
+    <Build Include="Admin\Views\ReportViews\ReportHeaderDetailsExecution.sql" />
+    <Build Include="Admin\Functions\udf_NodeIsProductConversion.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidateConsolidationSegmentForDelete.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\UpdateReportExecutionAuditoriaRolMenus.sql" />
+    <Build Include="Admin\Stored Procedures\WithoutOwner\usp_Cleanup_CutOff_ReportData.sql" />
+    <Build Include="Admin\Stored Procedures\WithOwner\usp_Cleanup_Ownership_ReportData.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ValidateNodesStateDifferentDeltas.sql" />
+    <None Include="Scripts\PostDeployment\Operations\GetCanonicFileStatusProcess.sql" />
+    <None Include="Scripts\PostDeployment\Operations\GetFileRegistrationSystemTypeSapPo.sql" />
+    <None Include="Scripts\PostDeployment\Operations\GetInventoriesProductForTicket.sql" />
+    <None Include="Scripts\PostDeployment\Operations\GetReportMovementLogistic.sql" />
+    <None Include="Scripts\PostDeployment\Operations\GetTicketInformation.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditInventoryByCreate.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditInventoryByUpdate.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditLog.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditLogForConfiguration.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditLogLastFourMonths.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditLogWithoutConfiguration.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditMovementsByCreate.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectAuditMovementsByUpdate.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectCategoryElements.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectDimDate.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectInventoriesForTicket.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectMovement.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectMovementsByPropertyTickets.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectOwnershipBalancesReportForTickets.sql" />
+    <None Include="Scripts\PostDeployment\Operations\SelectTicketsOfProperty.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PreDeployment\UnusedObjectCleanup.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteCategoryRow.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteFeatureRow.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DeleteFeatureRoleRow.sql" />
+    <None Include="Scripts\UsefulScripts\CleanupJunkCategoryElements.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropHomologationVersionTable.sql" />
+    <None Include="Scripts\PostDeployment\ControlTypeSeed.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\TempDacpacIssueFix.sql" />
+    <None Include="Scripts\PostDeployment\StorageLocationProductMappingSeed.sql" />
+    <Build Include="Schemas\Analytics.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateHomologationGroupTypeToCategoryElement.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropAlgorithmListTable.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DropColorTable.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MeasurementUnitMigration.sql" />
+    <Build Include="Admin\Stored Procedures\usp_SaveOperativeNodeRelationship.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetPendingTransferMovement.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\OffchainMeasurementUnitMigration.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\CorrectOwnerIdInOwnerTable.sql" />
+    <Build Include="Admin\Tables\SystemOwnershipCalculation.sql" />
+    <Build Include="Admin\Tables\DimDate.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateOwnerIdToElementId.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateProductTypeToCategoryElement.sql" />
+    <None Include="Scripts\UsefulScripts\CodeToFindTableDependencies.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SeedDataToBlockchainStatusColumn.sql" />
+    <None Include="Scripts\PostDeployment\AnalyticsAuditStatusSeed.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementWithoutCutOffForSystem.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementQualityWithoutCutOffForSegment.sql" />
+    <Build Include="Admin\Stored Procedures\SaveOperationalDataWithoutCutOff\usp_SaveOperationalMovementQualityWithoutCutOffForSystem.sql" />
+    <None Include="Scripts\UsefulScripts\DropAllTables.sql" />
+    <None Include="Scripts\UsefulScripts\TableDependencyListGenerator.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateFileRegistrationTable.sql" />
+    <Build Include="Admin\Tables\ReportTemplateConfiguration.sql" />
+    <None Include="Scripts\PostDeployment\ReportTemplateConfigurationSeed.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\DecimalChange.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameOwnerIdToOwner1IdForEvent.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\ColumnRenameCommercialIdToOwner1IdForContract.sql" />
+    <None Include="Scripts\UsefulScripts\CleanupJunkNodes.sql" />
+    <Build Include="Admin\Views\view_NodeProductRule.sql" />
+    <None Include="Scripts\PostDeployment\CategoryElementMigration.sql" />
+    <None Include="Scripts\UsefulScripts\CategoryElementMigrationScriptGenerator.sql" />
+    <None Include="Scripts\UsefulScripts\QueryForAllVarcharColumnsHavingINT.sql" />
+    <None Include="Scripts\UsefulScripts\Master_CatAndCatElements.xlsx" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetContractDetails.sql" />
+    <Build Include="Admin\Stored Procedures\OperationalDataAndConfiguration\usp_GetCancellationMovementDetails.sql" />
+    <Build Include="Admin\Stored Procedures\usp_ConsolidationDataCleanup.sql" />
+    <None Include="Scripts\UsefulScripts\Create-DBObjectsDocumentationToMD.ps1" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\PreMigrateSourceSystemAndSystemNameMovAndInvPrd.sql" />
+    <None Include="Scripts\PostDeployment\OneTimerScripts\PostMigrateSourceSystemAndSystemNameMovAndInvPrd.sql" />
+    <None Include="Scripts\PreDeployment\OneTimerScripts\MigrateRetryCountForNodeAndMovement.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateMovementWithOfficialDeltaTicket.sql" />
+    <Build Include="Admin\Stored Procedures\usp_UpdateInventoryProductWithOfficialDeltaTicket.sql" />
+    <Build Include="Admin\Stored Procedures\usp_GetStorageNode.sql" />
+    <Build Include="Admin\Functions\udf_PrecessorsIsApproved.sql" />
+    <Build Include="Admin\Functions\udf_GetContractValue.sql" />
+    <Build Include="Admin\Stored Procedures\usp_DeleteConsolidatedInformation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PreDeployment\MasterTableDataUpdate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PreDeployment\TableSchemaUpdate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\LogisticCenterSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\ProductSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\StorageLocationSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\SystemTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\MessageTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\HomologationObjectTypeSeed.sql" />
+    <Build Include="Schemas\Offchain.sql" />
+    <Build Include="Offchain\Tables\MovementDestination.sql" />
+    <Build Include="Offchain\Tables\Movement.sql" />
+    <Build Include="Offchain\Tables\MovementPeriod.sql" />
+    <Build Include="Offchain\Tables\MovementSource.sql" />
+    <Build Include="Offchain\Tables\InventoryProduct.sql" />
+    <Build Include="Offchain\Tables\Owner.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\RegisterFileActionTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\FileUploadStateSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\CategorySeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\CategoryElementSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\ScenarioSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\FeatureSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\RoleSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\VariableTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\FeatureRoleSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\StatusTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\NodeStateTypeSeed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\NodeIsExportation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PreDeployment\OneTimerScripts\HomologationObjectTypeCleanup.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\AzureV12\SqlSchemas\master.dacpac</HintPath>
+      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
+    </ArtifactReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="baseUrl">
+      <DefaultValue>null</DefaultValue>
+      <Value>$(SqlCmdVar__2)</Value>
+    </SqlCmdVariable>
+    <SqlCmdVariable Include="serverName">
+      <DefaultValue>null</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\OneTimerScripts\OfficialDeltaStoredProcedure.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\Operations\GetReportStatusProcess.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetCanonicFileChangeStatustoFailed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\PostDeployment\OneTimerScripts\SetReportChangeStatusToFailed.sql" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)../../../..
+git config core.hooksPath .git/hooks
+pip install detect-secrets
+npm install husky lint-staged eslint cspell --save-dev -g
+EXIT 0</PostBuildEvent>
+  </PropertyGroup>
+</Project>

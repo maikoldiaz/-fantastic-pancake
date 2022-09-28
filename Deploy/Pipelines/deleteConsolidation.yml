@@ -1,0 +1,91 @@
+parameters:
+- name: env
+  type: string
+  values: 
+  - 'dev-app'
+  - 'uat-app'
+  - 'qas-app'
+  - 'stg-app'
+  - 'prd-app'
+  default: 'dev-app'
+- name: segmentName
+  type: string
+  default: null
+- name: startDate
+  type: string
+  default: null
+- name: endDate
+  type: string
+  default: null
+
+variables:
+  - template: /Deploy/Pipelines/Templates/Variables/package.yml
+  - template: /Deploy/Pipelines/Templates/Variables/infra.yml
+  - ${{ if eq(parameters.env, 'dev-app') }}:
+    - group: true-secrets-dev
+    - name: env
+      value: dev
+  - ${{ if eq(parameters.env, 'uat-app') }}:
+    - group: true-secrets-uat
+    - name: env
+      value: uat
+  - ${{ if eq(parameters.env, 'stg-app') }}:
+    - group: true-secrets-stg
+    - name: env
+      value: stg
+  - ${{ if eq(parameters.env, 'qas-app') }}:
+    - group: true-secrets-qas
+    - name: env
+      value: qas
+  - ${{ if eq(parameters.env, 'prd-app') }}:
+    - group: true-secrets-prd
+    - name: env
+      value: prd
+    - template: ../Templates/Variables/prod.yml
+  - ${{ if not(eq(parameters.env, 'prd-app')) }}:
+    - template: /Deploy/Pipelines/Templates/Variables/non-prod.yml
+
+
+stages:
+  - stage: ValidateConsolidatedInformation
+    jobs:
+    - job:
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+          - checkout: self
+          - task: PowerShell@2
+            inputs:
+              filePath: '$(Build.SourcesDirectory)/Deploy/Scripts/Validate-ConsolidatedInformation.ps1'
+              arguments: '-ModulePath "$(Build.SourcesDirectory)/Deploy/Scripts/Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -SegmentName "${{ parameters.segmentName }}" -StartDate "${{ parameters.startDate }}" -EndDate "${{ parameters.endDate }}"'
+              failOnStderr: true
+              showWarnings: true
+              pwsh: true
+
+  - template: /Deploy/Pipelines/Templates/Stage/db.build.yml
+  - template: /Deploy/Pipelines/Templates/db.BackupDatabase.yml
+    parameters:
+      env: "${{ parameters.env }}"
+      serviceConnection : $(serviceConnection)
+
+  - stage: DeleteConsolidation
+    dependsOn:
+    - ValidateConsolidatedInformation
+    - DBBackUpBase
+    jobs:
+      - deployment: Run
+        pool:
+          vmImage: ubuntu-latest
+        environment: ${{ parameters.env }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Build.SourcesDirectory)/Deploy/Scripts/Delete-ConsolidatedInformation.ps1'
+                    arguments: '-ModulePath "$(Build.SourcesDirectory)/Deploy/Scripts/Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -SegmentName "${{ parameters.segmentName }}" -StartDate "${{ parameters.startDate }}" -EndDate "${{ parameters.endDate }}"'
+                    failOnStderr: true
+                    showWarnings: true
+                    pwsh: true

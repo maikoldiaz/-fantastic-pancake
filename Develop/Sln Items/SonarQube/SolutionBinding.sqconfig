@@ -1,0 +1,11 @@
+{
+  "ServerUri": "http://ecpcodeqa.eastus.cloudapp.azure.com:446",
+  "Organization": null,
+  "ProjectKey": "true",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "cs-sonar-lite-39575",
+      "ProfileTimestamp": "2019-08-01T11:28:03+05:30"
+    }
+  }
+}

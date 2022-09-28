@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "East US",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account for virtual machine"
+            }
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the virtual machine"
+            }
+        },
+        "keyVaultName": {
+          "type": "string",
+          "metadata": {
+            "description": "Name of the KeyVault"
+          }
+        },
+        "user": {
+          "type": "string"
+        }
+    },
+    "variables": {
+       "accountid": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name,'/providers/','Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+       "fileUris": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/scripts/Install-Conda.ps1')]"
+    },
+    "resources": [   
+        
+        {
+                "type": "Microsoft.Compute/virtualMachines/extensions",
+                "apiVersion": "2018-06-01",
+                "name": "[concat(parameters('vmName'),'/', 'UpdateCondaCustomScriptExtension')]",
+                "location": "[parameters('location')]",
+                "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "CustomScriptExtension",
+                    "typeHandlerVersion": "1.7",
+                    "autoUpgradeMinorVersion":true,
+                    "settings": {
+                        "fileUris": [
+                           "[variables('fileUris')]"
+                        ]
+                    },
+                  "protectedSettings": {
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file Install-Conda.ps1', ' ',parameters('storageAccountName'), ' ' , parameters('keyVaultName'), ' ' , parameters('user'))]",
+                    "storageAccountName": "[parameters('storageAccountName')]",
+                    "storageAccountKey": "[listkeys(variables('accountid'),'2019-06-01').keys[0].value]"
+                  }
+                }
+            }
+    ],
+    "outputs":{
+    }
+
+}

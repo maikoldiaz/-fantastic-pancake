@@ -1,0 +1,58 @@
+variables:
+  - group: true-threshold
+  - group: true-secrets-nonprd-shared
+  - group: true-secrets-dev
+  - group: true-network-dev
+  - group: true-automation
+  - template: ../../Templates/Variables/package.yml
+  - template: ../../Templates/Variables/infra.yml
+  - template: ../../Templates/Variables/non-prod.yml
+
+trigger: 
+      branches :
+       include: 
+        - master
+      paths:
+        include:
+         - Deploy/Templates/PowerAutomate/dev/*
+
+pr: none
+
+stages:
+- stage: Package
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-latest'
+    steps:    
+    - template: ../../Templates/package.yml
+      parameters:
+        infra: 'true'
+        azsk: 'true'
+
+- stage: Deploy
+  jobs:
+  - deployment: Flow
+    pool:
+     vmImage: 'windows-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - template: ../../Templates/Infra/flow.yml
+            parameters:
+              azureSubscriptionName :  '$(serviceConnection)'
+
+          - template: ../../Templates/Deploy/automation.yml 
+            parameters:
+              azureSubscriptionName : '$(serviceConnection)'
+              canExecuteAutomation: '$(dev)'
+              keyVaultName: '$(keyVault)'
+              automation: 'true'

@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowAlphanumericWithSpecialCharactersAndSpaceMessage" xml:space="preserve">
+    <value>5009-El Nombre solo admite números, letras, espacios y los siguientes caracteres especiales: ':' '_' '-'</value>
+  </data>
+  <data name="StorageLocationNameSpecialCharactersMessage" xml:space="preserve">
+    <value>5009-El Nombre del almacén solo admite números, letras, espacios y los siguientes caracteres especiales: “:”, “_”, “-”</value>
+  </data>
+  <data name="DescriptionMaxLength1000" xml:space="preserve">
+    <value>5007-La descripción puede contener máximo 1000 caracteres</value>
+  </data>
+  <data name="DuplicateEntityInsert" xml:space="preserve">
+    <value>5026-Esta entidad ya existe</value>
+  </data>
+  <data name="DuplicateNodeStorageLocationId" xml:space="preserve">
+    <value>5047-Se encuentra el ID de ubicación de almacenamiento de nodo duplicado</value>
+  </data>
+  <data name="DuplicateStorageLocationProductId" xml:space="preserve">
+    <value>5048-Se encuentra el ID de producto de ubicación de almacenamiento duplicado</value>
+  </data>
+  <data name="ElementDoesNotExist" xml:space="preserve">
+    <value>No existe el Elemento</value>
+  </data>
+  <data name="ElementStatusRequired" xml:space="preserve">
+    <value>5032-Se requiere el estado del elemento</value>
+  </data>
+  <data name="EntityNameMustBeUnique" xml:space="preserve">
+    <value>5025-La entidad con el mismo nombre ya existe</value>
+  </data>
+  <data name="EntityNotExists" xml:space="preserve">
+    <value>5028-La entidad relacionada no existe</value>
+  </data>
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>5027-La entidad que intenta actualizar no existe</value>
+  </data>
+  <data name="Max1000Characters" xml:space="preserve">
+    <value>5013-La descripción del nodo puede contener máximo 1000 caracteres</value>
+  </data>
+  <data name="StorageLocationMax1000Characters" xml:space="preserve">
+    <value>5013-La Descripción del almacén puede contener máximo 1000 caracteres</value>
+  </data>
+  <data name="Max150Characters" xml:space="preserve">
+    <value>5011-El nombre del nodo debe tener máximo 150 caracteres</value>
+  </data>
+  <data name="StorageLocationNameMax150Characters" xml:space="preserve">
+    <value>5011-El Nombre del almacén puede contener máximo 150 caracteres</value>
+  </data>
+  <data name="Max20Characters" xml:space="preserve">
+    <value>5012-El campo debe tener un máximo de 20 caracteres</value>
+  </data>
+  <data name="NameMaxLength150" xml:space="preserve">
+    <value>5004-El Nombre puede contener máximo 150 caracteres</value>
+  </data>
+  <data name="NotNullConstraintsError" xml:space="preserve">
+    <value>5030-Esta entidad no existe</value>
+  </data>
+  <data name="OneOrMoreProductDoesNotBelongToPassedStorageLocation" xml:space="preserve">
+    <value>5046-Uno o más productos no pertenecen a la ubicación de almacenamiento dada</value>
+  </data>
+  <data name="OneOrMoreProductDoesNotBelongToStorageLocation" xml:space="preserve">
+    <value>5045-Uno o más productos no pertenecen a la ubicación de almacenamiento dada</value>
+  </data>
+  <data name="OneOrMoreStorageLocationDoesNotExists" xml:space="preserve">
+    <value>5044-Uno o más StorageLocation no pertenecen al nodo dado</value>
+  </data>
+  <data name="OnlyAlphaNumericAllowed" xml:space="preserve">
+    <value>5003-Solo se permite alfanumérico, incluido el espacio</value>
+  </data>
+  <data name="OperatorRequired" xml:space="preserve">
+    <value>5019-El Operador es obligatorio</value>
+  </data>
+  <data name="ProductIdRequired" xml:space="preserve">
+    <value>5038-Se requiere ID del producto</value>
+  </data>
+  <data name="ProductMustBeActive" xml:space="preserve">
+    <value>5037-El producto debe estar activo</value>
+  </data>
+  <data name="SapCodeRequired" xml:space="preserve">
+    <value>5020-El código SAP es obligatorio</value>
+  </data>
+  <data name="SegmentRequired" xml:space="preserve">
+    <value>5018-El Segmento es obligatorio</value>
+  </data>
+  <data name="StorageNameMustBeUnique" xml:space="preserve">
+    <value>5024-No se permite un almacén con el mismo nombre en el nodo</value>
+  </data>
+  <data name="StoreShouldHaveAtLeastOneProduct" xml:space="preserve">
+    <value>5023-Un almacén debe tener por lo menos un producto asignado</value>
+  </data>
+  <data name="TypeRequired" xml:space="preserve">
+    <value>5021-El Tipo es obligatorio</value>
+  </data>
+  <data name="RegisterFileActionTypeRequired" xml:space="preserve">
+    <value>5075-RegisterFileActionTypeRequired</value>
+  </data>
+  <data name="RegisterFileBlobPathMaxLength500" xml:space="preserve">
+    <value>5077-RegisterFileBlobPathMaxLength500</value>
+  </data>
+  <data name="RegisterFileBlobPathRequired" xml:space="preserve">
+    <value>5076-RegisterFileBlobPathRequired</value>
+  </data>
+  <data name="RegisterFileNameRequired" xml:space="preserve">
+    <value>5074-RegisterFileNameRequired</value>
+  </data>
+  <data name="RegisterFilesUploadedSuccessfully" xml:space="preserve">
+    <value>5078-RegisterFilesUploadedSuccessfully</value>
+  </data>
+  <data name="RegisterFileUploadFileIdRequired" xml:space="preserve">
+    <value>5073-RegisterFileUploadFileIdRequired</value>
+  </data>
+  <data name="RegisterFileUploadIdMustBeUnique" xml:space="preserve">
+    <value>5072-RegisterFileUploadIdMustBeUnique</value>
+  </data>
+  <data name="OnlyGuidIsAllowed" xml:space="preserve">
+    <value>5079-OnlyGuidIsAllowed</value>
+  </data>
+  <data name="OWNERID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5080-El identificador del propietario es obligatorio</value>
+  </data>
+  <data name="OWNERSHIPPERCENTAGE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5081-El porcentaje de propiedad es obligatorio</value>
+  </data>
+  <data name="OWNERSHIPVALUE_TOTALVALIDATION" xml:space="preserve">
+    <value>5082-La sumatoria de los valores de propiedad debe ser 100%</value>
+  </data>
+  <data name="CommentMaxLength1000" xml:space="preserve">
+    <value>The comments can contain maximum of 1000 characters.</value>
+  </data>
+  <data name="OperationalCutOffSaveSuccess" xml:space="preserve">
+    <value>Operational cutoff saved successfully.</value>
+  </data>
+  <data name="CommentsRequired" xml:space="preserve">
+    <value>The comments are required.</value>
+  </data>
+  <data name="SegmentDoesNotExist" xml:space="preserve">
+    <value>5092-Segmento no existe</value>
+  </data>
+  <data name="OperatorDoesNotExist" xml:space="preserve">
+    <value>5091-Operador no existe</value>
+  </data>
+  <data name="RetryMessageError" xml:space="preserve">
+    <value>No es posible reintentar mensajes relacionados con excepciones técnicas. Este tipo de excepciones deben resolverse en el sistema origen. Desmarque los mensajes que tienen deshabilitada la opción reintentar en la grilla</value>
+  </data>
+  <data name="OwnershipNodeForApprovalFailed" xml:space="preserve">
+    <value>Ha ocurrido un error en la aprobación de propiedad para el nodo</value>
+  </data>
+  <data name="AtLeastOneMovementStored" xml:space="preserve">
+    <value>7082-Los movimientos no se encuentran registrados en la aplicación. Para realizar el proceso por lo menos uno de los movimientos debe estar registrado en la aplicación.</value>
+  </data>
+  <data name="BackupMovementIdRequired" xml:space="preserve">
+    <value>7077-El movimiento del punto oficial debe tener el identificador del movimiento de respaldo.</value>
+  </data>
+  <data name="GlobalMovementIdRequired" xml:space="preserve">
+    <value>7075-El identificador global es obligatorio.</value>
+  </data>
+  <data name="MoreThan2KRecordsFound" xml:space="preserve">
+    <value>7072-Solo se admiten hasta 2000 registros por llamada</value>
+  </data>
+  <data name="MoreThan2RecordsFound" xml:space="preserve">
+    <value>7074-Solo puede existir un movimiento como punto oficial y un movimiento de respaldo.</value>
+  </data>
+  <data name="MovementInvalidDataType" xml:space="preserve">
+    <value>7083-Mensaje de la excepción técnica</value>
+  </data>
+  <data name="NoRecordsFound" xml:space="preserve">
+    <value>7073-Al menos 1 registro debe estar presente en la solicitud</value>
+  </data>
+  <data name="OfficialInformationRequired" xml:space="preserve">
+    <value>7074-La colección {officialInformation} es obligatoria.</value>
+  </data>
+  <data name="OfficialPointError" xml:space="preserve">
+    <value>7076-Solo puede existir un movimiento como punto oficial.</value>
+  </data>
+  <data name="SameBackupMovementId" xml:space="preserve">
+    <value>7078-El identificador del movimiento marcado como No oficial debe ser igual al identificador del movimiento de respaldo asignado al movimiento del punto oficial.</value>
+  </data>
+  <data name="SameGlobalMovementId" xml:space="preserve">
+    <value>7079-Los movimientos deben tener el mismo identificador global.</value>
+  </data>
+  <data name="SingleMovementOfficialPoint" xml:space="preserve">
+    <value>7080-Los movimientos sin movimiento de respaldo deben estar marcados como puntos oficiales.</value>
+  </data>
+  <data name="SingleMovementStored" xml:space="preserve">
+    <value>7081-El movimiento no se encuentra registrado en la aplicación.</value>
+  </data>
+  <data name="BothMovementDataNotvalid" xml:space="preserve">
+    <value>7086-Los movimientos deben tener el mismo nodo origen, nodo destino, producto origen y producto destino.</value>
+  </data>
+  <data name="MultipleMovementDataNotMatchStored" xml:space="preserve">
+    <value>7085-Los datos del movimiento {0} no corresponden con los datos del último movimiento reportado por la aplicación TRUE como punto de transferencia.</value>
+  </data>
+  <data name="SingleMovementDataNotMatchStored" xml:space="preserve">
+    <value>7084-Los datos del movimiento recibido no corresponden con los datos del último movimiento reportado por la aplicación TRUE como  punto de transferencia.</value>
+  </data>
+  <data name="SingleMovementNotSendToSap" xml:space="preserve">
+    <value>7087-El movimiento no ha sido reportado a SAP PO como punto de transferencia.</value>
+  </data>
+  <data name="MultipleMovementNotSendToSap" xml:space="preserve">
+    <value>7088-Ninguno de los movimientos ha sido reportado a SAP PO como punto de transferencia.</value>
+  </data>
+</root>

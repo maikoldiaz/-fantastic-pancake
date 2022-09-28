@@ -1,0 +1,37 @@
+{
+  "SourceSystem": "EXCEL",
+  "SystemName": "EXCEL - OCENSA",
+  "DestinationSystem": "TRUE",
+  "EventType": "Insert",
+  "InventoryId": "DEFECT 9843073",
+  "InventoryDate": "2020-03-30T23:59:59",
+  "NodeId": 7342,
+  "Scenario": "OPERATIVO",
+  "Observations": "Reporte Operativo Cusiana -Fecha",
+  "UncertaintyPercentage": 0.21,
+  "ProductId": "10000002372",
+  "ProductType": 1,
+  "ProductVolume": 19508,
+  "GrossProductVolume": 120,
+  "MeasurementUnit": 31,
+  "Owners": [
+    {
+      "OwnerId": 0,
+      "OwnershipValue": 100,
+      "OwnershipValueUnit": "%"
+    }
+  ],
+  "Attributes": [
+    {
+      "AttributeId": 123,
+      "AttributeValue": 100,
+      "ValueAttributeUnit": 1234,
+      "AttributeDescription": "Description 3"
+    }
+  ],
+  "MessageId": "DEFECT 9843073_AYACUCHO",
+  "SegmentId": 10,
+  "Type": "Inventory",
+  "BlobPath": "excel/json/inventory/fd647b84-19c7-44f6-810a-de59ec3742d8/DEFECT 9843073_AYACUCHO/DEFECT 9843073_AYACUCHO_2985_1",
+  "IsHomologated": true
+}

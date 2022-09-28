@@ -1,0 +1,107 @@
+stages:
+- stage: Build
+  jobs:   
+  - job: Functions
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../Build/build.yml
+      parameters:
+        app: 'true'
+        publish: 'true'
+
+  - job: UI
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../Build/build.yml
+      parameters:
+        ui: 'true'
+        publish: 'true'
+
+  - job: AdminApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(apiProjectName)
+        dockerfile: 'Develop/Admin.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Api'
+        path: 'Develop'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+    
+  - job: SapApi  
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(sapApiProjectName)
+        dockerfile: 'Develop/SAP.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Sap.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+
+  - job: FlowApi  
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(flowApiProjectName)
+        dockerfile: 'Develop/Flow.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Flow.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+
+  - job: AnalyticsApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(analyticsProjectName)
+        dockerfile: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics/Dockerfile'
+        path: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics'
+        analytics: 'true'
+
+  - job: Config
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../Build/build.yml
+      parameters:
+        config: 'true'
+        publish: 'true'
+
+  - job: Blockchain
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../Build/build.yml
+      parameters:
+        blockchain: 'true'
+        publish: 'true'
+
+  - job: Database
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../Build/build.yml
+      parameters:
+        db: 'true'
+        publish: 'true'
+        
+  - job: Scanning
+    pool:
+     vmImage: 'windows-latest'
+    steps:   
+    - template: ../package.yml
+      parameters:
+        app: 'true'
+        db: 'true'
+        infra: 'true'

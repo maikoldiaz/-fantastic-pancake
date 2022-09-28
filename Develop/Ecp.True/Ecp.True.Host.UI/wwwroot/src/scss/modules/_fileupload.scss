@@ -1,0 +1,75 @@
+// _fileuplaod.scss
+
+#{$ep}-fupload {
+    $fupload:&;
+    position: relative;
+    border:solid 1px map-get($gray, 'CCCCCC');
+    border-radius: 5px;
+    &__control{
+        padding: pxToRem(10);
+        border-bottom:solid 1px map-get($gray, 'CCCCCC');
+        
+    }
+
+    &__input{
+        display: inline-block;
+        background-color: $btn-color;
+        padding: pxToRem(12) pxToRem(30);
+        color: $white;
+        height: pxToRem(48);
+        border: solid 1px $btn-color;
+        font-family: $font-family-sb;
+        border-radius: 5px;
+        box-shadow: 0px 2px 5px map-get($gray, 'CCCCCC');
+        outline: none;
+        cursor: pointer;
+
+        input[type='file']{
+            display: none;
+        }
+
+        &:hover {
+            background-color: $btn-color--hover;
+            border: solid 1px $btn-color--hover;
+            color: $btn-color;
+        }
+    }
+
+    &__file{
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        padding: pxToRem(10) pxToRem(15);
+        border-top: solid 1px map-get($gray, 'CCCCCC');
+        justify-content: space-between;
+
+        &:first-child{
+            border-top:none;
+        }
+    }
+
+    &__icn{
+        font-size: pxToRem(30);
+        padding-right: pxToRem(10);
+        color: $btn-color;
+    }
+
+    &__del{
+        font-size: pxToRem(20);
+        padding-left: pxToRem(10);
+        color: $btn-color;
+        cursor: pointer;
+    }
+
+    &__info{
+        width: 100%;
+        &-title{
+            display: block;
+            font-size: pxToRem(16);
+        }
+
+        &-stitle{
+            font-size: pxToRem(12);
+        }
+    }
+}

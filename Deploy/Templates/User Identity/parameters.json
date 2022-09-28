@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "identityName": {
+      "value": "identityName"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "description": {
+      "value": ""
+    },
+    "createdBy": {
+      "value": ""
+    },
+    "responsible": {
+      "value": ""
+    },
+    "projectName": {
+      "value": ""
+    },
+    "companyName": {
+      "value": ""
+    },
+    "environment": {
+      "value": ""
+    },
+    "organizationUnit": {
+      "value": ""
+    },
+    "tier": {
+      "value": ""
+    },
+    "dataProfileDataSecurityLevel": {
+      "value": ""
+    },
+    "creationDate": {
+      "value": ""
+    },
+    "pidDeploymentName": {
+      "value": "name"
+    }
+  }
+}

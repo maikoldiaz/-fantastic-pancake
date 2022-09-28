@@ -1,0 +1,16 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: Post deployment Clean Up - Functions
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-Resources.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -resourcesToRemove "$(deprecatedFunctions)" -resourceType "Microsoft.Web/sites"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: Post deployment Clean Up - Consumption Service Plan
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-Resources.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -resourcesToRemove "$(appServiceConsumptionPlanName)" -resourceType "Microsoft.Web/serverFarms"'
+     azurePowerShellVersion: LatestVersion

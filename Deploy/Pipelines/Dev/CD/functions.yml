@@ -1,0 +1,302 @@
+variables:
+  - group: true-threshold
+  - group: true-secrets-nonprd-shared
+  - group: true-secrets-dev
+  - group: true-network-dev
+  - group: true-automation
+  - template: ../../Templates/Variables/package.yml
+  - template: ../../Templates/Variables/infra.yml
+  - template: ../../Templates/Variables/non-prod.yml
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - Develop/*
+    exclude:
+      - Develop/Ecp.True/DI/*
+      - Develop/Ecp.True/Blockchain/*
+      - Develop/Ecp.True/Ecp.True.Host.UI/*
+
+pr: none
+
+stages:
+  - stage: Build
+    jobs:
+      - job: ConfigAndBlockchain
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../../Templates/Build/config.build.yml
+
+      - job: Functions
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../../Templates/Build/build.yml
+            parameters:
+              app: 'true'
+
+      - job: Database
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../../Templates/Build/build.yml
+            parameters:
+              db: 'true'
+
+      - job: Package
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../../Templates/package.yml
+            parameters:
+              infra: 'true'
+
+  - stage: Deploy
+    jobs:
+      - deployment: App
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(env)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../../Templates/Deploy/app.deploy.yml
+                  parameters:
+                    env: '$(env)'
+                    serviceConnection: $(serviceConnection)
+                    ui: 'false'
+                    version: '2'
+
+      - deployment: Config
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(env)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: 'Download Build Artifacts'
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/powerBI.yml
+                  parameters:
+                    env: '$(env)'
+                    azureSubscriptionName: '$(serviceConnection)'
+
+                - template: ../../Templates/Infra/config.yml
+                  parameters:
+                    env: '$(env)'
+                    azureSubscriptionName: '$(serviceConnection)'
+
+                - template: ../../Templates/Deploy/automation.yml
+                  parameters:
+                    azureSubscriptionName: '$(serviceConnection)'
+                    canExecuteAutomation: '$(dev)'
+                    keyVaultName: '$(keyVault)'
+                    automation: 'true'
+
+      - deployment: AvailabilitySWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/availability.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: BlockchainSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/blockchain.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: CalculatorSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/calculator.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: DeadletterSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/deadletter.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: DeltaSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/delta.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: OwnershipSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/ownership.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: ReportingSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/reporting.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: SapSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/sap.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: TransformSWAP
+        dependsOn:
+          - App
+        condition: and(succeeded(),eq(succeeded('App'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../../Templates/Infra/Swap/transform.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'

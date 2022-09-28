@@ -1,0 +1,17 @@
+variables:
+  - group: true-secrets-stg
+  - group: true-network-stg
+  - group: true-scale-nonprd
+  
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/non-prod-stg.yml
+  - template: ../Templates/Variables/tags.yml
+  - template: ../Templates/Variables/alerts.yml
+
+trigger: none
+pr: none
+
+stages:
+- template: ../Templates/Stage/infra.build.yml
+- template: ../Templates/Stage/infra.deploy.yml

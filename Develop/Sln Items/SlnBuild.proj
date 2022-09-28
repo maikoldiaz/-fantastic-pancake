@@ -1,0 +1,60 @@
+<Project ToolsVersion="14.0" DefaultTargets="Rebuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- msbuild SlnBuild.proj /v:m /fl3 /flp3:warningsonly;logfile=msbuild.wrn /fl4 /flp4:errorsOnly;logfile=msbuild.err /fl5 /flp5:Verbosity=n;logfile=msbuild.log /clp:PerformanceSummary;Summary;ShowTimestamp -->
+  <!-- MSBuild Task Reference: https://msdn.microsoft.com/en-us/library/7z253716.aspx-->
+  <!-- http://devmatter.blogspot.in/2008/02/so-what-deal-with-and-anyway.html -->
+
+  <ItemGroup>
+    <SolutionFile Include="Ecp.True.All.sln" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">Any CPU</Platform>
+    <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
+    <RunCodeAnalysis Condition="'$(RunCodeAnalysis)' == ''">true</RunCodeAnalysis>
+    <OutDir Condition="'$(OutDir)' == ''">$(MSBuildStartupDirectory)\Out\bin\\</OutDir>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">$(MSBuildStartupDirectory)\Out\obj\\</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- BuildProjects-target calls Rebuild first and then CleanUp -->
+  <Target Name="Rebuild" DependsOnTargets="PrintPaths">
+    <Message Text="::: BUILDING @(SolutionFile) :::" Importance="high" />
+    <MSBuild Projects="@(SolutionFile)" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform);OutDir=$(OutDir);IntermediateOutputPath=$(IntermediateOutputPath);BuildInParallel=$(BuildInParallel);"/>
+    <!--<CallTarget Targets="CleanUp"/>-->
+  </Target>
+
+  <Target Name="PrintPaths">
+    <Message Text="  " Importance="high" />
+    <!--<Message Text="                              SFProjects = @(SFProjects)" Importance="high" />-->
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', Configuration, $(Configuration)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', Platform, $(Platform)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', OutDir, $(OutDir)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', IntermediateOutputPath, $(IntermediateOutputPath)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', RunCodeAnalysis, $(RunCodeAnalysis)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', BuildInParallel, $(BuildInParallel)))" Importance="high" />
+
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFile, $(MSBuildThisFile)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFileDirectory, $(MSBuildThisFileDirectory)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFileDirectoryNoRoot, $(MSBuildThisFileDirectoryNoRoot)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFileExtension, $(MSBuildThisFileExtension)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFileFullPath, $(MSBuildThisFileFullPath)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildThisFileName, $(MSBuildThisFileName)))" />
+
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectDirectory, $(MSBuildProjectDirectory)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectFile, $(MSBuildProjectFile)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectExtension, $(MSBuildProjectExtension)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectFullPath, $(MSBuildProjectFullPath)))" Importance="high" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectName, $(MSBuildProjectName)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildBinPath, $(MSBuildBinPath)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildProjectDefaultTargets, $(MSBuildProjectDefaultTargets)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildExtensionsPath, $(MSBuildExtensionsPath)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', MSBuildStartupDirectory, $(MSBuildStartupDirectory)))" />
+
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', COMPUTERNAME, $(COMPUTERNAME)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', USERDNSDOMAIN, $(USERDNSDOMAIN)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', USERDOMAIN, $(USERDOMAIN)))" />
+    <Message Text="$([System.String]::Format('{0, 22} = {1}', USERNAME, $(USERNAME)))" />
+    <Message Text="  " Importance="high" />
+  </Target>
+
+</Project>

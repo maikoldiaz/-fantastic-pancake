@@ -1,0 +1,211 @@
+variables:
+- group: true-secrets-nonprd-shared
+- group: true-secrets-dev
+- group: true-network-dev
+- group: true-automation
+- template: ../../Templates/Variables/package.yml
+- template: ../../Templates/Variables/infra.yml
+- template: ../../Templates/Variables/non-prod.yml
+
+trigger:
+      branches :
+       include: 
+        - master
+      paths:
+        include:
+         - Develop/*
+        exclude:
+         - Develop/Ecp.True/DI/*
+         - Develop/Ecp.True/Blockchain/*
+         - Develop/Ecp.True/Ecp.True.Host.UI/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Balance/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Ownership/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Transform/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Validate/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Blockchain.Register/*
+         - Develop/Ecp.True/Ecp.True.Host.Functions.Blockchain.EventListener/*
+
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: AdminApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../../Templates/Build/aks.build.yml
+      parameters:
+        projectName: $(apiProjectName)
+        dockerfile: 'Develop/Admin.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Api'
+        path: 'Develop'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+  
+  - job: SapApi  
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../../Templates/Build/aks.build.yml
+      parameters:
+        projectName: $(sapApiProjectName)
+        dockerfile: 'Develop/SAP.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Sap.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+      
+  - job: FlowApi  
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../../Templates/Build/aks.build.yml
+      parameters:
+        projectName: $(flowApiProjectName)
+        dockerfile: 'Develop/Flow.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Flow.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+
+  - job: Scripts
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/package.yml
+      parameters:
+        infra: 'true'
+
+- stage: Deploy
+  jobs:
+  - deployment: AdminApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../../Templates/Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(apiProjectName)
+              releaseName: $(apiProjectName)
+              chartName: $(imageRegistryName)/$(apiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiHighCpuLimits)
+              memoryLimits: $(apiHighMemoryLimits)
+              memoryRequests: $(apiHighMemoryRequests)
+              cpuRequests: $(apiHighCpuRequests)
+              replicaCount: $(apiHighReplicaCount)
+              analytics: 'false'
+
+  - deployment: SapApi
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../../Templates/Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(sapApiProjectName)
+              releaseName: $(sapApiProjectName)
+              chartName: $(imageRegistryName)/$(sapApiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiLowCpuLimits)
+              memoryLimits: $(apiLowMemoryLimits)
+              memoryRequests: $(apiLowMemoryRequests)
+              cpuRequests: $(apiLowCpuRequests)
+              replicaCount: $(apiLowReplicaCount)
+              analytics: 'false'
+
+  - deployment: FlowApi
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../../Templates/Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(flowApiProjectName)
+              releaseName: $(flowApiProjectName)
+              chartName: $(imageRegistryName)/$(flowApiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiLowCpuLimits)
+              memoryLimits: $(apiLowMemoryLimits)
+              memoryRequests: $(apiLowMemoryRequests)
+              cpuRequests: $(apiLowCpuRequests)
+              replicaCount: $(apiLowReplicaCount)
+              analytics: 'false'
+
+  - deployment: RefreshAPIM
+    dependsOn:
+    - AdminApi
+    - SapApi
+    - FlowApi
+    condition: and(succeeded(), eq(succeeded('AdminApi'), 'true'), eq(succeeded('SapApi'), 'true'), eq(succeeded('FlowApi'), 'true'))
+    pool:
+     vmImage: 'windows-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - template: ../../Templates/Infra/apim.refresh.yml
+            parameters:
+              azureSubscriptionName : $(serviceConnection)
+              resourceGroupName : $(sharedResourceGroupName)
+              swaggerUrl: $(openAPIUrl)
+              apiDisplayName: $(apimDisplayName)
+              apimApiPath: $(adminPath)
+              serviceUrl: $(adminApiUrl)
+
+          - template: ../../Templates/Infra/apim.refresh.yml
+            parameters:
+              azureSubscriptionName : $(serviceConnection)
+              resourceGroupName : $(sharedResourceGroupName)
+              swaggerUrl: $(openAPIUrlSAP)
+              apiDisplayName: $(apimSapDisplayName)
+              apimApiPath: $(sapPath)
+              serviceUrl: $(sapApiUrl)
+
+          - template: ../../Templates/Infra/apim.refresh.yml
+            parameters:
+              azureSubscriptionName : $(serviceConnection)
+              resourceGroupName : $(sharedResourceGroupName)
+              swaggerUrl: $(openAPIUrlFlow)
+              apiDisplayName: $(apimFlowDisplayName)
+              apimApiPath: $(flowPath)
+              serviceUrl: $(flowApiUrl)
+
+          - template: ../../Templates/Deploy/automation.yml 
+            parameters:
+              azureSubscriptionName : '$(serviceConnection)'
+              canExecuteAutomation: '$(dev)'
+              keyVaultName: '$(keyVault)'
+              automation: 'true'

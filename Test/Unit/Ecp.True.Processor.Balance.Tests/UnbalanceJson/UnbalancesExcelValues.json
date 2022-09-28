@@ -1,0 +1,40 @@
+﻿[
+  {
+    "NodeId": 100,
+    "ProductId": "1",
+    "Node": {
+      "NodeId": 100,
+      "Name": "AYACUCHO CRD-GALAN 14",
+      "ControlLimit": 1.96
+    },
+    "Product": {
+      "ProductId": "1",
+      "Name": "Crudo caño limón (CCL)"
+    },
+    "Unbalance": 1418.15,
+    "Units": "Barriles",
+    "UnbalancePercentage": 0.1621560957811229448274217900,
+    "ControlLimit": 1.96,
+    "Inputs": 874558.55,
+    "IdentifiedLosses": 9.89
+  },
+  {
+    "NodeId": 100,
+    "ProductId": "2",
+    "Node": {
+      "NodeId": 100,
+      "Name": "AYACUCHO CRD-GALAN 14",
+      "ControlLimit": 1.96
+    },
+    "Product": {
+      "ProductId": "2",
+      "Name": "Isla VI (CIVI)"
+    },
+    "Unbalance": 1312.17,
+    "Units": "Barriles",
+    "UnbalancePercentage": 0.196586846517130900843339700,
+    "ControlLimit": 1.96,
+    "Inputs": 667475.99,
+    "IdentifiedLosses": 5620.15
+  }
+]

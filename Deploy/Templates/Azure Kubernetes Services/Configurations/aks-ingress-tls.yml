@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  tls.crt: #{tlscertvalue}#
+  tls.key: #{tlskeyvalue}#
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: aks-ingress-tls
+  namespace: #{namespace}#
+type: kubernetes.io/tls

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsResourceId": {
+      "value": "Id"
+    },
+    "apiManagementServiceName": {
+      "value": "name"
+    },
+    "publisherEmail": {
+      "value": "email"
+    },
+    "publisherName": {
+      "value": "name"
+    },
+    "tenant": {
+      "value": "f3aae218-3c83-4a06-a177-036cfc7b4192"
+    },
+    "tenantId": {
+      "value": "tenantId"
+    },
+    "apimAppClientId": {
+      "value": "Id"
+    },
+    "sku": {
+      "value": "Developer"
+    },
+    "skuCount": {
+      "value": 1
+    },
+    "apimDevPortalAppClientId": {
+      "value": "Id"
+    },
+    "apimDevPortalAppSecret": {
+      "value": "secret"
+    },
+    "apimAppSecret": {
+      "value": "secret"
+    },
+    "apimOAuthDefaultScope": {
+      "value": "api://f3aae218-3c83-4a06-a177-036cfc7b4192/user_impersonation"
+    },
+    "apimClientCredsDefaultScope": {
+      "value": "api://f3aae218-3c83-4a06-a177-036cfc7b4192/.default"
+    },
+    "authCodeAuthServerName": {
+      "value": "authCodeAuthServerName"
+    },
+    "clientCredsAuthServerName": {
+      "value": "clientCredsAuthServerName"
+    },
+    "virtualNetworkExternalid": {
+      "value": "Id"
+    },
+    "apimSubnetId": {
+      "value": "Id"
+    },
+    "pidDeploymentName": {
+      "value": "name"
+    }
+  }
+}

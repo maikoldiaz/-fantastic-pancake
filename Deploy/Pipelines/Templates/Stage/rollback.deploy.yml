@@ -1,0 +1,33 @@
+stages:
+  - stage: Rollback
+    jobs:
+      - deployment: Rollback
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envInfra)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: 'Download Build Artifacts'
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - powershell: |
+                    $date=$(Get-Date -Format g);
+                    Write-Host "##vso[task.setvariable variable=creationDate]$date"
+                  displayName: 'Set Date Tag'
+
+                - template: ../Infra/Rollback/functions.yml
+
+                - template: ../Infra/Rollback/ui.yml
+
+                - template: ../Infra/Rollback/config.yml
+
+                - template: ../Infra/redis.flush.yml
+                  parameters:
+                    serviceConnection : $(serviceConnection)
+                    env: '$(env)'
+                    storageAccountName: '$(storageAccountName)'

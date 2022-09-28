@@ -1,0 +1,77 @@
+﻿// _content.scss
+
+#{$ep}-content {
+    $cont:&;
+    height: 100%;
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        padding: pxToRem(23) 0;
+
+        + #{$cont}__body{
+            height: calc(100% - 94px);
+            padding-top: 0;
+        }
+
+        &--h71{
+            height: pxToRem(71);
+
+            + #{$cont}__body{
+                height: calc(100% - 71px);
+                padding-top: 0;
+            }
+        }
+
+        &--h130{
+            height: pxToRem(130);
+
+            + #{$cont}__body{
+                height: calc(100% - 130px);
+                padding-top: 0;
+            }
+        }
+
+        &:after{
+            content:"";
+            display: block;
+            @extend .clearfix;
+        }
+    }
+
+    &__title {
+        font-family: $font-family-lt;
+        font-weight: 400;
+        font-size: pxToRem(36);
+    }
+
+    &__body{
+        padding-top: pxToRem(20);
+        height: 100%;
+    }
+    &__lst{
+        & #{$cont}__item{
+            display: table-row;
+            &-icn, &-cont{
+                display: table-cell;
+                vertical-align: middle;
+                padding-right: pxToRem(10);
+                padding-bottom: pxToRem(20);
+            }
+            &-lbl{
+                font-size: pxToRem(18);
+                font-weight: bold;
+                color:$ep-logo-color;
+                margin-bottom: pxToRem(0);
+                margin-top: pxToRem(-5);
+                text-decoration: none;
+            }
+            &-val{
+                display: block;
+                & a,
+                & a:hover{
+                    color: $font-color;
+                }
+            }
+        }  
+    }
+}

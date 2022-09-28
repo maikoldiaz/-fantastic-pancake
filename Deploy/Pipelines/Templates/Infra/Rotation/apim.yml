@@ -1,0 +1,27 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: Add Authorization Code Auth Server
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimOAuthServer.ps1'
+     ScriptArguments: '-resourceGroup "$(sharedResourceGroupName)" -apimOauthServerName "$(authCodeAuthServerName)" -apimName "$(apiManagementServiceName)" -tenantId "organizations" -clientId "$(apimAppClientId)" -clientSecret "$(apimAppSecret)" -grantType "authorizationCode" -defaultScope "api://$(apiAppClientId)/user_impersonation"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['apim'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Add Client Credential Auth Server
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimOAuthServer.ps1'
+     ScriptArguments: '-resourceGroup "$(sharedResourceGroupName)" -apimOauthServerName "$(clientCredsAuthServerName)" -apimName "$(apiManagementServiceName)" -tenantId "$(tenantId)" -clientId "$(apimAppClientId)" -clientSecret "$(apimAppSecret)" -grantType "clientCredentials" -defaultScope "api://$(apiAppClientId)/.default"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['apim'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Update APIM Dev Portal Secret
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rotation/apim.ps1'
+     ScriptArguments: '-resourceGroup "$(sharedResourceGroupName)" -apimServiceName "$(apiManagementServiceName)" -clientSecret "$(apimDevPortalAppSecret)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['apim'], 'true'))

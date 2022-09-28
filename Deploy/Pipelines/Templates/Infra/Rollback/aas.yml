@@ -1,0 +1,18 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Delete Tabular Model
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-AnalysisServiceModel.ps1'
+      ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -modelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq(variables['aas'], 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Delete Audit Tabular Model
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-AnalysisServiceModel.ps1'
+      ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -modelName "$(analysisServerAuditModel)" -rolloutenvironment "$(rolloutenvironment)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq(variables['aas'], 'true'))

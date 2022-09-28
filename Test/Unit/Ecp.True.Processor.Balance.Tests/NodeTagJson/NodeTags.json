@@ -1,0 +1,24 @@
+[
+  {
+    "NodeId": 81,
+    "ElementId": 2,
+    "StartDate": "2019-09-02",
+    "EndDate": "2019-09-02",
+    "Node": {
+      "NodeId": 81,
+      "Name": "AYACUCHO CRD-GALAN 14",
+      "ControlLimit": 2
+    }
+  },
+  {
+    "NodeId": 82,
+    "ElementId": 2,
+    "StartDate": "2019-09-02",
+    "EndDate": "2019-09-02",
+    "Node": {
+      "NodeId": 82,
+      "Name": "AYACUCHO CRD-GALAN 16",
+      "ControlLimit": 3
+    }
+  }
+]

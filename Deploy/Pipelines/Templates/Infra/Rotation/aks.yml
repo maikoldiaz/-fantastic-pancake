@@ -1,0 +1,9 @@
+steps:
+- task: AzureCLI@2
+  displayName: AKS
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rotation/aks.ps1'
+    arguments: '-spId "$(aksServicePrincipalProfileClientId)" -spSecret "$(aksServicePrincipalProfileSecret)" -resourceGroupName "$(sharedResourceGroupName)" -clusterName "$(aksClusterName)" -serverApplicationId "$(aksAadProfileServerAppID)" -serverApplicationSecret "$(aksAadProfileServerAppSecret)" -clientAppId "$(aksAadProfileClientAppID)"'
+  condition:  and(succeeded(), eq(variables['aks'], 'true'))

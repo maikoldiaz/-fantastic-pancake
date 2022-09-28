@@ -1,0 +1,82 @@
+﻿steps:
+ - ${{ if eq(parameters['spell'], 'true') }}:
+   - template: ./spellCheck.yml
+
+ - task: CopyFiles@2
+   displayName: Copy Database Artifacts
+   inputs:
+     SourceFolder: $(dbProjectPath)
+     Contents: '**'
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/SQL'
+   condition: and(succeeded(), eq('${{parameters.db}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: Copy Tabular Model Artifacts
+   inputs:
+     SourceFolder: $(aasProjectPath)
+     Contents: '**'
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/TabularModel'
+   condition: and(succeeded(), eq('${{parameters.db}}', 'true'))
+ 
+ - task: CopyFiles@2
+   displayName: COPY ARM templates
+   inputs:
+     SourceFolder: $(infraTemplatePath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/Templates'
+   condition: and(succeeded(), eq('${{parameters.infra}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: COPY Test Artifacts
+   inputs:
+     SourceFolder: $(testArtifactPath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/Tests'
+   condition: and(succeeded(), eq('${{parameters.tests}}', 'true'))
+   
+ - task: CopyFiles@2
+   displayName: COPY APIM polices
+   inputs:
+     SourceFolder: $(apimPoliciesPath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/Policies'
+   condition: and(succeeded(), eq('${{parameters.infra}}', 'true'))
+   
+ - task: CopyFiles@2
+   displayName: COPY Scripts
+   inputs:
+     SourceFolder:  $(infraScriptPath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
+   condition: and(succeeded(), eq('${{parameters.infra}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: COPY Input Files.
+   inputs:
+     SourceFolder:  $(filesPath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/Files'
+   condition: and(succeeded(), eq('${{parameters.infra}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: COPY PBIX Files.
+   inputs:
+     SourceFolder:  $(powerBIPBIXPath)
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/PBIXFiles'
+   condition: and(succeeded(), eq('${{parameters.db}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: Copy Analysis Service Dependencies
+   inputs:
+     SourceFolder: $(aasDependenciesPath)
+     Contents: '**'
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/AnalysisServiceDependencies'
+   condition: and(succeeded(), eq('${{parameters.db}}', 'true'))
+
+ - task: CopyFiles@2
+   displayName: Copy Audit Tabular Model Artifacts
+   inputs:
+     SourceFolder: $(aasAuditProjectPath)
+     Contents: '**'
+     TargetFolder: '$(Build.ArtifactStagingDirectory)/AuditTabularModel'
+   condition: and(succeeded(), eq('${{parameters.db}}', 'true'))
+
+ - task: PublishBuildArtifacts@1
+   displayName: Publish Artifacts
+   inputs:
+     ArtifactName: Drop

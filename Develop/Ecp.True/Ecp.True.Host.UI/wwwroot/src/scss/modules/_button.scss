@@ -1,0 +1,150 @@
+﻿// _button.scss
+
+#{$ep}-btn {
+    $btn: &;
+    background-color: $btn-color;
+    padding: pxToRem(14) pxToRem(30);
+    color: $white;
+    height: pxToRem(48);
+    border: solid 1px $btn-color;
+    font-family: $font-family-sb;
+    font-size: pxToRem(14);
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px map-get($gray, 'CCCCCC');
+    outline: none;
+    cursor: pointer;
+    display: inline-block;
+    text-transform: lowercase;
+    &::first-letter{
+        text-transform: uppercase;
+    }
+    &__txt{
+        display: inline-block;
+        &::first-letter{
+            text-transform: uppercase;
+        }
+        &--tt{
+            text-transform: none;
+        }
+    }
+    + #{$btn}{
+        margin-left: pxToRem(18);
+    }
+
+    &:hover, &:active, &:focus {
+        outline: none;
+    }
+
+    &:hover {
+        background-color: $btn-color--hover;
+        border: solid 1px $btn-color--hover;
+        color: $btn-color;
+    }
+
+    &:disabled, &--disabled {
+        background: $disabled-bg;
+        border: 1px solid $font-disabled;
+        box-shadow: none;
+        color: $font-disabled;
+        cursor: not-allowed;
+    }
+
+    &--sm{
+        height: pxToRem(30);
+        padding: 4px pxToRem(35);
+    }
+
+    &--link{
+        padding: 0;
+        border-width: 0 0 1px 0;
+        font-family: $font-family;
+        font-weight: 700;
+        border-bottom-color: $btn-color;
+        height: pxToRem(22);
+        box-shadow: none;
+        color: $btn-color;
+        background-color: transparent;
+        border-radius: 0;
+
+        &:hover{
+            background-color: transparent;
+            border-width: 0 0 1px 0;
+            border-bottom-color: $btn-color--lnk-hover;
+            color: $btn-color--lnk-hover;
+        }
+
+        &:focus{
+            color: $btn-color--focus;
+        }
+
+        &:disabled, &#{$btn}--disabled {            
+            border-bottom-color: $font-disabled;
+            box-shadow: none;
+            color: $font-disabled;
+            cursor: not-allowed;
+        }
+    }
+
+    &--br{
+        color:$btn-color;
+        background-color: $white;
+       
+
+        &:hover{
+            background-color: $btn-color--hover;
+            border: solid 1px $btn-color--hover;
+            color: $btn-color;
+        }
+
+        &:focus{
+            color: $btn-color--focus;
+        }
+    }
+
+    &--sec{
+        color:$btn-color;
+        background-color: $white;
+        border-color:map-get($gray, 'C1C1C1');
+
+        &:hover{
+            background-color: $btn-color--hover;
+            border: solid 1px $btn-color--hover;
+            color: $btn-color;
+        }
+
+        &:focus{
+            background-color: $disabled-bg;
+            border-color:map-get($gray, 'C1C1C1');
+        }
+    }
+
+    &--tr{
+        padding: 0;
+        border: none;
+        font-family: $font-family;
+        font-weight: 700;
+        height: pxToRem(22);
+        box-shadow: none;
+        color: $btn-color;
+        background-color: transparent;
+        border-radius: 0;
+
+        &:hover{
+            background-color: transparent;
+            color: $btn-color--hover;
+            border:none;
+        }
+
+        &:focus{
+            color: $btn-color--focus;
+        }
+    }
+
+    &--block{
+        width:100%;       
+    }
+
+    &--pointerEventOn {
+        pointer-events: all;
+    }
+}

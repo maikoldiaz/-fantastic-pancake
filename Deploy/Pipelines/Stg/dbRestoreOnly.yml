@@ -1,0 +1,14 @@
+variables:
+- group: true-secrets-nonprd-shared
+- group: true-secrets-stg
+- group: true-network-stg
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/non-prod.yml
+
+trigger: none
+pr: none
+
+stages:
+- template: ../Templates/Stage/db.build.yml
+- template: ../Templates/Stage/db.restoreonly.yml

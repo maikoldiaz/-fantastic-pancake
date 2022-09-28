@@ -1,0 +1,23 @@
+variables:
+- group: true-secrets-nonprd-shared
+- group: true-release-threshold
+- group: true-secrets-qas
+- group: true-network-qas
+- group: true-mq-qas
+- group: true-scale-up
+
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/non-prod.yml
+- template: ../Templates/Variables/tags.yml
+
+# set pr trigger to none to prevent daily build running against master branch changess
+pr: none
+
+trigger: none
+
+stages:
+  - template: ../Templates/Stage/infra.build.yml
+  - template: ../Templates/Stage/scale.deploy.yml
+    parameters:
+      scaleup: 'true'

@@ -1,0 +1,13 @@
+variables:
+  - group: true-secrets-prd
+  - group: true-network-prd
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/prod.yml
+  - template: ../Templates/Variables/tags.yml
+
+trigger: none
+pr: none
+stages:
+- template: ../Templates/Stage/infra.build.yml
+- template: ../Templates/Stage/infra.shared.deploy.yml

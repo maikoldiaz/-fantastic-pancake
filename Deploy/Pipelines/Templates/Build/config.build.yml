@@ -1,0 +1,35 @@
+﻿steps:
+- task: DotNetCoreCLI@2
+  displayName: 'Configuration Manager build'
+  inputs:
+    projects: '$(configProjectPath)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Configuration Manager publish'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(configProjectPath)'
+    modifyOutputPath: true
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Blockchain build'
+  inputs:
+    projects: '$(blockchainProjectPath)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Blockchain publish'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(blockchainProjectPath)'
+    modifyOutputPath: true
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-build'
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifacts
+  inputs:
+    ArtifactName: Drop

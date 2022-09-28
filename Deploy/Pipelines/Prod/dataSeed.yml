@@ -1,0 +1,28 @@
+variables:
+  - group: true-secrets-prd
+
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+
+
+trigger: none
+stages:
+- template: ../Templates/Stage/data.seed.build.yml
+      
+- stage: Deploy
+  jobs:
+  - deployment: Deploy
+    pool:
+     vmImage: 'windows-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - template: ../Templates/Stage/data.seed.yml

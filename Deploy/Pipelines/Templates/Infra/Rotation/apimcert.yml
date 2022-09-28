@@ -1,0 +1,15 @@
+steps:
+ - template: ../fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '$(serviceConnection)'
+     keyVaultName: '$(keyVaultShared)'
+     secretsFilter: '*'
+
+ - task: AzurePowerShell@4
+   displayName: Bind SSL Certificate For API
+   condition: and(succeeded(), eq(variables['apimCert'], 'true'))
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bind-SSL-APIM.ps1'
+     ScriptArguments: '-apimServiceName "$(apiManagementServiceName)" -resourceGroupName "$(sharedResourceGroupName)" -dnsName "$(dnsNameForApi)" -certificateFilePath "$(System.ArtifactsDirectory)/Drop/$(dnsNameForApi).pfx" -certificatePassword "$(sslCertPasswordForApi)"'
+     azurePowerShellVersion: LatestVersion

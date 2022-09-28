@@ -1,0 +1,30 @@
+steps:
+  - script: |
+     npm install -g npm@6.14.15 --force
+    displayName: Downgrade NPM
+    
+  - task: NodeTool@0
+    displayName: 'Downgrade Node'
+    inputs:
+      versionSpec: '14.18.1'
+
+  - task: Npm@1
+    displayName: NPM Install
+    inputs:
+      workingDir: '$(uiFolderPath)'
+      verbose: false
+      publishRegistry: useFeed
+
+  - script: |
+     npm install -g cspell
+    displayName: CSpell Install
+
+  - script: |
+      npx cspell Develop/Ecp.True/Ecp.True.Host.UI/wwwroot/src/**/*.js --no-progress
+    displayName: Run JS Spell Check
+    condition: and(succeeded(), eq(variables['spellCheckJs'], 'true'))
+
+  - script: |
+      npx cspell Develop/**/*.cs --no-progress
+    displayName: Run CS Spell Check
+    condition: and(succeeded(), eq(variables['spellCheckCs'], 'true'))

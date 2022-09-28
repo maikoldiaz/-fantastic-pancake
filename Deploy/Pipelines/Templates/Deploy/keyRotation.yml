@@ -1,0 +1,36 @@
+steps:
+- template: ../Infra/Rotation/secrets.yml
+
+- template: ../Infra/Rotation/connection.yml
+  parameters:
+    keyType: 'secondary'
+
+- template: ../restartServices.yml
+
+- template: ../Infra/Rotation/connection.yml
+  parameters:
+    keyType: 'primary'
+
+- template: ../Infra/fetchSecrets.yml
+  parameters:
+    azureSubscriptionName : '$(serviceConnection)'
+    keyVaultName: '$(keyVaultShared)'
+    secretsFilter: '*'
+
+- template: ../Infra/Rotation/analytics.yml
+
+- template: ../Infra/Rotation/aks.yml
+
+- template: ../Infra/Rotation/apim.yml
+
+- template: ../Infra/flow.yml
+  parameters:
+    azureSubscriptionName :  '$(serviceConnection)'
+
+- template: ../Infra/Rotation/appGateway.yml
+
+- template: ../Infra/Rotation/apimcert.yml
+
+- template: ../Infra/Rotation/akscert.yml
+
+- template: ../Infra/Rotation/sap.yml

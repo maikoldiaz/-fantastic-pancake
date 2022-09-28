@@ -1,0 +1,382 @@
+stages:
+- stage: Deploy
+  jobs:
+  - template: ../Deploy/infra.deploy.yml
+    parameters:
+      env: '$(env)'
+      serviceConnection : $(serviceConnection)
+      mqChannel : '$(mqChannel)'
+      mqEffectiveUserName : '$(mqEffectiveUserName)'
+      mqQueueIL : '$(mqQueueIL)'
+      mqQueueIn : '$(mqQueueIn)'
+      mqQueueManager : '$(mqQueueManager)'
+      mqQueueMo : '$(mqQueueMo)'
+      mqQueueSM : '$(mqQueueSM)'
+      mqServer : '$(mqServer)'
+      powerBIAppID : '$(powerBIAppID)'
+      powerBIAppSecret : '$(powerBIAppSecret)'
+      tenant : '$(tenant)'
+      dnsUI : '$(dnsUI)'
+      dnsNameForUI : '$(dnsNameForUI)'
+      groupId: '$(adsGroupPrincipalId)'
+      podId: ''
+      deployAks: 'true'
+      prod: 'false'
+      version: '2'
+      shared: 'false'
+      resourceGroupName: '$(resourceGroupName)'
+
+  - job: BuildAdminApi
+    dependsOn:
+    - ClusterSecrets
+    condition: succeeded('ClusterSecrets')    
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(apiProjectName)
+        dockerfile: 'Develop/Admin.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Api'
+        path: 'Develop'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+
+  - job: BuildAnalyticsApi
+    dependsOn:
+    - ClusterSecrets
+    condition: succeeded('ClusterSecrets')
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(analyticsProjectName)
+        dockerfile: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics/Dockerfile'
+        path: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics'
+        analytics: 'true'
+
+  - job: BuildSapApi
+    dependsOn:
+    - ClusterSecrets
+    condition: succeeded('ClusterSecrets')  
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(sapApiProjectName)
+        dockerfile: 'Develop/SAP.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Sap.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+  
+  - job: BuildFlowApi
+    dependsOn:
+    - ClusterSecrets
+    condition: succeeded('ClusterSecrets')  
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../Build/aks.build.yml
+      parameters:
+        projectName: $(flowApiProjectName)
+        dockerfile: 'Develop/Flow.Dockerfile'
+        folderPath: '$(System.DefaultWorkingDirectory)/Develop/Ecp.True/Ecp.True.Host.Flow.Api'
+        targetFiles: 'appsettings.json'
+        analytics: 'false'
+        path: 'Develop'
+
+  - deployment: DeployAdminApi
+    dependsOn:
+    - BuildAdminApi
+    condition: succeeded('BuildAdminApi')
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: '$(envInfra)'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - template: ../Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: 'app-blockchain'
+              projectName: $(apiProjectName)
+              releaseName: $(apiProjectName)
+              chartName: $(imageRegistryName)/$(apiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiHighCpuLimits)
+              memoryLimits: $(apiHighMemoryLimits)
+              memoryRequests: $(apiHighMemoryRequests)
+              cpuRequests: $(apiHighCpuRequests)
+              replicaCount: $(apiHighReplicaCount)
+              analytics: 'false'
+  
+  - deployment: DeployAnalyticsApi
+    dependsOn:
+    - BuildAnalyticsApi
+    condition: succeeded('BuildAnalyticsApi')
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(analyticsProjectName)
+              releaseName: $(analyticsProjectName)
+              chartName: $(imageRegistryName)/$(analyticsProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiMediumCpuLimits)
+              memoryLimits: $(apiMediumMemoryLimits)
+              memoryRequests: $(apiMediumMemoryRequests)
+              cpuRequests: $(apiMediumCpuRequests)
+              replicaCount: $(apiMediumReplicaCount)
+              analytics: 'true'
+              prod: 'true'
+
+  - deployment: DeploySapApi
+    dependsOn:
+    - BuildSapApi
+    condition: succeeded('BuildSapApi')
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(sapApiProjectName)
+              releaseName: $(sapApiProjectName)
+              chartName: $(imageRegistryName)/$(sapApiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiLowCpuLimits)
+              memoryLimits: $(apiLowMemoryLimits)
+              memoryRequests: $(apiLowMemoryRequests)
+              cpuRequests: $(apiLowCpuRequests)
+              replicaCount: $(apiLowReplicaCount)
+              analytics: 'false'
+              prod: 'true'
+
+  - deployment: DeployFlowApi
+    dependsOn:
+    - BuildFlowApi
+    condition: succeeded('BuildFlowApi')
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(flowApiProjectName)
+              releaseName: $(flowApiProjectName)
+              chartName: $(imageRegistryName)/$(flowApiProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiLowCpuLimits)
+              memoryLimits: $(apiLowMemoryLimits)
+              memoryRequests: $(apiLowMemoryRequests)
+              cpuRequests: $(apiLowCpuRequests)
+              replicaCount: $(apiLowReplicaCount)
+              analytics: 'false'
+              prod: 'true'
+
+  - deployment: APIM
+    dependsOn:
+    - DeployAdminApi
+    - DeployAnalyticsApi
+    - DeploySapApi
+    - DeployFlowApi
+    condition: and(succeeded(), eq(succeeded('DeployAdminApi'), 'true'), eq(succeeded('DeployAnalyticsApi'), 'true'), eq(succeeded('DeploySapApi'), 'true'), eq(succeeded('DeployFlowApi'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - script: echo '##vso[task.setvariable variable=env]$(env)
+            displayName: 'Set Environment Variable'
+
+          - powershell: |
+              $date=$(Get-Date -Format g);
+              Write-Host "##vso[task.setvariable variable=creationDate]$date"
+            displayName: 'Set Date Tag'
+
+          - template: ../Infra/apim.yml
+            parameters:
+              azureSubscriptionName: '$(serviceConnection)'
+              resourceGroupName: '$(sharedResourceGroupName)'
+              deployLocation: '$(deployLocation)'
+              tier: 'data'
+              deployTM : 'false'
+              shared: 'false'
+
+  - deployment: AppGateway
+    dependsOn:
+    - ADF
+    condition: succeeded('ADF')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - script: echo '##vso[task.setvariable variable=env]$(env)
+            displayName: 'Set Environment Variable'
+
+          - powershell: |
+              $date=$(Get-Date -Format g);
+              Write-Host "##vso[task.setvariable variable=creationDate]$date"
+            displayName: 'Set Date Tag'
+
+          - template: ../Infra/applicationGateway.yml
+            parameters:
+              azureSubscriptionName :  '$(serviceConnection)'
+              resourceGroupName : '$(resourceGroupName)'
+              deployLocation: '$(deployLocation)'
+              tier : "security"
+              dnsUI : "$(dnsUI)"
+              deployTM : 'false'
+              version : '2'
+
+  - deployment: ServiceEndpoints
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - script: echo '##vso[task.setvariable variable=env]$(env)
+            displayName: 'Set Environment Variable'
+
+          - powershell: |
+              $date=$(Get-Date -Format g);
+              Write-Host "##vso[task.setvariable variable=creationDate]$date"
+            displayName: 'Set Date Tag'
+
+          - template: ../Infra/serviceEndpoint.yml
+            parameters:
+              env: '$(env)'
+              serviceConnection : $(serviceConnection)
+              version: '2'
+
+  - deployment: DeployAlerts
+    dependsOn:
+      - AvailabilityFn
+    condition: and(succeeded(), eq(succeeded('AvailabilityFn'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - script: echo '##vso[task.setvariable variable=env]$(env)
+            displayName: Set Environment
+
+          - powershell: |
+              $date=$(Get-Date -Format g);
+              Write-Host "##vso[task.setvariable variable=creationDate]$date"
+            displayName: Set Date
+
+          - template: ../Deploy/alerts.deploy.yml
+            parameters:
+              serviceConnection : $(serviceConnection)
+              resourceGroupName: $(resourceGroupName)
+              sharedResourceGroupName: $(sharedResourceGroupName)
+              deployLocation: $(deployLocation)
+              status: $(disableAlert)
+
+  - deployment: IntegrationTests
+    dependsOn:
+      - DeployAlerts
+    condition: and(succeeded(), eq(succeeded('DeployAlerts'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - script: echo '##vso[task.setvariable variable=env]$(env)
+            displayName: 'Set Environment Variable'
+
+          - task: AzurePowerShell@5
+            displayName: Run - Integration Test cases.
+            inputs:
+              ConnectedServiceNameARM: "$(serviceConnection)"
+              azureSubscription: "$(serviceConnection)"
+              ScriptPath: '$(System.ArtifactsDirectory)/Drop/Tests/testOrchestrator.ps1'
+              ScriptArguments: '-basePath "$(System.ArtifactsDirectory)\Drop\Tests\Integration" -templateRootPath "$(System.ArtifactsDirectory)\Drop\Templates" -scriptRootPath "$(System.ArtifactsDirectory)\Drop\Scripts"'
+              azurePowerShellVersion: LatestVersion
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'NUnit'
+              testResultsFiles: '$(System.ArtifactsDirectory)\Drop\Tests\Integration\testResult.xml'
+              failTaskOnFailedTests: true

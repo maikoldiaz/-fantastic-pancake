@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accountName": {
+      "value": "accountName"
+    },
+    "accountPassword": {
+      "value": ""
+    },
+    "accountEmail": {
+      "value": "accountEmail@microsoft.com"
+    },
+    "pidDeploymentName": {
+      "value": "name"
+    }
+  }
+}

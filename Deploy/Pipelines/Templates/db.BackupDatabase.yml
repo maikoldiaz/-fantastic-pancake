@@ -1,0 +1,31 @@
+stages:
+  - stage: DBBackUpBase
+    jobs:
+      - deployment: BackUp
+        timeoutInMinutes: 120 
+        pool:
+          vmImage: "windows-2019"
+        environment: ${{ parameters.env }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: /Deploy/Pipelines/Templates/Infra/fetchSecrets.yml
+                  parameters:
+                    azureSubscriptionName : '${{parameters.serviceConnection}}'
+                    keyVaultName: '$(keyVault)'
+                    secretsFilter: '*'
+
+                - task:  AzurePowerShell@4
+                  displayName: Backup Database
+                  inputs:
+                    azureSubscription: '${{parameters.serviceConnection}}'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Create-DatabaseBackup.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerName "$(sqlServerName)" -DatabaseName "$(databaseName)" -StorageAccountConnectionString "$(storageconnectionstring)" -BlobContainerName "$(dbBackupsBlobContainer)" -SqlPackageExePath "$(sqlPackageExePath)" -Clone "$(cloneDatabase)" -ResourceGroupName "$(sharedResourceGroupName)"'
+                    azurePowerShellVersion: LatestVersion

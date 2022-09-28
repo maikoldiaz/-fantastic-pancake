@@ -1,0 +1,15 @@
+﻿variables:
+- name: compName
+  value: 'Ecopetrol Colombia'
+- name: createdBy
+  value: 'True Azure Devops Release Pipeline'
+- name: dataProfile
+  value: 'Confidential'
+- name: description
+  value: 'Ambiente dev proyecto Gestión Volumétrica GOP Blockchain'
+- name: organizationUnit
+  value: 'GOP'
+- name: projectName
+  value: 'Gestión Volumétrica GOP - Blockchain'
+- name: responsible
+  value: 'Carlos Peña'

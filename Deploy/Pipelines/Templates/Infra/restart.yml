@@ -1,0 +1,148 @@
+steps:
+- task: AzureCLI@2
+  displayName: AKS - Get Creds
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az aks get-credentials --resource-group "$(sharedResourceGroupName)" --name "$(aksClusterName)" --admin
+
+- task: AzureCLI@2
+  displayName: AKS - Admin API Pod Restart
+  condition: and(succeeded(),eq(variables['adminapi'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(apiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - Flow API Pod Restart
+  condition: and(succeeded(),eq(variables['flowapi'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(flowApiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - SAP API Pod Restart
+  condition: and(succeeded(),eq(variables['sapapi'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(sapApiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - Analytics API Pod Restart
+  condition: and(succeeded(),eq(variables['analyticsapi'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(analyticsProjectName)"
+
+- task: AzurePowerShell@4
+  displayName: Restart Transform FA
+  condition: and(succeeded(),eq(variables['homologate'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(transformFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Calculation FA
+  condition: and(succeeded(),eq(variables['calculate'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(calFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Blockchain FA
+  condition: and(succeeded(),eq(variables['blockchain'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(bcFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Ownership FA
+  condition: and(succeeded(),eq(variables['ownership'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(ownershipFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Deadletter FA
+  condition: and(succeeded(),eq(variables['deadletter'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(dlFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Delta FA
+  condition: and(succeeded(),eq(variables['delta'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(deltaFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Sap FA
+  condition: and(succeeded(),eq(variables['sap'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(sapFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Reporting FA
+  condition: and(succeeded(),eq(variables['reporting'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(reportingFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Availability FA
+  condition: and(succeeded(),eq(variables['availability'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(availabilityFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Stop Web App
+  condition: and(succeeded(),eq(variables['ui'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "STOP" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Start Web App
+  condition: and(succeeded(),eq(variables['ui'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "START" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion

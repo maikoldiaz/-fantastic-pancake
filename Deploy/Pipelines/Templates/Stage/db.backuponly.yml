@@ -1,0 +1,35 @@
+stages:
+  - stage: DBBackUp
+    jobs:
+      - deployment: BackUp
+        pool:
+          vmImage: "windows-latest"
+        environment: $(envInfra)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: "Download Build Artifacts"
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: "$(System.ArtifactsDirectory)"
+
+                - powershell: |
+                    $date=$(Get-Date -Format g);
+                    Write-Host "##vso[task.setvariable variable=creationDate]$date"
+                  displayName: "Set Date Tag"
+
+                - template: ../Infra/fetchSecrets.yml
+                  parameters:
+                    azureSubscriptionName: "$(serviceConnection)"
+                    keyVaultName: "$(keyVault)"
+                    secretsFilter: "*"
+
+                - task: AzurePowerShell@4
+                  displayName: DB Backup of Customer Database
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/BackUp-Database.ps1"
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -DatabaseName "$(databaseName)" -StorageAccountConnectionString "$(storageconnectionstring)" -BlobContainerName "$(dbBackupsBlobContainer)" -SqlPackageExePath "$(sqlPackageExePath)" -offshoreChanges "false" -customerDbBackUp "true"'
+                    azurePowerShellVersion: LatestVersion

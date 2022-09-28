@@ -1,0 +1,55 @@
+steps:
+- task: DownloadBuildArtifacts@0
+  displayName: Download Build Artifacts
+  inputs:
+    artifactName: Drop
+    downloadPath: '$(System.ArtifactsDirectory)'
+  condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+
+- template: ../Infra/fetchSecrets.yml
+  parameters:
+    azureSubscriptionName : '${{parameters.serviceConnection}}'
+    keyVaultName: '$(keyVault)'
+    secretsFilter: '*'
+
+- task: AzurePowerShell@4
+  displayName: Check AAS Status
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-AnalysisServerStatus.ps1'
+    ScriptArguments: '-ResourceGroupName "$(resourceGroupName)" -AnalysisServerName "$(analysisServicesName)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@3
+  displayName: Delete Tabular Model
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-AnalysisServiceModel.ps1'
+    ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -modelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq(variables['deleteModel'], 'true'))
+
+- task: AzurePowerShell@3
+  displayName: Delete Audit Tabular Model
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-AnalysisServiceModel.ps1'
+    ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -modelName "$(analysisServerAuditModel)" -rolloutenvironment "$(rolloutenvironment)"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq(variables['deleteAuditModel'], 'true'))
+
+- task: AzurePowerShell@3
+  displayName: Publish Tabular Model
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Publish-TabularModel.ps1'
+    ScriptArguments: '-dependenciesPath "$(System.ArtifactsDirectory)\Drop\AnalysisServiceDependencies" -modelPath "$(System.ArtifactsDirectory)\Drop\$(modelPath)" -sqlConnString "$(sqlconnectionstring)" -aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -analysisServerModelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)" -environment "$(env)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@3
+  displayName: Publish Audit Tabular Model
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Publish-TabularModel.ps1'
+    ScriptArguments: '-dependenciesPath "$(System.ArtifactsDirectory)\Drop\AnalysisServiceDependencies" -modelPath "$(System.ArtifactsDirectory)\Drop\$(auditModelPath)" -sqlConnString "$(sqlconnectionstring)" -aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -analysisServerModelName "$(analysisServerAuditModel)" -rolloutenvironment "$(rolloutenvironment)" -environment "$(env)"'
+    azurePowerShellVersion: LatestVersion

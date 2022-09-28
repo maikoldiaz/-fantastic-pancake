@@ -1,0 +1,7 @@
+﻿// _footer.scss
+
+#{$ep}-footer {
+    background: map-get($gray, 'EEEEEE');
+    height: pxToRem(40);
+    padding: pxToRem(10) pxToRem(20);
+}

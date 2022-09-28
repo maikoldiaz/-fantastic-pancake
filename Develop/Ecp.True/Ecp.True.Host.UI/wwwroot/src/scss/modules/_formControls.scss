@@ -1,0 +1,357 @@
+﻿// _formControls.scss
+//Textbox, Textarea
+#{$ep}-textbox, #{$ep}-textarea {
+    $txt: &;
+    height: pxToRem(37);
+    border:solid 1px $control-border;
+    border-radius: pxToRem(4);
+    padding: 0 pxToRem(11);
+    font-size: pxToRem(16);
+    color: $control-text;
+    width: 100%;
+    font-family: $font-family;
+    &:hover, &:active, &:focus {
+        outline: none;
+    }
+
+    &:focus {
+        border-color:$control-border-focused;
+    }
+
+    &[readonly]{
+        background-color: $disabled-bg;
+    }
+
+    &--error{
+        border-color:$error;
+    }
+}
+
+#{$ep}-textbox[type=number]{
+    text-align: right;
+}
+
+// Textarea
+#{$ep}-textarea{
+    min-height: pxToRem(75);
+    padding: pxToRem(11);
+}
+
+//Select
+#{$ep}-select {
+    $sel: &;
+    font-size: pxToRem(16);
+    #{$sel}__control{
+        border:solid 1px $control-border;        
+        height: pxToRem(37);
+        min-height: pxToRem(37);
+        &:focus-within{
+            border:solid 1px $control-border-focused; 
+            box-shadow: none;
+            &:hover{
+                border:solid 1px $control-border-focused; 
+            }
+        }
+    }
+
+    &__placeholder{
+        font-size: pxToRem(16);
+        text-transform: lowercase;
+        &:first-letter{
+            text-transform: uppercase;
+        }
+    }
+
+    #{$ep}-select__menu{
+        z-index: 100;
+    }
+
+    &__menu{
+        
+        &-list{
+            #{$sel}__option{
+                color: map-get($dark,'a');
+                font-size: pxToRem(16);
+                padding: pxToRem(6) pxToRem(12);
+                background: transparent;
+                &:hover{
+                    background-color: map-get($light,'a');
+                }
+
+                &--is-selected{
+                    background-color: #E0F0FA;
+                    font-weight:bold; 
+                }
+
+                &-month{
+                    display: grid;
+                    grid-template-columns: 1fr pxToRem(40) 1fr;
+                }
+            }
+        }
+    }
+
+    &--error{        
+        #{$sel}__control{
+            border-color:$error;
+        }
+    }
+
+    &--multi{
+        #{$ep}-select{
+            &__option{
+                position: relative;
+                padding-left: pxToRem(40);
+                background-color: transparent;
+                font-weight: normal;
+                &:before{
+                    content: "";
+                    position: absolute;
+                    left:pxToRem(12);
+                    top:pxToRem(8);
+                    border:solid 1px #B4B4B4;
+                    @include mix-square(17px);
+                    border-radius: pxToRem(4);
+                    cursor: pointer;
+                }
+                
+                &--is-selected{
+                    &:before{
+                        border-color:$ep-secondary-color;
+                    }
+                    &:after{
+                        content: "";
+                        height: pxToRem(8);
+                        width: pxToRem(4);
+                        border-width: 0 pxToRem(2) pxToRem(2) 0;
+                        border-color: $ep-secondary-color;
+                        border-style: solid;
+                        display: inline-block;
+                        position: absolute;
+                        top: pxToRem(12);
+                        left: pxToRem(19);
+                        transform: rotate(44deg);
+                        border-bottom-right-radius: pxToRem(2);
+                    }
+                }
+            }
+
+            &__control{
+                height: auto;
+            }
+        }
+    }
+    #{$sel}__indicator{
+        color:$btn-color;
+        &:hover{
+            color:$btn-color;
+        }
+    }
+}
+
+//Datepicker
+#{$ep}-datepicker{
+    $txt: &;
+    height: pxToRem(37);
+    border:solid 1px $control-border;
+    border-radius: 4px;   
+    width: 100%;
+    overflow: hidden;
+    &__icn{
+        position: absolute;
+        right: 0;
+        top: 0;
+        @include mix-square(35px);
+        line-height: pxToRem(35);
+        text-align: center;
+        color: $font-color;
+    }
+    &__input{
+        color: $control-text;
+        font-size: pxToRem(16);      
+        width: 100%;
+        border: none;
+        height: pxToRem(35);
+        padding: pxToRem(11);
+        text-transform: capitalize;
+        &:focus{
+            border:none;
+            outline: none;
+        }
+    }
+
+    &--error{
+        border-color:$error;
+    }
+
+    .react-datepicker-wrapper,.react-datepicker__input-container{
+        width: 100%;
+    }
+
+    &:focus-within {
+        border-color:$control-border-focused;
+    }
+}
+
+
+//label
+#{$ep}-label{
+    display: block;
+    font-family: $font-family-sb;
+    font-size: pxToRem(14);
+    color: $label;
+    margin-bottom: pxToRem(6);
+    text-transform: lowercase;
+    &-wrap{
+        display: flex;
+        align-items: flex-start;
+    }
+    &:first-letter{
+        text-transform: uppercase;
+    }
+}
+
+#{$ep}-data{  
+    display: block;
+    word-break: break-word;
+}
+
+//Control
+#{$ep}-control{
+    $control:&;
+    position: relative;
+    &__error{
+        display: inline-block;
+        color: $error;
+        font-size: pxToRem(16);
+        font-family: $font-family-sb;
+        margin-top: 5px;
+        word-break: break-word;
+    }
+
+    &-group{
+        margin-bottom: pxToRem(35);   
+
+        &-header{
+            color:$btn-color;
+            border-bottom:solid 1px $btn-color;
+            margin-bottom: pxToRem(10);
+            padding-bottom: pxToRem(5);
+        }
+
+        &-title{
+            font-size: pxToRem(16);
+            @extend .fw-500;
+            margin-bottom: pxToRem(15);
+        }
+        &--mh84{
+            min-height: pxToRem(84);
+        }
+
+        &__tip{
+            background-color: map-get($gray, 'EEEEEE');
+            padding: pxToRem(13) pxToRem(10) pxToRem(11) pxToRem(10);
+            border-radius: pxToRem(3);
+            margin-top: pxToRem(-3);
+        }
+    }
+
+    &--addon,&--ac{
+        #{$control}{
+            &__inner{
+                display: flex;
+                border:solid 1px $control-border;
+                border-radius: pxToRem(4);
+                overflow: hidden;
+                height: pxToRem(37);
+                #{$ep}-textbox{
+                    border:none;
+                }
+
+                &-addon{
+                    display: inline-block;
+                    border-left: solid 1px $control-border;
+                    width: pxToRem(38);
+                    text-align: center;
+                    font-size: pxToRem(16);
+                    line-height: pxToRem(37);
+                    color: $btn-color;
+                }
+
+                input[role=combobox]{
+                    height: 100%;
+                    width: 100%;
+                    border:none;
+                    padding: 0 pxToRem(11);
+                    font-size: pxToRem(16);
+                    outline: none;
+                }
+
+                input[type=number]#{$ep}-textbox{
+                    padding-right: 0;
+                }
+                &-bgwt{
+                    background-color: $white;
+                }
+                &-input{
+                    & #{$control} {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+
+    &--decimal{
+
+        #{$control}{
+            &__inner{
+                border:solid 1px $control-border;
+                border-radius: pxToRem(4);
+                overflow: hidden;
+                height: pxToRem(37);
+            }
+        }
+        input[type='text']{
+            height: pxToRem(37);
+            border:none;
+            border-radius: pxToRem(4);
+            padding: 0 pxToRem(11);
+            font-size: pxToRem(16);
+            color: $control-text;
+            width: 100%;
+            font-family: $font-family;
+            text-align: right;
+            &:hover, &:active, &:focus {
+                outline: none;
+            }
+        
+            &:focus {
+                border-color:$control-border-focused;
+            }
+        
+            &[readonly]{
+                background-color: $disabled-bg;
+            }
+        }
+    }
+}
+
+//DateRange
+
+#{$ep}-daterange{
+    &__date{
+        width: calc(100% - 100px);
+        padding-right: pxToRem(20);
+    }
+
+    &__year{
+        width: pxToRem(100);
+    }
+
+    &__body{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}

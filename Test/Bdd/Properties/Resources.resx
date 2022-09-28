@@ -1,0 +1,1413 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Bing" xml:space="preserve">
+    <value>http://www.bing.com</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>xpath://input[@id='input_FileUpload']</value>
+  </data>
+  <data name="ClickHereToTest" xml:space="preserve">
+    <value>xpath:/html/body/table/tbody/tr/td[1]/a[1]</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>xpath://*[@id="main"]/p[2]/a</value>
+  </data>
+  <data name="ElementClick" xml:space="preserve">
+    <value>https://unixpapa.com/js/testmouse.html</value>
+  </data>
+  <data name="FileDownload" xml:space="preserve">
+    <value>https://docs.microsoft.com/en-us/power-bi/sample-financial-download</value>
+  </data>
+  <data name="FileUpload" xml:space="preserve">
+    <value>https://ezgif.com/effects</value>
+  </data>
+  <data name="Google" xml:space="preserve">
+    <value>http://www.google.com</value>
+  </data>
+  <data name="Query" xml:space="preserve">
+    <value>xpath://*[@name='q']</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>xpath://h1[contains(text(),'Search Results')]</value>
+  </data>
+  <data name="CategoryHeader" xml:space="preserve">
+    <value>xpath://h1[@id='h1_modal_title']</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>xpath://span[text()='Administración']</value>
+  </data>
+  <data name="BalanceTransportersWithProperty" xml:space="preserve">
+    <value>xpath://span[text()='Balance transportadores con propiedad']</value>
+  </data>
+  <data name="Module" xml:space="preserve">
+    <value>xpath://span[text()='{0}']</value>
+  </data>
+  <data name="DescriptionFromGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[1]/div/div[2]</value>
+  </data>
+  <data name="GridFirstRowColumnValue" xml:space="preserve">
+    <value>xpath://div[@id='grd_{0}']/div/div[2]/div/div/div/div/div</value>
+  </data>
+  <data name="NameFromGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[1]/div/div[1]</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>xpath://*[@id='true_app']/header/div[1]/img</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>xpath://div[text()='Código']</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>xpath://span[@class='ep-textbox__error-txt']</value>
+  </data>
+  <data name="Loader" xml:space="preserve">
+    <value>xpath://div[@class='ep-loader']</value>
+  </data>
+  <data name="Toggler" xml:space="preserve">
+    <value>xpath://span[@class='ep-navbar__toggler']</value>
+  </data>
+  <data name="NavigationBar" xml:space="preserve">
+    <value>xpath://span[contains(@class,'ep-navbar')]</value>
+  </data>
+  <data name="SelectBox" xml:space="preserve">
+    <value>xpath://label[text()='{0}']//following-sibling::div[@class='ep-control']//div[contains(@class,'ep-select__control')]</value>
+  </data>
+  <data name="SelectBoxMenu" xml:space="preserve">
+    <value>xpath://label[text()='{0}']//following-sibling::div[@class='ep-control']//div[contains(@class,'ep-select__menu')]</value>
+  </data>
+  <data name="DesbalancePercentage1" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -odd']/div[7]/span</value>
+  </data>
+  <data name="DesbalancePercentage2" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -even']/div[7]/span</value>
+  </data>
+  <data name="Desbalance1" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -odd']/div[5]/span</value>
+  </data>
+  <data name="Desbalance2" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -even']/div[5]/span</value>
+  </data>
+  <data name="AcceptableBalancePercentage1" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -odd']/div[8]/span</value>
+  </data>
+  <data name="AcceptableBalancePercentage2" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -even']/div[8]/span</value>
+  </data>
+  <data name="NewPropertyFunctionLabel" xml:space="preserve">
+    <value>xpath://label[text()='Nueva Función de Propiedad']</value>
+  </data>
+  <data name="SelectBoxOption" xml:space="preserve">
+    <value>xpath://div[contains(@class,'ep-select__menu')]//*[text()='{0}']</value>
+  </data>
+  <data name="OwnershipPercentageTextBox" xml:space="preserve">
+    <value>xpath://input[contains(@id,'txt_{0}_owner')]</value>
+  </data>
+  <data name="GridRow" xml:space="preserve">
+    <value>xpath://div[@id='grd_{0}']//div[@class='rt-tr-group']</value>
+  </data>
+  <data name="DropDown" xml:space="preserve">
+    <value>xpath://div[@id='dd_nodeTags_element']</value>
+  </data>
+  <data name="NodeNameFilter" xml:space="preserve">
+    <value>xpath://input[@id='txt_nodeTags_node.name']</value>
+  </data>
+  <data name="NodeCheckBox" xml:space="preserve">
+    <value>xpath:(//span[@class='ep-checkbox__action'])[2]</value>
+  </data>
+  <data name="Scroller" xml:space="preserve">
+    <value>xpath://div[@class='ep-select__menu css-2163qy-menu]</value>
+  </data>
+  <data name="CategoryNameFilter" xml:space="preserve">
+    <value>xpath://input[@id='txt_categories_name']</value>
+  </data>
+  <data name="MenuOption" xml:space="preserve">
+    <value>xpath://div[contains(@class,'ep-select__menu')]</value>
+  </data>
+  <data name="UploadDropDown" xml:space="preserve">
+    <value>xpath://*[@id="dd_fileUpload_actions"]/div/div[2]/div</value>
+  </data>
+  <data name="UploadType" xml:space="preserve">
+    <value>xpath:(//*[text()='{0}'])[{1}]</value>
+  </data>
+  <data name="UploadTypeName" xml:space="preserve">
+    <value>xpath://*[text()='{0}']</value>
+  </data>
+  <data name="UploadId" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][1]</value>
+  </data>
+  <data name="UploadIdFilter" xml:space="preserve">
+    <value>xpath://input[@id='txt_fileUploads_uploadId']</value>
+  </data>
+  <data name="ActionDropDown" xml:space="preserve">
+    <value>xpath://*[@id='dd_fileUpload_actions']</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>xpath:(//a[@id='lnk_fileUploads_download'])[1]</value>
+  </data>
+  <data name="FinalDate" xml:space="preserve">
+    <value>xpath://*[@id='dt_uploadFileFilter_finalDate']</value>
+  </data>
+  <data name="InputDate" xml:space="preserve">
+    <value>xpath://*[@id='dt_uploadFileFilter_initialDate']</value>
+  </data>
+  <data name="NoRecordsFoundMessage" xml:space="preserve">
+    <value>xpath://*[@class='rt-noData']</value>
+  </data>
+  <data name="FileUploadHeader" xml:space="preserve">
+    <value>xpath://div[@class='rt-resizable-header-content']</value>
+  </data>
+  <data name="GridCount" xml:space="preserve">
+    <value>xpath://*[@id="grd_fileUploadGrid"]/div[2]/div/div[1]</value>
+  </data>
+  <data name="GridLink" xml:space="preserve">
+    <value>xpath://*[@id='lnk_categories_Edit']</value>
+  </data>
+  <data name="SelectBoxOptionByValue" xml:space="preserve">
+    <value>xpath://*[text()='{0}']</value>
+  </data>
+  <data name="GridDetails" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[1]/div/div[{0}]</value>
+  </data>
+  <data name="ElementByText" xml:space="preserve">
+    <value>xpath://*[text()='{0}']</value>
+  </data>
+  <data name="FinalDatePickerinSegment" xml:space="preserve">
+    <value>xpath://input[@id='dt_initTicket_finalDate']</value>
+  </data>
+  <data name="ErrorMessageinSegment" xml:space="preserve">
+    <value>xpath://span[@class='ep-control__error-txt']</value>
+  </data>
+  <data name="PageIdentifier" xml:space="preserve">
+    <value>xpath://span[text()='{0}']</value>
+  </data>
+  <data name="CategoryFromGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[1]/div/div[5]</value>
+  </data>
+  <data name="CategoryDropdown" xml:space="preserve">
+    <value>xpath://*[@id='dd_category']</value>
+  </data>
+  <data name="ElementEditLink" xml:space="preserve">
+    <value>xpath://*[@id='lnk_elements_edit']</value>
+  </data>
+  <data name="ElementNameFilter" xml:space="preserve">
+    <value>xpath://input[@id='txt_elements_name']</value>
+  </data>
+  <data name="GetValueFromGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_nodeProducts']/div[1]/div[3]/div/div/div[{0}]</value>
+  </data>
+  <data name="Rule_SelectBox" xml:space="preserve">
+    <value>xpath://*[@id='dd_nodeAttributes_{0}']</value>
+  </data>
+  <data name="GetErrorMessageFromModel" xml:space="preserve">
+    <value>xpath://*[@class='ep-control__error-txt']</value>
+  </data>
+  <data name="TicketTotalRegisters" xml:space="preserve">
+    <value>xpath://span[text()='{0}']//following-sibling::span[contains(@class,'leg-val')]</value>
+  </data>
+  <data name="SegmentLabel" xml:space="preserve">
+    <value>xpath://*[@id='lbl_initTicket_segment']</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>xpath://*[@id='btn_initTicket_next']</value>
+  </data>
+  <data name="SelectAllCheckBox" xml:space="preserve">
+    <value>xpath://*[@id='chk_select-all']//following-sibling::span</value>
+  </data>
+  <data name="GraphValue" xml:space="preserve">
+    <value>xpath://*[name()='g' and (contains(@class,'recharts-bar'))]//*[name()='tspan']</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>xpath://div[text()='{0}']</value>
+  </data>
+  <data name="CreateNodeInterface" xml:space="preserve">
+    <value>xpath://li[@class='ep-tabpanels__tab ep-tabpanels__tab--active']</value>
+  </data>
+  <data name="SummaryPageHeader" xml:space="preserve">
+    <value>xpath://*[text()='Resultado Corte Operativo']</value>
+  </data>
+  <data name="ViewErrorModal" xml:space="preserve">
+    <value>xpath://*[text()='Error al procesar corte operativo']</value>
+  </data>
+  <data name="ElementInErrorPopup" xml:space="preserve">
+    <value>xpath://*[@id='lbl_ErrorDetails_ElementName']</value>
+  </data>
+  <data name="EndDateInErrorPopup" xml:space="preserve">
+    <value>xpath://*[@id='lbl_ErrorDetails_EndDate']</value>
+  </data>
+  <data name="PaginationCount" xml:space="preserve">
+    <value>xpath://*[@class='ep-table__pagination-txt']</value>
+  </data>
+  <data name="StartDateInErrorPopup" xml:space="preserve">
+    <value>xpath://*[@id='lbl_ErrorDetails_StartDate']</value>
+  </data>
+  <data name="TicketIdFilter" xml:space="preserve">
+    <value>xpath://*[@id='txt_tickets_ticketId']</value>
+  </data>
+  <data name="ErrorMessageInInicioTab" xml:space="preserve">
+    <value>xpath://*[@class='ep-notification__msg']</value>
+  </data>
+  <data name="StartDatePickerinSegment" xml:space="preserve">
+    <value>xpath://input[@id='dt_initTicket_initialDate']</value>
+  </data>
+  <data name="LabelsOnConfirmationInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_confirm_cutoff']/div/div[{0}]/span</value>
+  </data>
+  <data name="ConfirmationLabel" xml:space="preserve">
+    <value>xpath://*[@id='frm_confirm_cutoff']/div/p/span</value>
+  </data>
+  <data name="OperationalCutoffPage" xml:space="preserve">
+    <value>xpath:(//a[@class='ep-bcrumbs__lst-lnk'])[2]</value>
+  </data>
+  <data name="PeriodLabelOnConfirmationInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_confirm_cutoff']/div/div[3]/span[{0}]</value>
+  </data>
+  <data name="NodeInformationAfterFiltered" xml:space="preserve">
+    <value>xpath://div[@id="grd_nodes"]/div[1]/div[3]/div/div/div[{0}]</value>
+  </data>
+  <data name="NodeInformationInterface" xml:space="preserve">
+    <value>xpath://*[@id='grd_nodes']/label</value>
+  </data>
+  <data name="ErrorPage" xml:space="preserve">
+    <value>xpath://*[text()='Acceso Denegado']</value>
+  </data>
+  <data name="Tab" xml:space="preserve">
+    <value>xpath://li[contains(@class,'ep-tabpanels') and text()='{0}']</value>
+  </data>
+  <data name="ReportHeader" xml:space="preserve">
+    <value>xpath://a[text()='Reporte Balance Operativo']</value>
+  </data>
+  <data name="PaginationSecondPage" xml:space="preserve">
+    <value>xpath://*[@id='page1']</value>
+  </data>
+  <data name="PaginationDropdown" xml:space="preserve">
+    <value>xpath://*[@class='ep-table__pagination-dd']</value>
+  </data>
+  <data name="ProductNameTextBox" xml:space="preserve">
+    <value>xpath://*[@placeholder='Nombre del producto...']</value>
+  </data>
+  <data name="NodeNameTextBox" xml:space="preserve">
+    <value>xpath://*[@id='txt_createNode_name']</value>
+  </data>
+  <data name="GetColumnCountfromGrid" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -odd']/div</value>
+  </data>
+  <data name="GetProductNameFromGrid" xml:space="preserve">
+    <value>xpath:(//div[@class='rt-tr -odd']/div)[{0}]</value>
+  </data>
+  <data name="GetStorageLocationName" xml:space="preserve">
+    <value>xpath:(//input[@value])</value>
+  </data>
+  <data name="ColumnsInNodeGrid" xml:space="preserve">
+    <value>xpath://div[@id='grd_nodes']/div[1]/div[1]/div/div[{0}]/div[1]</value>
+  </data>
+  <data name="FilterForNodeName" xml:space="preserve">
+    <value>xpath://input[@id='txt_nodes_name']</value>
+  </data>
+  <data name="OwnershipCalculationForSegmentsTicketGrid" xml:space="preserve">
+    <value>xpath://div[@id='grd_tickets']/div[1]/div[3]/div[1]/div/div[{0}]</value>
+  </data>
+  <data name="SidePaneOpen" xml:space="preserve">
+    <value>xpath://span[@class='ep-nav__toggler ep-nav__toggler--open']</value>
+  </data>
+  <data name="GetValueFromConnectionsGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_connectionProducts']/div[1]/div[2]/div/div/div[{0}]</value>
+  </data>
+  <data name="GetColumnValueFromFristRow" xml:space="preserve">
+    <value>xpath:(//div[@id='grd_{0}']//div[@class='rt-tr-group'])[1]/div/div[{1}]</value>
+  </data>
+  <data name="ActualOwnershipStrategy" xml:space="preserve">
+    <value>xpath://*[@id='frm_nodeAttributes_functions']/section/div[1]/div/div/label[{0}]</value>
+  </data>
+  <data name="TicketIdFilterInOwnershipCalculationNodeGrid" xml:space="preserve">
+    <value>xpath://*[@id='txt_ownershipNodes_ticketId']</value>
+  </data>
+  <data name="OwnershipCalculationForNodesGrid" xml:space="preserve">
+    <value>xpath://div[@id='grd_ownershipNodes']/div[1]/div[3]/div[1]/div/div[{0}]</value>
+  </data>
+  <data name="ErrorMessageControl" xml:space="preserve">
+    <value>xpath://span[@class='ep-control__error-txt']</value>
+  </data>
+  <data name="LatestOperationalCutoffTicket" xml:space="preserve">
+    <value>xpath://div[@id='grd_tickets']/div[1]/div[3]/div[1]/div/div[1]</value>
+  </data>
+  <data name="Error401Page" xml:space="preserve">
+    <value>xpath://*[text()='No permissios']</value>
+  </data>
+  <data name="Error404Page" xml:space="preserve">
+    <value>xpath://*[text()='Página no encontrada']</value>
+  </data>
+  <data name="Error500Page" xml:space="preserve">
+    <value>xpath://*[text()='Error Inesperado']</value>
+  </data>
+  <data name="RefreshPageLink" xml:space="preserve">
+    <value>xpath://*[text()='Refrescar la pagina']</value>
+  </data>
+  <data name="SupportLink" xml:space="preserve">
+    <value>xpath://*[text()=['ContactEcoPetrolSupport']</value>
+  </data>
+  <data name="OwnershipInputDate" xml:space="preserve">
+    <value>xpath://*[@id='dt_ownershipCal_initialDate']</value>
+  </data>
+  <data name="GetValueFromConnectionsMainGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_connAttributes']/div[1]/div[3]/div/div/div[{0}]</value>
+  </data>
+  <data name="PropertyFunctionColumn" xml:space="preserve">
+    <value>xpath://span[text()='Función de Propiedad']</value>
+  </data>
+  <data name="SourceNodeNameTextBox" xml:space="preserve">
+    <value>xpath:(//input[@role='combobox'])[{0}]</value>
+  </data>
+  <data name="Checkboxes" xml:space="preserve">
+    <value>xpath://span[@class='ep-checkbox__action']</value>
+  </data>
+  <data name="ControlExceptionsBreadCrumb" xml:space="preserve">
+    <value>xpath://*[text()='Control excepciones']</value>
+  </data>
+  <data name="EndDateOnSearchInterfaceOfFileUploadGrid" xml:space="preserve">
+    <value>xpath://*[@id='dt_uploadFileFilter_finalDate']</value>
+  </data>
+  <data name="StartDateOnSearchInterfaceOfFileUploadGrid" xml:space="preserve">
+    <value>xpath://*[@id='dt_uploadFileFilter_initialDate']</value>
+  </data>
+  <data name="UploadedFileNameInFileUploadGrid" xml:space="preserve">
+    <value>xpath://*[@id='txt_fileUploads_name']</value>
+  </data>
+  <data name="UploadFileTypeDropdownOfFileUploadGrid" xml:space="preserve">
+    <value>xpath://*[@id='dd_fileUpload_fileType']</value>
+  </data>
+  <data name="GetErrorValueOfException" xml:space="preserve">
+    <value>xpath://*[text()='{0}']/following::p</value>
+  </data>
+  <data name="GetExceptionPageValues" xml:space="preserve">
+    <value>xpath://*[text()='{0}']/following-sibling::span</value>
+  </data>
+  <data name="GetExceptionNodeDetails" xml:space="preserve">
+    <value>xpath:(//h3[text()='{0}']/following::label[text()='{1}']/following-sibling::span)[{2}]</value>
+  </data>
+  <data name="ProcessDropdown" xml:space="preserve">
+    <value>xpath://*[@id='dd_undefined_pendingTransaction.messageTypeId']</value>
+  </data>
+  <data name="EndDateOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://input[@id='dt_createLogistics_finalDate']</value>
+  </data>
+  <data name="OwnerOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_logisticsCriteria']/section/div[3]/div/div[{0}]/label/span[2]</value>
+  </data>
+  <data name="SegmentFilterInCreateLogisticReportGrid" xml:space="preserve">
+    <value>txt_tickets_segment</value>
+  </data>
+  <data name="SegmentOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://div[@id='dd_logisticsCriteria_segment']</value>
+  </data>
+  <data name="StartDateOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://input[@id='dt_createLogistics_initialDate']</value>
+  </data>
+  <data name="StatusFilterOnEvenFileUploadGrid" xml:space="preserve">
+    <value>xpath://div[@id='dd_fileUploads_status']</value>
+  </data>
+  <data name="ErrorMessageOnCreateLogisticInterface" xml:space="preserve">
+    <value>xpath://div[@class='ep-notification__msg']</value>
+  </data>
+  <data name="SegmentInputOnCreateLogisticInterface" xml:space="preserve">
+    <value>react-select-3-input</value>
+  </data>
+  <data name="StatusFilterOnLogisticReportGrid" xml:space="preserve">
+    <value>dd_tickets_state</value>
+  </data>
+  <data name="NodeTagDate" xml:space="preserve">
+    <value>xpath:://*[@id='dp_nodeTag_operationDate']</value>
+  </data>
+  <data name="FileStatus" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][7]</value>
+  </data>
+  <data name="GetNameFromGrid" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr -odd']/div[{0}]</value>
+  </data>
+  <data name="MovementNodeOrginTextBox" xml:space="preserve">
+    <value>xpath://input[@id='txt_movements_originSourceNode_name']</value>
+  </data>
+  <data name="DuplicatetransformationMessage" xml:space="preserve">
+    <value>xpath://div[@class='ep-notification__msg']</value>
+  </data>
+  <data name="SubmitButton" xml:space="preserve">
+    <value>xpath://*[@id="btn_submit"]</value>
+  </data>
+  <data name="OwnershipFinalDate" xml:space="preserve">
+    <value>xpath://*[@id='dt_ownershipCal_finalDate']</value>
+  </data>
+  <data name="OwnerShipNextButton" xml:space="preserve">
+    <value>xpath://*[@id='btn_ownershipCalculationValidations_submit']</value>
+  </data>
+  <data name="Button" xml:space="preserve">
+    <value>btn_{0}_{1}</value>
+  </data>
+  <data name="ControlPercentageInEditOwnershipGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-tfoot']/div/div[@class='rt-td'][13]/span</value>
+  </data>
+  <data name="GreenStatusOnEditOwnershipGrid" xml:space="preserve">
+    <value>xpath://*[@class='fas fa-circle fas--success']</value>
+  </data>
+  <data name="Grid" xml:space="preserve">
+    <value>grd_{0}</value>
+  </data>
+  <data name="InputValueOnEditOwnershipGrid" xml:space="preserve">
+    <value>xpath:(//*[@class='rt-td'][3])[{0}]</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>lnk_{0}_{1}</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>xpath://label[@class='rt-noData']</value>
+  </data>
+  <data name="NodeFilterInOwnershipPerNode" xml:space="preserve">
+    <value>txt_ownershipNodes_nodeName</value>
+  </data>
+  <data name="NodeStatus" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][8]</value>
+  </data>
+  <data name="NodeStatusInEditOwnershipGrid" xml:space="preserve">
+    <value>xpath://*[@class='ep-actionbar__card']/span[2]</value>
+  </data>
+  <data name="OwnershipInformation" xml:space="preserve">
+    <value>xpath://*[@id='true_app']/section/section/section/div/section/header/ul/li[{0}]/span</value>
+  </data>
+  <data name="RedStatusOnEditOwnershipGrid" xml:space="preserve">
+    <value>xpath://*[@class='fas fa-circle fas--error']</value>
+  </data>
+  <data name="SelectedValueForComboBox" xml:space="preserve">
+    <value>xpath://label[@id='lbl_{0}_{1}']/parent::div</value>
+  </data>
+  <data name="OwnershipGridInfo" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][{0}]</value>
+  </data>
+  <data name="ActionDropDownInEditOwnershipGrid" xml:space="preserve">
+    <value>dd_actions</value>
+  </data>
+  <data name="EditOwnershipCalculationInformation" xml:space="preserve">
+    <value>xpath://*[@class='rt-tfoot']/div/div[{0}]/span</value>
+  </data>
+  <data name="EditOwnershipLabelsInformation" xml:space="preserve">
+    <value>xpath:(//*[@class='ep-section__header-lbl']/span)[{0}]</value>
+  </data>
+  <data name="ExcelUpload" xml:space="preserve">
+    <value>xpath://*[@id="cont_modal_uploadFileModal"]/div/section/form/section/div[3]/div/section/div/label</value>
+  </data>
+  <data name="FileUploadTypeDropDown" xml:space="preserve">
+    <value>xpath://*[@id="dd_fileUpload_fileType"]</value>
+  </data>
+  <data name="InventoryNodeOrginTextBox" xml:space="preserve">
+    <value>xpath://*[@id='txt_inventories_originSourceNode_name']</value>
+  </data>
+  <data name="TicketsGridOwnershipSegment" xml:space="preserve">
+    <value>xpath://*[@id='txt_tickets_ticketId']</value>
+  </data>
+  <data name="SegementTicketStatus" xml:space="preserve">
+    <value>xpath://*[@id="grd_tickets"]/div[1]/div[3]/div/div/div[7]</value>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>xpath://*[@class='ep-actionbar__card-btn']</value>
+  </data>
+  <data name="ReopenToolTip" xml:space="preserve">
+    <value>xpath: (//div[@class='ep-tooltip__body'])[1]</value>
+  </data>
+  <data name="ComboBox" xml:space="preserve">
+    <value>xpath://label[@id='lbl_{0}_{1}']/parent::div</value>
+  </data>
+  <data name="ComboValue" xml:space="preserve">
+    <value>xpath://div[.='{0}']</value>
+  </data>
+  <data name="ExpanderInGrid" xml:space="preserve">
+    <value>xpath://div[@class='rt-expander']</value>
+  </data>
+  <data name="GridNoData" xml:space="preserve">
+    <value>xpath://label[@class='rt-noData']</value>
+  </data>
+  <data name="DropDownDefaultOption" xml:space="preserve">
+    <value>xpath://*[text()='Seleccionar']</value>
+  </data>
+  <data name="EditMovementAndInventoryGrid" xml:space="preserve">
+    <value>xpath:(//*[@class='rt-tr -odd'])[2]/div[{0}]</value>
+  </data>
+  <data name="EditInventoryOperationalInformation" xml:space="preserve">
+    <value>xpath:(//*[@class='rt-tr'])[6]/td[{0}]</value>
+  </data>
+  <data name="OwnerhsipData" xml:space="preserve">
+    <value>xpath:(//input[@class='ep-textbox'])[{0}]</value>
+  </data>
+  <data name="OwenrshipTotalPercentage" xml:space="preserve">
+    <value>xpath://*[@id="grd_ownershipMovementInventoryGrid"]/div[1]/div[3]/div/div[3]/span</value>
+  </data>
+  <data name="OwenrshipVolume" xml:space="preserve">
+    <value>xpath://*[@id="grd_ownershipMovementInventoryGrid"]/div[1]/div[3]/div/div[2]/span</value>
+  </data>
+  <data name="ViewModalTable" xml:space="preserve">
+    <value>xpath://*[@id="cont_modal_movementOwnership"]/div/section/form/section/section[1]/div/table/tbody/tr/td[1]</value>
+  </data>
+  <data name="OwnershipCommentBox" xml:space="preserve">
+    <value>txt_movementOwnership_comment</value>
+  </data>
+  <data name="MovementOwnerNames" xml:space="preserve">
+    <value>xpath://*[@id="grd_ownershipMovementInventoryGrid"]/div[1]/div[2]/div[{0}]/div/div[1]/div</value>
+  </data>
+  <data name="NetVolume" xml:space="preserve">
+    <value>xpath://*[@id="cont_modal_movementOwnership"]/div/section/form/section/section[1]/div/table/tbody/tr/td[6]</value>
+  </data>
+  <data name="OwnerErrorNotification" xml:space="preserve">
+    <value>xpath://*[@id="cont_modal_movementOwnership"]/div/section/div/div/div/div[1]</value>
+  </data>
+  <data name="OwnerInputBoxes" xml:space="preserve">
+    <value>xpath://*[@id="grd_ownershipMovementInventoryGrid"]/div[1]/div[2]/div/div/div[{0}]/input</value>
+  </data>
+  <data name="ActionsDropdown" xml:space="preserve">
+    <value>//*[@id="dd_actions"]</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>xpath://div[@title='#{0}']</value>
+  </data>
+  <data name="AllIcons" xml:space="preserve">
+    <value>xpath://input[@id='icon_picker']</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>xpath://input[@id='icon_picker' and @value='{0}']//following-sibling::span</value>
+  </data>
+  <data name="IconSearch" xml:space="preserve">
+    <value>xpath://input[@id='txt_icon']//parent::div[@class='ep-control']//following-sibling::span[contains(@class,'ep-control')]//i</value>
+  </data>
+  <data name="NodeReactTextBox" xml:space="preserve">
+    <value>xpath://*[@id='lbl_nodeFilter_node']/parent::div/div/div/div/input</value>
+  </data>
+  <data name="ReactDropdown" xml:space="preserve">
+    <value>xpath://*[@id='dd_nodeFilter_{0}']/div/div[1]</value>
+  </data>
+  <data name="CategoryAutofillTextBox" xml:space="preserve">
+    <value>xpath://label[@id='lbl_nodeFilter_category']/parent::div//input</value>
+  </data>
+  <data name="ElementAutoFillTextbox" xml:space="preserve">
+    <value>xpath://label[@id='lbl_nodeFilter_element']/parent::div//input</value>
+  </data>
+  <data name="NodeTextbox" xml:space="preserve">
+    <value>xpath://input[@role='combobox']</value>
+  </data>
+  <data name="GraphicalElementName" xml:space="preserve">
+    <value>xpath://div[@class='ep-diagram__node-info']/div[2]/div[1]/div[1]</value>
+  </data>
+  <data name="GraphicalNodeIcon" xml:space="preserve">
+    <value>xpath://div[@data-nodeid='{0}']</value>
+  </data>
+  <data name="GraphicalNodeName" xml:space="preserve">
+    <value>xpath://div[@class='ep-diagram__node-info']/div[1]</value>
+  </data>
+  <data name="Icons" xml:space="preserve">
+    <value>xpath:(//div[@class='approval-card'])/div[3]/button[@aria-label='{0}']</value>
+  </data>
+  <data name="ApprovalCard" xml:space="preserve">
+    <value>xpath://div[@class='approval-card']</value>
+  </data>
+  <data name="ApprovalConfirmRequest" xml:space="preserve">
+    <value>xpath://button[@aria-label='Confirm']</value>
+  </data>
+  <data name="ApprovalTabs" xml:space="preserve">
+    <value>xpath://a[text()=' {0} ']</value>
+  </data>
+  <data name="ButtonsOnApprovalCards" xml:space="preserve">
+    <value>xpath:(//div[@class='approval-card'])[0]/div[3]/button[{0}]</value>
+  </data>
+  <data name="VerificationMessage" xml:space="preserve">
+    <value>xpath://p[@class='message']</value>
+  </data>
+  <data name="DestinationProductsOnCreateMovementInterface" xml:space="preserve">
+    <value>dd_createMovement_destinationProduct</value>
+  </data>
+  <data name="SourceProductsOnCreateMovementInterface" xml:space="preserve">
+    <value>dd_createMovement_sourceProduct</value>
+  </data>
+  <data name="DatePickerOnCreateMovement" xml:space="preserve">
+    <value>dt_createMovement_date</value>
+  </data>
+  <data name="SelectBoxMenuOnCreateMovement" xml:space="preserve">
+    <value>xpath://label[text()='{0}']/../div/div/div[2]/div/div</value>
+  </data>
+  <data name="CloseButtonOnCreateMovementInterface" xml:space="preserve">
+    <value>xpath:(//*[@id='lbl_modal_close'])[2]</value>
+  </data>
+  <data name="DestinationNodeOnCreateMovementInterface" xml:space="preserve">
+    <value>dd_createMovement_destinationNode</value>
+  </data>
+  <data name="SourceNodeOnCreateMovementInterface" xml:space="preserve">
+    <value>dd_createMovement_sourceNode</value>
+  </data>
+  <data name="ComboboxDisabled" xml:space="preserve">
+    <value>xpath://*[@id='dd_{0}_{1}']/div/div/div/div/input</value>
+  </data>
+  <data name="CommentsTextBoxOnCreateMovement" xml:space="preserve">
+    <value>txt_createMovement_comments</value>
+  </data>
+  <data name="TotalVolumeOnCreateMovement" xml:space="preserve">
+    <value>xpath://*[text()='Total']/../../div[2]/span</value>
+  </data>
+  <data name="TotalVolumePercentageOnCreateMovement" xml:space="preserve">
+    <value>xpath://*[text()='Total']/../../div[3]/div/div/input</value>
+  </data>
+  <data name="NewMovementInformation" xml:space="preserve">
+    <value>xpath://*[@id='grd_ownershipNodeData']/div/div[3]/div/div/div[{0}]</value>
+  </data>
+  <data name="CutoffDateOnOperationalCutoffPages" xml:space="preserve">
+    <value>xpath://*[@id='sec_operationalCut_wzd']/header/div/ul/li[{0}]</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>dt_{0}_{1}</value>
+  </data>
+  <data name="NodeFieldOnCreateLogisticInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_logisticsCriteria']/section/div[2]/div/div/div/div/div</value>
+  </data>
+  <data name="ButtonsOnCreateLogisticInterface" xml:space="preserve">
+    <value>xpath://*/footer/div/span/button[{0}]</value>
+  </data>
+  <data name="DataOnLogisticsGenerationGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_tickets']/div[1]/div[3]/div[{0}]/div/div[{1}]</value>
+  </data>
+  <data name="LogisticReportConfirmationDetails" xml:space="preserve">
+    <value>xpath://*[@id='sec_createLogistics_wzd']/div/section/div[{0}]/span</value>
+  </data>
+  <data name="LogisticsValifationGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_logisticsValidationGrid']/div[1]/div[3]/div</value>
+  </data>
+  <data name="NodeFieldOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_logisticsCriteria']/section/div[2]/div/div/div</value>
+  </data>
+  <data name="NodeInputOnCreateLogisticsInterface" xml:space="preserve">
+    <value>xpath://*[@id='frm_logisticsCriteria']/section/div[2]/div/div/div/input</value>
+  </data>
+  <data name="FailedRecordsOnCreateInterface" xml:space="preserve">
+    <value>xpath://*[@id='grd_logisticsValidationGrid']/div[1]/div[3]/div[{0}]/div/div[{1}]</value>
+  </data>
+  <data name="PopupClose" xml:space="preserve">
+    <value>lbl_modal_close</value>
+  </data>
+  <data name="ConnectionIdInGraphicNetwork" xml:space="preserve">
+    <value>xpath://*[@id='out_{0}-in_{1}']</value>
+  </data>
+  <data name="NodeDetails" xml:space="preserve">
+    <value>xpath://*[@data-nodeid='{0}']//div[@class='ep-data fs-12 fw-sb']</value>
+  </data>
+  <data name="NodeFooterDetails" xml:space="preserve">
+    <value>xpath://*[@data-nodeid='{0}']//div[@class='ep-diagram__node-port-val']</value>
+  </data>
+  <data name="NodeIconLock" xml:space="preserve">
+    <value>xpath://*[@data-nodeid='{0}']/div/div/div[2]/span</value>
+  </data>
+  <data name="NodeIdInGraphicNetwork" xml:space="preserve">
+    <value>xpath://*[@data-nodeid ='{0}']</value>
+  </data>
+  <data name="NodeInGraphicNetwork" xml:space="preserve">
+    <value>xpath://*[@data-nodeid ='{0}']/div</value>
+  </data>
+  <data name="NodeTagCategoryDropDown" xml:space="preserve">
+    <value>xpath:(//*[@id='dd_nodeTags_category'])[{0}]</value>
+  </data>
+  <data name="NodeTagCategoryElementDropDown" xml:space="preserve">
+    <value>xpath:(//*[@id='dd_nodeTags_element'])[{0}]</value>
+  </data>
+  <data name="NodeInputInGraphicNetwork" xml:space="preserve">
+    <value>xpath://*[@id='lbl_nodeFilter_node']/following::div/div/div/input</value>
+  </data>
+  <data name="OwnershipDataGridRows" xml:space="preserve">
+    <value>xpath://*[@id='grd_ownershipNodeData']/div/div[3]/div/div</value>
+  </data>
+  <data name="InterfaceTitle" xml:space="preserve">
+    <value>xpath://h1[@id='h1_modal_title']</value>
+  </data>
+  <data name="DestinationNode" xml:space="preserve">
+    <value>xpath://*[@id="true_app"]/section/section/section/div/section/div/span/div/div/div[2]/div/footer/span[1]/div</value>
+  </data>
+  <data name="NodeConnectionTextbox" xml:space="preserve">
+    <value>xpath://*[@id="true_app"]/section/section/section/div/div/form/div/section/div[3]/div/div/div/input</value>
+  </data>
+  <data name="NodeConnectionTextboxMagnifier" xml:space="preserve">
+    <value>xpath://*[@id="true_app"]/section/section/section/div/div/form/div/section/div[3]/div/div/div/div/div[2]</value>
+  </data>
+  <data name="SourceNode" xml:space="preserve">
+    <value>xpath://*[@id="true_app"]/section/section/section/div/section/div/div/div/div/div[1]/div/footer/span[2]/div</value>
+  </data>
+  <data name="DestinationNode2" xml:space="preserve">
+    <value>xpath://*[@id="true_app"]/section/section/section/div/section/div/div/div/div/div[1]/div/footer/span[1]/div</value>
+  </data>
+  <data name="NodeConnector" xml:space="preserve">
+    <value>xpath://*[@id='{0}']</value>
+  </data>
+  <data name="CurrentOwnershipStrategyinInterface" xml:space="preserve">
+    <value>xpath://form[@id='frm_nodeOwnershipRules_functions']/section/div/div/div/span</value>
+  </data>
+  <data name="NodeOwnershipstrategyonPage" xml:space="preserve">
+    <value>xpath://ul[@id='ul_nodeOwnershipRules']/../../div[6]</value>
+  </data>
+  <data name="EnterStrategyinInterface" xml:space="preserve">
+    <value>xpath://section[@class='ep-modal__content']//*[text()='{0}']</value>
+  </data>
+  <data name="GridColumnDetails" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[{0}]/div/div[{1}]</value>
+  </data>
+  <data name="NumberOfNodesOnTheConfirmationPopUp" xml:space="preserve">
+    <value>xpath://span[contains(@class,'ep-data fw-bold fas--success')]</value>
+  </data>
+  <data name="OldOwnershipStrategiesInformation" xml:space="preserve">
+    <value>xpath://*[@id='frm_nodeOwnershipRules_functions']/section/div[1]/div/div/span</value>
+  </data>
+  <data name="GridColumn" xml:space="preserve">
+    <value>xpath://div[@id='grd_{0}']//span[text()='{1}']</value>
+  </data>
+  <data name="SelectBoxOptions" xml:space="preserve">
+    <value>xpath://label[text()='{0}']//following-sibling::div[@class='ep-control']//div[contains(@class,'ep-select__menu')]//div</value>
+  </data>
+  <data name="ButtonName" xml:space="preserve">
+    <value>xpath://*[@id='btn_{0}']/span</value>
+  </data>
+  <data name="GraphicalStateOfUnSavedNode" xml:space="preserve">
+    <value>xpath://div[contains(@class, 'ep-diagram__node-unsaved')]</value>
+  </data>
+  <data name="GraphicalStateOfInactiveNode" xml:space="preserve">
+    <value>xpath://div[contains(@class, 'inactive')]</value>
+  </data>
+  <data name="NodeNameOnGraphicalNetwork" xml:space="preserve">
+    <value>xpath://*[@class='rt-tbody']/div[{0}]/div/div[{1}]</value>
+  </data>
+  <data name="RuleSynchronizerDetails" xml:space="preserve">
+    <value>xpath://*[@class='ep-notification__{0}']</value>
+  </data>
+  <data name="GraphicalStateOfSelectedNode" xml:space="preserve">
+    <value>xpath://*[contains(@class,'node--selected')]</value>
+  </data>
+  <data name="GrphicalStateOfHoveredNode" xml:space="preserve">
+    <value>xpath:(//*[contains(@class,'ep-diagram__node ep-diagram__node--')])[{0}]</value>
+  </data>
+  <data name="BackgroundGridInGraph" xml:space="preserve">
+    <value>xpath://*[@class='ep-diagram']/div</value>
+  </data>
+  <data name="GraphicalStateOfHoveredConnection" xml:space="preserve">
+    <value>xpath://*[@id='out_{0}-in_{1}']//*/*[2]</value>
+  </data>
+  <data name="ZoomValueInGraph" xml:space="preserve">
+    <value>xpath://*[contains(@class,'ep-diagram__canvas')]/*</value>
+  </data>
+  <data name="NodeFilterSelectBox" xml:space="preserve">
+    <value>xpath://*[@id = 'lbl_nodeFilter_node']/following::input</value>
+  </data>
+  <data name="NodeOptions" xml:space="preserve">
+    <value>xpath://*[contains(text(), 'Automation_')]</value>
+  </data>
+  <data name="RuleSynchronizerstate" xml:space="preserve">
+    <value>xpath://div[@id='ruleSynchronizer_{0}']</value>
+  </data>
+  <data name="WarningRuleSynchronizer" xml:space="preserve">
+    <value>xpath://div[@id='ruleSynchronizer_warning']</value>
+  </data>
+  <data name="FailedErrorMessage" xml:space="preserve">
+    <value>xpath://*[@id='cont_confirm_message']</value>
+  </data>
+  <data name="NodeIn" xml:space="preserve">
+    <value>xpath://div[@data-name='in' and @data-nodeid='{0}']</value>
+  </data>
+  <data name="NodeOut" xml:space="preserve">
+    <value>xpath://div[@data-name='out' and @data-nodeid='{0}']</value>
+  </data>
+  <data name="ConfirmationMessage" xml:space="preserve">
+    <value>xpath://div[@id='cont_confirm_message']</value>
+  </data>
+  <data name="PaginationCounts" xml:space="preserve">
+    <value>xpath://*[@id="grd_transferPointsLogistics"]/div[2]/div/div[1]</value>
+  </data>
+  <data name="OrderLabel" xml:space="preserve">
+    <value>xpath://div[@class='ep-diagram__node-info']/div[2]/div[3]/label</value>
+  </data>
+  <data name="OrderValue" xml:space="preserve">
+    <value>xpath://div[@class='ep-diagram__node-info']/div[2]/div[3]/div</value>
+  </data>
+  <data name="GraphicalGridError" xml:space="preserve">
+    <value>xpath://*[class='ep-diagram__overlay-txt']</value>
+  </data>
+  <data name="GridTitle" xml:space="preserve">
+    <value>xpath://*[@class='ep-pane__actions']/../h3</value>
+  </data>
+  <data name="GridVisibility" xml:space="preserve">
+    <value>xpath://div[@class='ep-diagram__overlay']</value>
+  </data>
+  <data name="EditNodeGraphically" xml:space="preserve">
+    <value>xpath://button[@class='ep-diagram__node-{0}']</value>
+  </data>
+  <data name="GetValidationMessage" xml:space="preserve">
+    <value>xpath://*[text()='{0}']/following-sibling::p</value>
+  </data>
+  <data name="SuccessValidationIcon" xml:space="preserve">
+    <value>xpath://*[@class = 'ep-validation__itm-icn success']</value>
+  </data>
+  <data name="OwnersColorsBar" xml:space="preserve">
+    <value>xpath://*[contains(@class, 'ep-sbar__item ep-sbar__item')]</value>
+  </data>
+  <data name="OwnersColorsInPieChart" xml:space="preserve">
+    <value>xpath://div//*[@class='recharts-sector']</value>
+  </data>
+  <data name="OwnersColorsInPieChartContainer" xml:space="preserve">
+    <value>xpath://span[@class='ep-chart__leg-typ-square']</value>
+  </data>
+  <data name="GetValueFromNodeProductsGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_nodeProducts']/div[1]/div[2]/div[1]/div[1]/div[{0}]</value>
+  </data>
+  <data name="SelectDateOnCalendar" xml:space="preserve">
+    <value>xpath:(//div[text()='{0}'])[1]</value>
+  </data>
+  <data name="FileUploadError" xml:space="preserve">
+    <value>xpath://span[@id='span_file_error_message']</value>
+  </data>
+  <data name="CancellationTypeDropdown" xml:space="preserve">
+    <value>xpath://div[@id='dd_annulation_movement']</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>xpath://div[@id='dd_annulation_node']</value>
+  </data>
+  <data name="DestinationProduct" xml:space="preserve">
+    <value>xpath://div[@id='dd_annulation_product']</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>xpath://div[@id='dd_source_node']</value>
+  </data>
+  <data name="SourceMovementDropdown" xml:space="preserve">
+    <value>xpath://div[@id='dd_source_movement']</value>
+  </data>
+  <data name="SourceProduct" xml:space="preserve">
+    <value>xpath://div[@id='dd_source_product']</value>
+  </data>
+  <data name="ActiveButton" xml:space="preserve">
+    <value>xpath://span[@class='ep-toggler__action']</value>
+  </data>
+  <data name="AnnulationMessage" xml:space="preserve">
+    <value>xpath://div[@class='ep-notification__msg']</value>
+  </data>
+  <data name="SelectedTitleForComboBox" xml:space="preserve">
+    <value>xpath://*[@id='{0}']/parent::div</value>
+  </data>
+  <data name="DateElementsOnCalendar" xml:space="preserve">
+    <value>xpath://*[contains(@class,'react-datepicker__day') and @role='option']</value>
+  </data>
+  <data name="MovementRadio" xml:space="preserve">
+    <value>xpath://span[contains(@class, 'ep-radio-toggler__text') and text() = 'Movimientos']</value>
+  </data>
+  <data name="InventoryRadio" xml:space="preserve">
+    <value>xpath://span[contains(@class, 'ep-radio-toggler__text') and text() = 'Inventarios']</value>
+  </data>
+  <data name="Header" xml:space="preserve">
+    <value>xpath://div[contains(@class,'ep-section__body')]//h1[contains(@class,'text-center')]</value>
+  </data>
+  <data name="NotificationErrorMessage" xml:space="preserve">
+    <value>xpath://*[@class='ep-notification__msg']</value>
+  </data>
+  <data name="StepDescInitialInventory" xml:space="preserve">
+    <value>xpath:(//li[@class='ep-validation__itm'])[1]//p[contains(@class,'desc')]</value>
+  </data>
+  <data name="StepDescPossibleNewNodes" xml:space="preserve">
+    <value>xpath:(//li[@class='ep-validation__itm'])[2]//p[contains(@class,'desc')]</value>
+  </data>
+  <data name="StepStatusInitialInventory" xml:space="preserve">
+    <value>xpath:(//li[@class='ep-validation__itm'])[1]//span[contains(@class,'icn')]</value>
+  </data>
+  <data name="StepStatusPossibleNewNodes" xml:space="preserve">
+    <value>xpath:(//li[@class='ep-validation__itm'])[2]//span[contains(@class,'icn')]</value>
+  </data>
+  <data name="ErrorGridNextButton" xml:space="preserve">
+    <value>xpath://*[@id='btn_errorsGrid_next']</value>
+  </data>
+  <data name="MovementRadiobtnChecked" xml:space="preserve">
+    <value>xpath://*[contains(@id, 'AuditoriaDeMovimientos')]</value>
+  </data>
+  <data name="CreateRelationButton" xml:space="preserve">
+    <value>xpath://*[@id='btn_createRelation']/span</value>
+  </data>
+  <data name="GetCancellationTypeElement" xml:space="preserve">
+    <value>xpath://input[@id='txt_annulations_annulationCategoryElement_name']</value>
+  </data>
+  <data name="GetHeadingsFromGrid" xml:space="preserve">
+    <value>xpath://div[@class='rt-thead -header']//div[@class='rt-tr']/div[{0}]</value>
+  </data>
+  <data name="GetSourceCategoryElement" xml:space="preserve">
+    <value>xpath://input[@id='txt_annulations_sourceCategoryElement_name']</value>
+  </data>
+  <data name="GetSourceNodeDropdown" xml:space="preserve">
+    <value>xpath://div[@id='dd_annulations_sourceNodeOriginType.name']</value>
+  </data>
+  <data name="PaginationCountValue" xml:space="preserve">
+    <value>xpath://*[@class='ep-table__pagination-dd']</value>
+  </data>
+  <data name="StepDateColumnInitialInventory" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutOwnership']//tbody//tr[{0}]//span</value>
+  </data>
+  <data name="StepDateColumnPossibleNewNodes" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutInitialInventory']//tbody//tr[{0}]//span</value>
+  </data>
+  <data name="StepNodeNameColumnInitialInventory" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutOwnership']//tbody//tr[{0}]//td[1]</value>
+  </data>
+  <data name="StepNodeNameColumnPossibleNewNodes" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutInitialInventory']//tbody//tr[{0}]//td[1]</value>
+  </data>
+  <data name="StepRowCountInitialInventory" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutOwnership']//tbody//tr</value>
+  </data>
+  <data name="StepRowCountPossibleNewNodes" xml:space="preserve">
+    <value>xpath://*[@id='tbl_validate_nodesWithoutInitialInventory']//tbody//tr</value>
+  </data>
+  <data name="DeltaColumnGrid" xml:space="preserve">
+    <value>xpath://*[@id="grd_tickets"]/div[1]/div[3]/div[1]/div/div[{0}]</value>
+  </data>
+  <data name="DeltaColumnHeader" xml:space="preserve">
+    <value>xpath://input[@id='txt_tickets_{0}']</value>
+  </data>
+  <data name="DeltaExecutionGrid" xml:space="preserve">
+    <value>xpath://*[@id="grd_tickets"]/div[1]/div[3]/div/div/div[5]</value>
+  </data>
+  <data name="DeltaGridDt" xml:space="preserve">
+    <value>xpath://input[@id='dt_tickets_{0}']</value>
+  </data>
+  <data name="DeltaInitialHeader" xml:space="preserve">
+    <value>xpath://div[@class='ep-section__body ep-section__body--auto']/h2</value>
+  </data>
+  <data name="DeltaInitialMessage" xml:space="preserve">
+    <value>xpath://h2[@class='ep-control-group-title']</value>
+  </data>
+  <data name="DeltaWizard" xml:space="preserve">
+    <value>xpath://section[@id='sec_operationalDelta_wzd']</value>
+  </data>
+  <data name="ClearDropdown" xml:space="preserve">
+    <value>xpath://div[@id='{0}']//div[contains(@class,'__clear-indicator')]</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>xpath://*[contains(@id,'error_{0}')]</value>
+  </data>
+  <data name="PhoneorEmailForOption" xml:space="preserve">
+    <value>xpath://label[text()='{0}']/..//following-sibling::span/a</value>
+  </data>
+  <data name="ReportStepsTypes" xml:space="preserve">
+    <value>xpath://h1[contains(text(),'{0}')]//following-sibling::p[text()='{1}']</value>
+  </data>
+  <data name="PhoneExtension" xml:space="preserve">
+    <value>xpath://label[text()='{0}']/..//following-sibling::span</value>
+  </data>
+  <data name="ChainSegmentsElements" xml:space="preserve">
+    <value>xpath://*[contains(@id,'li_segments_source')]</value>
+  </data>
+  <data name="ChainSegmentsElementsByText" xml:space="preserve">
+    <value>xpath://*[contains(@id,'li_segments_source') and contains(text(),'{0}')]</value>
+  </data>
+  <data name="DropdowmSegmentsList" xml:space="preserve">
+    <value>xpath://*[contains(@class,'ep-select__option')]</value>
+  </data>
+  <data name="SonSegmentsElements" xml:space="preserve">
+    <value>xpath://*[contains(@id,'li_segments_target')]</value>
+  </data>
+  <data name="SonSegmentsElementsByText" xml:space="preserve">
+    <value>xpath://*[contains(@id,'li_segments_target') and contains(text(),'{0}')]</value>
+  </data>
+  <data name="DeltaBusinessError" xml:space="preserve">
+    <value>xpath://h1[contains(text(), 'Detalle del error al procesar la consolidación') and contains(@id,'h1_modal_title')]</value>
+  </data>
+  <data name="DeltaCalAcceptBtn" xml:space="preserve">
+    <value>xpath://*[@id='btn_category_cancel']</value>
+  </data>
+  <data name="DeltaCalculationFilter" xml:space="preserve">
+    <value>xpath://input[@id = 'txt_tickets_ticketId']</value>
+  </data>
+  <data name="DeltaErrorSegmentHeader" xml:space="preserve">
+    <value>xpath://label[@id = 'lbl_ErrorDetails_Category']//following::span[contains(text(), 'Facilidad')]</value>
+  </data>
+  <data name="DeltaTechError" xml:space="preserve">
+    <value>xpath://h1[contains(text(), 'Error durante el cálculo de los deltas') and contains(@id,'h1_modal_title')]</value>
+  </data>
+  <data name="DeltaTechErrorText" xml:space="preserve">
+    <value>xpath://*[text()='Se presentó un error técnico y no es recuperable']</value>
+  </data>
+  <data name="DeltaTechErrorText1" xml:space="preserve">
+    <value>xpath://*[text()='Por favor intente de nuevo más tarde.']</value>
+  </data>
+  <data name="DeltaTicketBusinessErrorIcon" xml:space="preserve">
+    <value>xpath://*[@id='lnk_tickets_viewSummary']</value>
+  </data>
+  <data name="DeltaTicketTechErrorIcon" xml:space="preserve">
+    <value>xpath://*[@id='lnk_tickets_viewError']</value>
+  </data>
+  <data name="NewDeltabtn" xml:space="preserve">
+    <value>xpath://span[contains(@class, 'ep-btn__txt') and contains(text(), 'Nuevo cálculo de deltas')]</value>
+  </data>
+  <data name="ColumnHeaders" xml:space="preserve">
+    <value>xpath://div[@class='rt-tr']/div[@role='columnheader']/div/span/span</value>
+  </data>
+  <data name="DatesinGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][6]</value>
+  </data>
+  <data name="MovementsActions" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][10]</value>
+  </data>
+  <data name="MovementsDatesinGrid" xml:space="preserve">
+    <value>xpath://*[@class='rt-td'][9]</value>
+  </data>
+  <data name="PendingGridFilters" xml:space="preserve">
+    <value>xpath://*[@id="grd_pendingInventories"]/div[1]/div[3]/div/div/div[{0}]</value>
+  </data>
+  <data name="PendingInventories" xml:space="preserve">
+    <value>xpath://*[@id='txt_pendingInventories_{0}']</value>
+  </data>
+  <data name="PendingMovementsandInventoriesHeader" xml:space="preserve">
+    <value>xpath://h1[contains(@class,'ep-section__title')]</value>
+  </data>
+  <data name="PendingMovementsGrid" xml:space="preserve">
+    <value>xpath://*[@id="grd_pendingMovements"]/div[1]/div[3]/div[1]/div/div[{0}]</value>
+  </data>
+  <data name="PendingMovementsTextBox" xml:space="preserve">
+    <value>xpath://*[@id='txt_pendingMovements_{0}']</value>
+  </data>
+  <data name="GetEachRowByEachColumnInGrid" xml:space="preserve">
+    <value>xpath:(//div[@id='grd_{0}']//div[@class='rt-tr-group'])[{1}]//div[@role='gridcell'][{2}]</value>
+  </data>
+  <data name="GetErrorIconOfEachRow" xml:space="preserve">
+    <value>xpath:(//div[@id='grd_{0}']//div[@class='rt-tr-group'])[{1}]//a[@id='lnk_{2}_viewError']</value>
+  </data>
+  <data name="SegmentDefaultValue" xml:space="preserve">
+    <value>xpath://*[@id='dd_initTicket_segment']//div[contains(@class,'ep-select__placeholder')]</value>
+  </data>
+  <data name="OfficialPointInfoMessage" xml:space="preserve">
+    <value>xpath://*[@id='msg_officialPointsGrid_infoMessage']</value>
+  </data>
+  <data name="TransferPointMovements" xml:space="preserve">
+    <value>xpath://*[@id="grd_officialPoints"]/div[1]/div[3]/div/div[1]/div[2]</value>
+  </data>
+  <data name="UnbalanceGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_unbalances']/div[1]/div[3]/div/div/div[2]</value>
+  </data>
+  <data name="ButtonsOnCutoffInterface" xml:space="preserve">
+    <value>xpath://button[@id='btn_{0}']</value>
+  </data>
+  <data name="TitleCutoffGrid" xml:space="preserve">
+    <value>xpath://h1[contains(@class,'m-t-')]</value>
+  </data>
+  <data name="DeltaGridDropdown" xml:space="preserve">
+    <value>xpath://div[@id='dd_tickets_{0}']</value>
+  </data>
+  <data name="Error403Page" xml:space="preserve">
+    <value>xpath://*[text()='No Autorizado']</value>
+  </data>
+  <data name="InfoMessageonCutoffPage" xml:space="preserve">
+    <value>xpath://span[@class='fw-sb m-r-4']</value>
+  </data>
+  <data name="NoteMessageonCutoffPopup" xml:space="preserve">
+    <value>xpath://label[@class='ep-label']</value>
+  </data>
+  <data name="ManualApprovalOfOwnershipInFrame" xml:space="preserve">
+    <value>xpath://*[contains(@class,'approval-card')]//*[contains(@class,'title') and contains(text(),'{0}')]/following-sibling::*//*[@aria-label='Approve']</value>
+  </data>
+  <data name="ManualRejectionOfOwnershipInFrame" xml:space="preserve">
+    <value>xpath://*[contains(@class,'approval-card')]//*[contains(@class,'title') and contains(text(),'{0}')]/following-sibling::*//*[@aria-label='Reject']</value>
+  </data>
+  <data name="ActionsDropdownOnNodeDetailsPage" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Acciones')]</value>
+  </data>
+  <data name="ApprovalRequestOnNodeDetailsPage" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Enviar a aprobación')]</value>
+  </data>
+  <data name="BackToListLink" xml:space="preserve">
+    <value>xpath://*[text()='Regresar al listado']</value>
+  </data>
+  <data name="EditOwnershipButton" xml:space="preserve">
+    <value>xpath://a[contains(@id,'editOwnership')]</value>
+  </data>
+  <data name="ErrorMessageOnNodeDetailsPage" xml:space="preserve">
+    <value>xpath://*[text()='Error']</value>
+  </data>
+  <data name="NodeNameBasedOnItsState" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Propiedad')]/preceding-sibling::div[2]</value>
+  </data>
+  <data name="NodeNameOnNodeDetailsPage" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Nodo')]/following-sibling::*</value>
+  </data>
+  <data name="NodesInStateProperty" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Propiedad')]/parent::div//following-sibling::div//li[contains(@id,'editOwnership')]</value>
+  </data>
+  <data name="OwnershipNodeSearchInGrid" xml:space="preserve">
+    <value>xpath://*[contains(@class,'filter-txt') and contains(@id,'nodeName')]</value>
+  </data>
+  <data name="TicketIdSearchBox" xml:space="preserve">
+    <value>xpath://*[contains(@id,'ticketId')]</value>
+  </data>
+  <data name="ManualApprovalRejectionConfirmButtonInFrame" xml:space="preserve">
+    <value>xpath://*[contains(@aria-label,'Confirm')]</value>
+  </data>
+  <data name="ModelPopUpWIthTitle" xml:space="preserve">
+    <value>xpath://h1[contains(text(),'{0}'] and contains(@id,'h1_modal_title')]/..//following-sibling::div/p/span</value>
+  </data>
+  <data name="SelectBoxEdit" xml:space="preserve">
+    <value>xpath://label[text()='Segmento']//following-sibling::div[@class='ep-control']//div[contains(@class,'ep-select__control')]/div/div</value>
+  </data>
+  <data name="ValidationMessage" xml:space="preserve">
+    <value>xpath://label[text()='{0}']/..//span</value>
+  </data>
+  <data name="MonthDropdownOnDatePicker" xml:space="preserve">
+    <value>xpath://span[contains(@class, 'react-datepicker__month-read-view--down-arrow')]</value>
+  </data>
+  <data name="NameOfMonthOnDatePicker" xml:space="preserve">
+    <value>xpath://div[contains(@class, 'month') and text()='{0}']</value>
+  </data>
+  <data name="OfficialAdjustmentGridStatus" xml:space="preserve">
+    <value>xpath://div[@id='dd_tickets_state']</value>
+  </data>
+  <data name="OfficialAdjustmentStatusMenu" xml:space="preserve">
+    <value>xpath://div[@id='dd_tickets_state']//div[contains(@class,'dd__menu')]</value>
+  </data>
+  <data name="OfficialAdjustmentStatusOption" xml:space="preserve">
+    <value>xpath://div[@id='dd_tickets_state']//div[contains(@class,'dd__menu')]//*[text()='{0}']</value>
+  </data>
+  <data name="OfficialDeltaNodeGrid" xml:space="preserve">
+    <value>xpath://*[@id='grd_officialDeltaNodesGrid']/div[1]/div[3]/div</value>
+  </data>
+  <data name="OfficialDeltaNodeGridStatus" xml:space="preserve">
+    <value>xpath://div[@id='dd_officialDeltaNodesGrid_status']</value>
+  </data>
+  <data name="OfficialDeltaStatusMenu" xml:space="preserve">
+    <value>xpath://div[@id='dd_officialDeltaNodesGrid_status']//div[contains(@class,'dd__menu')]</value>
+  </data>
+  <data name="OfficialDeltaStatusOption" xml:space="preserve">
+    <value>xpath://div[@id='dd_officialDeltaNodesGrid_status']//div[contains(@class,'dd__menu')]//*[text()='{0}']</value>
+  </data>
+  <data name="TicketViewSummaryButton" xml:space="preserve">
+    <value>xpath://li[@id='li_tickets_viewSummary_{0}']</value>
+  </data>
+  <data name="ColumnNamesOnBusinessErrorTable" xml:space="preserve">
+    <value>xpath://div[contains(@id,'BusinessError')]//*[@class='rt-resizable-header-content']/span/*</value>
+  </data>
+  <data name="ErrorEyeIconOnTable" xml:space="preserve">
+    <value>xpath://a[contains(@id,'viewError')]</value>
+  </data>
+  <data name="PeroiodEndDateOnErrorPopup" xml:space="preserve">
+    <value>xpath://*[contains(@id,'lbl_ErrorDetails_EndDate')]</value>
+  </data>
+  <data name="PeroiodStartDateOnErrorPopup" xml:space="preserve">
+    <value>xpath://*[contains(@id,'lbl_ErrorDetails_StartDate')]</value>
+  </data>
+  <data name="SegmentElementOnErrorPopup" xml:space="preserve">
+    <value>xpath://*[contains(@id,'ErrorDetails_categoryName')]</value>
+  </data>
+  <data name="BusinessErrorsOnThePopup" xml:space="preserve">
+    <value>xpath://*[text()='Error']/following-sibling::span</value>
+  </data>
+  <data name="ExecutionDateFromBusinessErrorPopup" xml:space="preserve">
+    <value>xpath://*[contains(@id,'lbl_delta_ErrorDetails_CategoryName')]</value>
+  </data>
+  <data name="EyeIconOfBusinessError" xml:space="preserve">
+    <value>xpath://a[contains(@id,'lnk_tickets_viewSummary')]</value>
+  </data>
+  <data name="NodeNameFromBusinessErrorPopup" xml:space="preserve">
+    <value>xpath://*[contains(@id,'lbl_ErrorDetails_categoryName')]</value>
+  </data>
+  <data name="TypoColumnValuesFromBusinessErrorPopup" xml:space="preserve">
+    <value>xpath://*[@class='rt-td rt-expandable']/following-sibling::div[1]</value>
+  </data>
+  <data name="Pagination" xml:space="preserve">
+    <value>xpath://div[contains(@class,'pagination')]</value>
+  </data>
+  <data name="WizardColumns" xml:space="preserve">
+    <value>xpath://tr/th[text()='{0}']</value>
+  </data>
+  <data name="ColumnNamesOnOfficialDeltaCalculationTable" xml:space="preserve">
+    <value>xpath://*[contains(@class,'rt-resizable-header-content')]/span/*</value>
+  </data>
+  <data name="PeriodEndDateDuringOfficialDeltaCalculation" xml:space="preserve">
+    <value>xpath:(//*[text()='Período']/following-sibling::span)[3]</value>
+  </data>
+  <data name="PeriodFromDateDuringOfficialDeltaCalculation" xml:space="preserve">
+    <value>xpath:(//*[text()='Período']/following-sibling::span)[1]</value>
+  </data>
+  <data name="ProcessingPeriodDorpdown" xml:space="preserve">
+    <value>xpath://*[contains(text(),'Período del procesamiento')]/parent::div//*[contains(@class,'select__value-container')]</value>
+  </data>
+  <data name="ProcessingPeriodDropdownValue" xml:space="preserve">
+    <value>xpath:(//*[contains(@class,'select__menu-list')]/*)[1]</value>
+  </data>
+  <data name="RowElementsOnOfficialDeltaCalculationTable1" xml:space="preserve">
+    <value>xpath:(//*[@class='rt-td']/span)[{0}]</value>
+  </data>
+  <data name="RowElementsOnOfficialDeltaCalculationTable2" xml:space="preserve">
+    <value>xpath:(//*[@class='rt-td'])[{0}]</value>
+  </data>
+  <data name="SegmentFilterOnOfficialDeltaCalculationTable" xml:space="preserve">
+    <value>xpath://*[contains(@id,'txt_tickets_segment')]</value>
+  </data>
+  <data name="NodeDropdownTextInReport" xml:space="preserve">
+    <value>xpath://div[@class='ep-control__inner']//div//input</value>
+  </data>
+  <data name="OfficialDeltaNodesGridNodeNameFilter" xml:space="preserve">
+    <value>xpath://input[@id='txt_officialDeltaNodesGrid_nodeName']</value>
+  </data>
+  <data name="PeriodDropdownInReport" xml:space="preserve">
+    <value>xpath://div[@class='ep-select__value-container css-1hwfws3']</value>
+  </data>
+  <data name="SegmentDropdownInReport" xml:space="preserve">
+    <value>xpath://div[@id='dd_nodeFilter_element']</value>
+  </data>
+  <data name="YearDropdownInReport" xml:space="preserve">
+    <value>xpath://div[@class='ep-daterange__year']//div[contains(@class,'__value-container')]</value>
+  </data>
+  <data name="EditProductPriority" xml:space="preserve">
+    <value>xpath:(//*[contains(@id, 'lnk_connectionProducts_editPriority')])[2]</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>xpath://*[@id="h2_error_title"]</value>
+  </data>
+  <data name="WelcomePage" xml:space="preserve">
+    <value>img_true_home</value>
+  </data>
+  <data name="OfficialDeltaReportPage" xml:space="preserve">
+    <value>xpath://*[text()='Balance Oficial por Nodo']</value>
+  </data>
+  <data name="TicketInDeltasPerNodeGrid" xml:space="preserve">
+    <value>xpath://*[@id='txt_officialDeltaNodesGrid_ticketId']</value>
+  </data>
+  <data name="ApproveOrRejectFocusButton" xml:space="preserve">
+    <value>xpath://button[@aria-label='{0}' and @data-is-focusable='true']</value>
+  </data>
+  <data name="ManuaApprovalFlowReportLink" xml:space="preserve">
+    <value>xpath://*[contains(text(),'{0}')]</value>
+  </data>
+  <data name="ManualApprovalFlowTile" xml:space="preserve">
+    <value>xpath://*[contains(@class,'approval-card')]//*[contains(@class,'title') and contains(text(),'{0}')]</value>
+  </data>
+  <data name="OfficialDeltaBalenceApprovalFlowTile" xml:space="preserve">
+    <value>xpath://div[contains(@aria-label,'{0}')]</value>
+  </data>
+  <data name="ElementByTextContains" xml:space="preserve">
+    <value>xpath://*[contains(text(), '{0}')]</value>
+  </data>
+  <data name="linkOnOfficialLogisticsGrid" xml:space="preserve">
+    <value>lnk_tickets_{0}_{1}</value>
+  </data>
+  <data name="NodeTextboxOnOfficialSivWizard" xml:space="preserve">
+    <value>xpath://label[text()='Nodo']/following-sibling::div//input</value>
+  </data>
+  <data name="OwnerOnOfficialSivWizard" xml:space="preserve">
+    <value>xpath://span[contains(@class,'radio') and text()='{0}']</value>
+  </data>
+  <data name="ResultNodeInsideNodeTextboxOnOfficialSivWizard" xml:space="preserve">
+    <value>xpath://label[text()='Nodo']/following-sibling::div/div/div/div/div</value>
+  </data>
+</root>

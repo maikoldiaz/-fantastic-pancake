@@ -1,0 +1,102 @@
+﻿$white: #FFFFFF;
+$black: #000000;
+
+$ep-logo-color:#00443A;
+$ep-corp-color:#025449;
+$ep-primary-color:#D8DE5A;
+$ep-secondary-color: #002060;
+$font-color: #262626;
+$ep-font-color: #333333;
+$font-disabled: #d7d7d7;
+
+$label:#707070;
+$card-label:#4D4F5C;
+$chart-leg:#3B3838;
+$chart-val: #5C5C5C;
+
+$btn-color: #002060;
+$btn-color--hover: #D8DE5A;
+$btn-color--focus:#939823;
+$btn-color--lnk-hover: #1592E6;
+
+
+$disabled-bg: #F4F3F0;
+$selected-bg:#E0F0FA;
+
+$control-border:#c1c1c1;
+$control-border-focused:#70A1CE;
+$control-text:#212121;
+$chk-border:#B4B4B4;
+
+
+$error:#C1515B;
+$success:green;
+$process:#50AB39;
+$warning: #FFE8A3;
+
+$active: #8FD163;
+$inactive: #858585;
+
+$color-blue-lt:#70A1CE;
+$color-blue-ltr:#81B7DD;
+$color-blue-teal:#1C8AAB;
+$color-blue-grey:#2C5D79;
+$color-blue-prpl:#424D9D;
+$color-blue-a: #E0F0FA;
+
+$grid-row-hover: #E0F0FA;
+
+$alert-success: #E1EDBC;
+$alert-success-dk: #9AB73C;
+$alert-warning: #FFE8A3;
+$alert-warning-dk: #FFC619;
+$alert-error: #FC9AAA;
+$alert-error-dk: #F7032C;
+$alert-info: #C6D9EB;
+$alert-info-dk: #70A1CE;
+
+$dark:(
+    "a":#707070
+);
+
+$light:(
+    "a":#F5F5F5
+);
+
+$gray:(
+    B3B3B3: #B3B3B3,
+    C1C1C1: #C1C1C1,
+    CCCCCC: #CCCCCC,
+    D4D4D4: #D4D4D4,
+    EEEEEE: #EEEEEE,
+    F0F0EE: #F0F0EE,
+    FAFAFA: #FAFAFA,
+    F3F3F4: #F3F3F4,
+    F1F1F1: #F1F1F1,
+    F7F7F7: #7F7F7F,
+    F8F8F8: #F8F8F8,
+    _2F353E: #2F353E,
+    C9C9C9: #C9C9C9,
+    _999999: #999999
+);
+
+$prop:(
+    "a": #74B44A,
+    "b": #F7DF00,
+    "c": #656565,
+    "d": #E0F0FA,
+    "e": #5995AF,
+    "f": #1592E6,
+    "g": #93BCBB,
+    "h": #C3D2CB,
+    "i": #00CB90,
+    "j": #CCD325,
+    "k": #F6B41A,
+    "l": #C55A11,
+    "m": #7030A0,
+    "n": #3B3838,
+    "o": #7A8B58,
+    "p": #93A7BE,
+    "q": #5F6867,
+    "r": #003427,
+);

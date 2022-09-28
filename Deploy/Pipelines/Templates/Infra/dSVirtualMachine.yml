@@ -1,0 +1,45 @@
+steps:
+ - task: AzureResourceGroupDeployment@2
+   displayName: VM - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/deploy.json'
+     overrideParameters: '-adminUsername "${{parameters.vmUsername}}" -adminPassword "${{parameters.vmPassword}}" -storageAccountName "$(vmStorageAccountName)" -vmName "${{parameters.virtualMachineName}}" -subnetName "${{parameters.subnetName}}" -virtualNetworkID "${{parameters.vmVnetId}}" -networkInterfaceName "${{parameters.networkInterfaceName}}"'
+     deploymentOutputs: armOut
+
+ - task: AzurePowerShell@4
+   displayName: VM - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{ parameters.virtualMachineName }}"'
+     azurePowerShellVersion: LatestVersion
+  
+ - task: AzurePowerShell@5
+   displayName: VM - Storage Account Container and Copy Files
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Container.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -storageAccountName "$(vmStorageAccountName)" -file "$(System.ArtifactsDirectory)/Drop/Scripts/Install-Conda.ps1" -fileOwership "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/Ownership-Prediction.yml" -filePipReq "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/pip-requirements.txt" -analytics "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/Analitica Propiedad Ecopetrol.zip" -preprod "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/Preprocesamiento de datos Knime.zip" -secrets "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/Secrets.py" -trainOwnModel "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/train_ownership_models.py" -trainAzureSql "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/training_azure_sql.py" -updateXbgoostModel "$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/update_xgboost_models.py"'
+     azurePowerShellVersion: LatestVersion  
+
+ - task: AzureresourceGroupDeployment@2
+   displayName: VM - Add Conda Update Libraries Extension
+   inputs:
+     azureSubscription: '${{ parameters.azureSubscriptionName }}'
+     resourceGroupName: '${{ parameters.resourceGroupName }}'
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/DataScience Virtual Machine/Configurations/updateCondaExtension.json'
+     overrideParameters: '-storageAccountName "$(vmStorageAccountName)" -vmName "${{parameters.virtualMachineName}}" -keyVaultName "$(keyVault)" -user "${{parameters.vmUsername}}"'
+     deploymentMode: Incremental
+  
+ - task: AzureCLI@2
+   displayName: VM - MSI
+   inputs:
+     azureSubscription: '${{ parameters.azureSubscriptionName }}'
+     scriptType: ps
+     scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-ManagedIdentity.ps1'
+     arguments: '-resourceGroupName "$(resourceGroupName)" -dataScienceVirtualMachineName "${{parameters.virtualMachineName}}" -keyVaultName "$(keyVault)"'
+

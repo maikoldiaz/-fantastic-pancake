@@ -1,0 +1,25 @@
+{
+  "version": "2.0",
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "maxConcurrentCalls": 1,
+        "maxAutoRenewDuration": "00:10:00"
+      }
+    },
+    "durableTask": {
+      "hubName": "ownership",
+      "storageProvider": {
+        "workItemQueueVisibilityTimeout": "00:30:00"
+      }
+    }
+  },
+  "logging": {
+    "logLevel": {
+      "default": "Information",
+      "Host": "Information",
+      "Function": "Information",
+      "Host.Aggregator": "Trace"
+    }
+  }
+}

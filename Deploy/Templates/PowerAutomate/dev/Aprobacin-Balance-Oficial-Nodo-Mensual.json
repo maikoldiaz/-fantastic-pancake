@@ -1,0 +1,757 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_approvals": {
+        "runtimeSource": "embedded",
+        "connection": {},
+        "api": { "name": "shared_approvals" }
+      },
+      "shared_sendgrid": {
+        "runtimeSource": "embedded",
+        "connection": {},
+        "api": { "name": "shared_sendgrid" }
+      },
+      "shared_servicebus": {
+        "runtimeSource": "embedded",
+        "connection": {},
+        "api": { "name": "shared_servicebus" }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When_a_message_is_received_in_a_queue_(auto-complete)": {
+          "recurrence": {
+            "frequency": "Minute",
+            "interval": 1
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_servicebus",
+              "connectionName": "shared_servicebus",
+              "operationId": "GetMessageFromQueue"
+            },
+            "parameters": {
+              "queueName": "deltaapprovals",
+              "queueType": "Main"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Send_Mail_To": {
+          "runAfter": {},
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "SendEmailTo",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Approval_Outcome": {
+          "runAfter": { "Send_Mail_To": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ApprovalOutcome",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Comments": {
+          "runAfter": { "Approval_Outcome": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Comments",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Define_Approver_Mail_Variable": {
+          "runAfter": { "Comments": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ApproverMail",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Read_service_bus_message": {
+          "runAfter": { "Define_Administrator_Mail_Variable": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "DeltaNodeId",
+                "type": "string",
+                "value": "@base64ToString(triggerOutputs()?['body/ContentData'])"
+              }
+            ]
+          }
+        },
+        "Mail_Subject": {
+          "runAfter": { "Read_service_bus_message": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "MailSubject",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Mail_Body": {
+          "runAfter": { "Mail_Subject": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "MailBody",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Flow_Status": {
+          "runAfter": { "Initialize_Format_End_Date": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "FlowStatus",
+                "type": "string",
+                "value": "Succeeded"
+              }
+            ]
+          }
+        },
+        "Try": {
+          "actions": {
+            "Compose_JSON_Input": {
+              "runAfter": {},
+              "type": "Compose",
+              "inputs": {
+                "grant_type": "client_credentials",
+                "scope": "api://5afa1090-e8b8-42b7-9ea5-8d8c1cc4f6a6/.default",
+                "clientId": "d445deae-dff1-4295-928e-8079a5be0a62",
+                "clientSecret": "",
+                "tenantId": "a4305987-cf78-4f93-9d64-bf18af65397b",
+                "apiUrl": "https://dev-api.ecopetrol.com.co"
+              },
+              "runtimeConfiguration": { "secureData": { "properties": [ "inputs" ] } }
+            },
+            "Parse_JSON_Input": {
+              "runAfter": { "Compose_JSON_Input": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@outputs('Compose_JSON_Input')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "grant_type": { "type": "string" },
+                    "scope": { "type": "string" },
+                    "clientId": { "type": "string" },
+                    "clientSecret": { "type": "string" },
+                    "tenantId": { "type": "string" },
+                    "apiUrl": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "HTTP_-POST_Auth_Token": {
+              "runAfter": { "Parse_JSON_Input": [ "Succeeded" ] },
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                "headers": {
+                  "content-type": "application/x-www-form-urlencoded",
+                  "Host": "login.microsoftonline.com"
+                },
+                "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+              },
+              "runtimeConfiguration": { "secureData": { "properties": [ "inputs" ] } }
+            },
+            "PARSE_HTTP_POST_-_Auth_Token": {
+              "runAfter": { "HTTP_-POST_Auth_Token": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-POST_Auth_Token')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token_type": { "type": "string" },
+                    "expires_in": { "type": "integer" },
+                    "ext_expires_in": { "type": "integer" },
+                    "access_token": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "HTTP_-_Get_Node_Information": {
+              "runAfter": { "PARSE_HTTP_POST_-_Auth_Token": [ "Succeeded" ] },
+              "type": "Http",
+              "inputs": {
+                "method": "GET",
+                "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/@{variables('DeltaNodeId')}/delta",
+                "headers": { "Authorization": "Bearer @{body('PARSE_HTTP_POST_-_Auth_Token')?['access_token']}" }
+              }
+            },
+            "Parse_HTTP_-_Get_Node_Information": {
+              "runAfter": { "HTTP_-_Get_Node_Information": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-_Get_Node_Information')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balanceProfessionalUserName": { "type": "string" },
+                    "balanceProfessionalEmail": { "type": "string" },
+                    "nodeName": { "type": "string" },
+                    "startDate": { "type": "string" },
+                    "endDate": { "type": "string" },
+                    "reportPath": { "type": "string" },
+                    "approverMail": { "type": "string" },
+                    "ticketId": { "type": "integer" }
+                  }
+                }
+              }
+            },
+            "Set_Approver_Mail": {
+              "runAfter": { "Parse_HTTP_-_Get_Node_Information": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "ApproverMail",
+                "value": "@body('Parse_HTTP_-_Get_Node_Information')?['approverMail']"
+              }
+            },
+            "Do_until": {
+              "actions": {
+                "Condition-_Check_if_approval_outcome_is_Approved": {
+                  "actions": {
+                    "Start_and_wait_for_an_approval_initial": {
+                      "runAfter": {},
+                      "type": "OpenApiConnectionWebhook",
+                      "inputs": {
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_approvals",
+                          "connectionName": "shared_approvals",
+                          "operationId": "StartAndWaitForAnApproval"
+                        },
+                        "parameters": {
+                          "approvalType": "Basic",
+                          "WebhookApprovalCreationInput/title": "Aprobación del balance oficial del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período  @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}.",
+                          "WebhookApprovalCreationInput/assignedTo": "@variables('ApproverMail')",
+                          "WebhookApprovalCreationInput/details": "El usuario @{body('Parse_HTTP_-_Get_Node_Information')?['balanceProfessionalUserName']} ha solicitado a usted aprobación del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}. Para el detalle del balance haga clic en el siguiente enlace:",
+                          "WebhookApprovalCreationInput/itemLink": "@body('Parse_HTTP_-_Get_Node_Information')?['reportPath']",
+                          "WebhookApprovalCreationInput/itemLinkDescription": "Reporte balance oficial por nodo",
+                          "WebhookApprovalCreationInput/enableNotifications": true,
+                          "WebhookApprovalCreationInput/enableReassignment": true
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Set_Outcome": {
+                      "runAfter": { "Start_and_wait_for_an_approval_initial": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApprovalOutcome",
+                        "value": "@outputs('Start_and_wait_for_an_approval_initial')?['body/outcome']"
+                      }
+                    },
+                    "Update_Approver_Mail": {
+                      "runAfter": { "Set_Comments": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverMail",
+                        "value": "@{body('Start_and_wait_for_an_approval_Initial')?['responses'][0]?['responder']?['email']}"
+                      }
+                    },
+                    "Set_Comments": {
+                      "runAfter": { "Set_Outcome": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "Comments",
+                        "value": "@{body('Start_and_wait_for_an_approval_Initial')?['responses'][0]?['comments']}"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {
+                      "Start_and_wait_for_an_approval_No_Comments": {
+                        "runAfter": {},
+                        "type": "OpenApiConnectionWebhook",
+                        "inputs": {
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_approvals",
+                            "connectionName": "shared_approvals",
+                            "operationId": "StartAndWaitForAnApproval"
+                          },
+                          "parameters": {
+                            "approvalType": "Basic",
+                            "WebhookApprovalCreationInput/title": "Aprobación del balance oficial del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período \r\n @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}.",
+                            "WebhookApprovalCreationInput/assignedTo": "@variables('ApproverMail')",
+                            "WebhookApprovalCreationInput/details": "### Es obligatorio un comentario para cambio de estado del nodo.\r\n\r\nEl usuario @{body('Parse_HTTP_-_Get_Node_Information')?['balanceProfessionalUserName']} ha solicitado a usted aprobación del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')} . Para el detalle del balance haga clic en el siguiente enlace:",
+                            "WebhookApprovalCreationInput/itemLink": "@body('Parse_HTTP_-_Get_Node_Information')?['reportPath']",
+                            "WebhookApprovalCreationInput/itemLinkDescription": "Reporte balance oficial por nodo",
+                            "WebhookApprovalCreationInput/enableNotifications": true,
+                            "WebhookApprovalCreationInput/enableReassignment": true
+                          },
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Set_Outcome_no_comments": {
+                        "runAfter": { "Start_and_wait_for_an_approval_No_Comments": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "ApprovalOutcome",
+                          "value": "@outputs('Start_and_wait_for_an_approval_No_Comments')?['body/outcome']"
+                        }
+                      },
+                      "Set_Comments_R": {
+                        "runAfter": { "Set_Outcome_no_comments": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "Comments",
+                          "value": "@{body('Start_and_wait_for_an_approval_No_Comments')?['responses'][0]?['comments']}"
+                        }
+                      },
+                      "Update_Approver_Mail_R": {
+                        "runAfter": { "Set_Comments_R": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "ApproverMail",
+                          "value": "@{body('Start_and_wait_for_an_approval_No_Comments')?['responses'][0]?['responder']?['email']}"
+                        }
+                      }
+                    }
+                  },
+                  "expression": { "equals": [ "@or(equals(variables('ApprovalOutcome'), 'Approve'),equals(variables('ApprovalOutcome'), ''))", "@true" ] },
+                  "type": "If"
+                }
+              },
+              "runAfter": { "Format_End_Date": [ "Succeeded" ] },
+              "expression": "@equals(or(and(equals(variables('ApprovalOutcome'), 'Reject'), not(equals(variables('Comments'), ''))), equals(variables('ApprovalOutcome'), 'Approve')), true)",
+              "limit": {
+                "count": 60,
+                "timeout": "PT1H"
+              },
+              "type": "Until"
+            },
+            "Condition-_Check_Approval_Outcome": {
+              "actions": {
+                "Condition_-_Check_Node_Approve_response": {
+                  "actions": {
+                    "Set_Mail_Subject_Approve_Success": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "MailSubject",
+                        "value": "Aprobación balance oficial del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}."
+                      }
+                    },
+                    "Set_Mail_Body_Approve_Success": {
+                      "runAfter": { "Set_Mail_Subject_Approve_Success": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "MailBody",
+                        "value": "El nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} ha sido aprobado para el período  @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}  con la siguiente observación @{variables('Comments')}."
+                      }
+                    },
+                    "Set_Send_Mail_To_Variable": {
+                      "runAfter": { "Set_Mail_Body_Approve_Success": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "SendEmailTo",
+                        "value": "@body('Parse_HTTP_-_Get_Node_Information')?['balanceProfessionalEmail']"
+                      }
+                    }
+                  },
+                  "runAfter": { "HTTP_-_Update_Node_Status_(Approve)": [ "Succeeded" ] },
+                  "else": {
+                    "actions": {
+                      "Set_Mail_Body_Approve_Error": {
+                        "runAfter": { "Set_Mail_Subject_Approve_Error": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailBody",
+                          "value": "Ha ocurrido un error actualizando el estado del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']}. Causa: @{body('Parse_Node_Approve_Error_Response')?['errorCodes'][0]['message']}, Por favor verifique la causa y relance el flujo."
+                        }
+                      },
+                      "Set_Send_mail_to_approver": {
+                        "runAfter": { "Set_Mail_Body_Approve_Error": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "SendEmailTo",
+                          "value": "@variables('ApproverMail')"
+                        }
+                      },
+                      "Parse_Node_Approve_Error_Response": {
+                        "runAfter": {},
+                        "type": "ParseJson",
+                        "inputs": {
+                          "content": "@body('HTTP_-_Update_Node_Status_(Approve)')",
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "errorCodes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "code": { "type": "string" },
+                                    "message": { "type": "string" }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "Set_Mail_Subject_Approve_Error": {
+                        "runAfter": { "Parse_Node_Approve_Error_Response": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailSubject",
+                          "value": "Error en el llamado del API de aprobación de balance oficial de nodos."
+                        }
+                      }
+                    }
+                  },
+                  "expression": { "equals": [ "@outputs('HTTP_-_Update_Node_Status_(Approve)')['statusCode']", 200 ] },
+                  "type": "If"
+                },
+                "HTTP": {
+                  "runAfter": {},
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                    "headers": {
+                      "content-type": "application/x-www-form-urlencoded",
+                      "Host": "login.microsoftonline.com"
+                    },
+                    "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+                  }
+                },
+                "HTTP_-_Update_Node_Status_(Approve)": {
+                  "runAfter": { "Análisis_del_archivo_JSON": [ "Succeeded" ] },
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/delta",
+                    "headers": { "Authorization": "Bearer @{body('Análisis_del_archivo_JSON')?['access_token']}" },
+                    "body": {
+                      "deltaNodeId": "@variables('DeltaNodeId')",
+                      "approverAlias": "@variables('ApproverMail')",
+                      "status": "APPROVED",
+                      "comment": "@variables('Comments')"
+                    }
+                  }
+                },
+                "Análisis_del_archivo_JSON": {
+                  "runAfter": { "HTTP": [ "Succeeded" ] },
+                  "type": "ParseJson",
+                  "inputs": {
+                    "content": "@body('HTTP')",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "token_type": { "type": "string" },
+                        "expires_in": { "type": "integer" },
+                        "ext_expires_in": { "type": "integer" },
+                        "access_token": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              },
+              "runAfter": { "Do_until": [ "Succeeded" ] },
+              "else": {
+                "actions": {
+                  "Condition__-_Check_Node_Reject_Response": {
+                    "actions": {
+                      "Set_Mail_Subject_Reject_Success": {
+                        "runAfter": {},
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailSubject",
+                          "value": "Rechazo balance oficial del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} para el período @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')}."
+                        }
+                      },
+                      "Set_Mail_Body_Reject_Success": {
+                        "runAfter": { "Set_Mail_Subject_Reject_Success": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailBody",
+                          "value": "El nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']} ha sido rechazado para el período @{variables('StartDateFormatted')} al @{variables('EndDateFormatted')} con la siguiente observación @{variables('Comments')} "
+                        }
+                      },
+                      "Set_Reject_Success_Send_Mail_to": {
+                        "runAfter": { "Set_Mail_Body_Reject_Success": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "SendEmailTo",
+                          "value": "@body('Parse_HTTP_-_Get_Node_Information')?['balanceProfessionalEmail']"
+                        }
+                      }
+                    },
+                    "runAfter": { "HTTP_-_Update_Node_Status_(Reject)": [ "Succeeded" ] },
+                    "else": {
+                      "actions": {
+                        "Parse_Node_Reject_Response": {
+                          "runAfter": {},
+                          "type": "ParseJson",
+                          "inputs": {
+                            "content": "@body('HTTP_-_Update_Node_Status_(Reject)')",
+                            "schema": {
+                              "type": "object",
+                              "properties": {
+                                "errorCodes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "code": { "type": "string" },
+                                      "message": { "type": "string" }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Set_Mail_Subject_Reject__Error": {
+                          "runAfter": { "Parse_Node_Reject_Response": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "MailSubject",
+                            "value": "Error en el llamado del API de aprobación de balance oficial de nodos."
+                          }
+                        },
+                        "Set_Reject_Failure_send_mail_to_": {
+                          "runAfter": { "Set_Mail_Body_Reject_Error": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SendEmailTo",
+                            "value": "@variables('ApproverMail')"
+                          }
+                        },
+                        "Set_Mail_Body_Reject_Error": {
+                          "runAfter": { "Set_Mail_Subject_Reject__Error": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "MailBody",
+                            "value": "Ha ocurrido un error actualizando el estado del nodo @{body('Parse_HTTP_-_Get_Node_Information')?['nodeName']}. Causa: @{body('Parse_Node_Reject_Response')?['errorCodes'][0]['message']}, Por favor verifique la causa y relance el flujo."
+                          }
+                        }
+                      }
+                    },
+                    "expression": { "equals": [ "@outputs('HTTP_-_Update_Node_Status_(Reject)')['statusCode']", 200 ] },
+                    "type": "If"
+                  },
+                  "HTTP_2": {
+                    "runAfter": {},
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                      "headers": {
+                        "content-type": "application/x-www-form-urlencoded",
+                        "Host": "login.microsoftonline.com"
+                      },
+                      "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+                    }
+                  },
+                  "HTTP_-_Update_Node_Status_(Reject)": {
+                    "runAfter": { "Análisis_del_archivo_JSON_2": [ "Succeeded" ] },
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/delta",
+                      "headers": { "Authorization": "Bearer @{body('Análisis_del_archivo_JSON_2')?['access_token']}" },
+                      "body": {
+                        "deltaNodeId": "@variables('DeltaNodeId')",
+                        "approverAlias": "@variables('ApproverMail')",
+                        "status": "REJECTED",
+                        "comment": "@variables('Comments')"
+                      }
+                    }
+                  },
+                  "Análisis_del_archivo_JSON_2": {
+                    "runAfter": { "HTTP_2": [ "Succeeded" ] },
+                    "type": "ParseJson",
+                    "inputs": {
+                      "content": "@body('HTTP_2')",
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "token_type": { "type": "string" },
+                          "expires_in": { "type": "integer" },
+                          "ext_expires_in": { "type": "integer" },
+                          "access_token": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "expression": { "equals": [ "@variables('ApprovalOutcome')", "Approve" ] },
+              "type": "If"
+            },
+            "Format_Start_Date": {
+              "runAfter": { "Set_Approver_Mail": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "StartDateFormatted",
+                "value": "@{formatDateTime(body('Parse_HTTP_-_Get_Node_Information')?['startDate'], 'dd-MMM-yyyy')}"
+              }
+            },
+            "Format_End_Date": {
+              "runAfter": { "Format_Start_Date": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "EndDateFormatted",
+                "value": "@formatDateTime(body('Parse_HTTP_-_Get_Node_Information')?['endDate'], 'dd-MMM-yyyy')"
+              }
+            }
+          },
+          "runAfter": { "Flow_Status": [ "Succeeded" ] },
+          "type": "Scope"
+        },
+        "Catch": {
+          "actions": {
+            "Set_Mail_Body_General_Error": {
+              "runAfter": { "Set_Mail_Subject_General_Error": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "MailBody",
+                "value": "El flujo de aprobación ha fallado, por favor use este enlace para verificar la causa de falla y relance el flujo:\r\n@{concat('https://flow.microsoft.com/manage/environments/', workflow()?['tags']['environmentName'], '/flows/', workflow()?['name'], '/runs/', workflow()?['run']['name'])}"
+              }
+            },
+            "Set_Flow_Failed_Status": {
+              "runAfter": { "Set_Mail_Body_General_Error": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "FlowStatus",
+                "value": "Failed"
+              }
+            },
+            "Set_Send_Mail_To_Default_Approver": {
+              "runAfter": {},
+              "type": "SetVariable",
+              "inputs": {
+                "name": "SendEmailTo",
+                "value": "@variables('AdminMail')"
+              }
+            },
+            "Set_Mail_Subject_General_Error": {
+              "runAfter": { "Set_Send_Mail_To_Default_Approver": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "MailSubject",
+                "value": "Error ejecutando el flujo de aprobación de nodos"
+              }
+            }
+          },
+          "runAfter": { "Try": [ "Failed", "Skipped", "TimedOut" ] },
+          "type": "Scope"
+        },
+        "Finally": {
+          "actions": {
+            "Send_email_(V4)": {
+              "runAfter": {},
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sendgrid",
+                  "connectionName": "shared_sendgrid",
+                  "operationId": "SendEmailV4"
+                },
+                "parameters": {
+                  "request/from": "trueadmin@ecopetrol.com.co",
+                  "request/to": "@variables('SendEmailTo')",
+                  "request/subject": "@variables('MailSubject')",
+                  "request/text": "<p>@{variables('MailBody')}</p>"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Terminate": {
+              "runAfter": { "Send_email_(V4)": [ "Succeeded" ] },
+              "type": "Terminate",
+              "inputs": { "runStatus": "@variables('FlowStatus')" }
+            }
+          },
+          "runAfter": { "Catch": [ "Succeeded", "Failed", "Skipped", "TimedOut" ] },
+          "type": "Scope"
+        },
+        "Initialize_Format_Start_Date": {
+          "runAfter": { "Mail_Body": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "StartDateFormatted",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Define_Administrator_Mail_Variable": {
+          "runAfter": { "Define_Approver_Mail_Variable": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "AdminMail",
+                "type": "string",
+                "value": "trueadmin@ecopetrol.com.co"
+              }
+            ]
+          }
+        },
+        "Initialize_Format_End_Date": {
+          "runAfter": { "Initialize_Format_Start_Date": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "EndDateFormatted",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

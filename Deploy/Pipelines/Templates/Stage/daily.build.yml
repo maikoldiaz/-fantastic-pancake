@@ -1,0 +1,123 @@
+stages:
+- stage: BuildServer
+  jobs:
+  - job: Blockchain
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+      - template: ../Build/blockchain.build.yml
+
+  - job: Database
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+      - template: ../Build/db.build.yml
+
+  - job: Config
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+      - template: ../Build/config.build.yml
+
+  - job: App
+    timeoutInMinutes: 180
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ESDevopsCIConfig.ServicesDevOpsBuildConfig@3
+      displayName: Set ES DevOps Configuration
+      inputs:
+          ServicesDevOpsServiceEndpoint: $(EsDevopsServicesCodeEndPoint)
+          CASuppressionsEnabled: false
+          ISGEnabled: false
+          AIScannerEnabled: true
+          apiuri: '$(apiUri)'
+          emailto: 'epoffteam@microsoft.com'
+          emailcc: 'bldcor@microsoft.com'
+          GlobalResolveReferences: true
+          FlavourToAnalyse: 'Release'
+          PlatformToAnalyse: '$(BuildPlatform)'
+          UpdateVirtuoso: true
+          IsQGBuild: true
+          AzureToolDownloadPath: 'C:\Temp\DevopsTools'
+          GlobalInclusions: '*'
+          GlobalExclusions: 'Microsoft.*.dll System.*.dll AntiXssLibrary.dll DocumentFormat.OpenXml.dll *_Accessor.dll *_Accessor.pdb *.*Test*.dll *.*Test*.pdb Telerik.*.dll *.Moles.dll *.Fakes.dll Antlr3.*.dll csc.exe csi.exe EntityFramework.*.dll Newtonsoft.Json.dll Owin.dll vbc.exe VBCSCompiler.exe WebGrease.dll'
+          FxcopEnabled: true
+          RAEnabled: true
+          CMEnabled: true
+          FxCopSDLEnabled: true
+          JSLintNETEnabled: true
+          CMExclusionsList: '$(CMExclusionsList)'
+
+    - task: WhiteSource Bolt@20
+      inputs:
+        cwd: '$(Build.SourcesDirectory)\Develop'
+
+    - template: ../Build/ui.build.yml
+
+    - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+      displayName: Prepare SONAR Analysis
+      inputs:
+        SonarQube: 'TRUE-DEV-SONAR'
+        projectKey: 'EcoPetrolad_True'
+        projectName: 'EcoPetrolad_True'
+        extraProperties: |
+                sonar.exclusions=**/*.bin,**/__tests__/**,**/msflow-sdk.js
+                sonar.javascript.lcov.reportPaths = $(Build.ArtifactStagingDirectory)/lcov.info
+        projectVersion: '$(Build.BuildNumber)'
+    
+    - task: DotNetCoreCLI@2
+      displayName: Build TRUE Solution
+      inputs:
+        command: build
+        projects: '$(appSolutionPath)'
+        arguments: '--configuration $(buildConfiguration) --output $(Build.BinariesDirectory)\$(buildConfiguration)'        
+
+    - task: DotNetCoreCLI@2
+      displayName: Run Dot Net Unit Tests
+      inputs:
+        command: test
+        projects: '$(unitTestProjects)'
+        arguments: '--collect "Code coverage" --settings "$(Build.SourcesDirectory)\Develop\Sln Items\Ecp.True.CodeCoverage.NetCore.runsettings"'
+
+    - task: CopyFiles@2
+      displayName: Copy Test Results to BuildLogFolder
+      inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: |
+                **/*.trx
+                **/*.coverage
+        TargetFolder: '$(Agent.BuildDirectory)\BuildLogFolder\TestResults'
+
+    - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+      displayName: Run SONAR Code Analysis
+
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ESDevopsValidateCIConfig.ServicesDevOpsValidateBuildConfig@3
+      displayName: ServicesDevOpsValidateBuildConfig
+
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ESDevopsDownloadTools_AzureBlob.ServicesDevOpsToolDownload@3
+      displayName: ServicesDevOpsToolDownload
+
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ESDevopsJSLintNet.ServicesDevOpsJSLintNet@3
+      displayName: 'T-JSLintNet:'
+      inputs:
+        Source: '$(Build.SourcesDirectory)'
+
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ServicesDevOpsAIScanner.ServicesDevOpsAIScanner@3
+      displayName: 'T-AIScanner:'
+          
+    - task: EnterpriseServicesDevOpsTeam.BuildTool-Tasks.task-ESDevopsCopyReports.ServicesDevOpsCopyReports@3
+      displayName: ServicesDevOpsCopyReports
+
+    - task: CredScan@2
+      displayName: Credential Scanning
+      inputs:
+        toolMajorVersion: 'V2'
+        outputFormat: 'csv'
+        scanFolder: '$(Build.SourcesDirectory)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: BuildLogFolder'
+      inputs:
+        PathtoPublish: '$(Agent.BuildDirectory)\BuildLogFolder'
+        ArtifactName: BuildLogFolder

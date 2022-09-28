@@ -1,0 +1,19 @@
+variables:
+- group: true-release-threshold
+- group: true-secrets-prd
+- group: true-network-prd
+- group: true-automation
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/prod.yml
+
+trigger: none
+pr: none
+
+stages:
+- template: ../Templates/Stage/app.build.yml
+- template: ../Templates/Stage/app.deploy.yml
+  parameters:
+    canExecuteAutomation: '$(prd)'
+    automation: 'true'
+- template: ../Templates/Stage/app.purge.yml

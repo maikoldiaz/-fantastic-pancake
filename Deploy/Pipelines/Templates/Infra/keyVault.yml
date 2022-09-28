@@ -1,0 +1,155 @@
+steps:
+- task: AzurePowerShell@4
+  displayName: KV - Get Access Policy For Service Connection
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-KeyVaultAccessPolicies.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -keyVaultName "${{ parameters.keyVaultName }}"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzureResourceGroupDeployment@2
+  displayName: KV - ARM
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Key Vault/deploy.json'
+    overrideParameters: '-accessPolicies "$(Infra.KeyVault.AccessPolicies)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -keyVaultName "${{ parameters.keyVaultName }}" -skuName "${{parameters.skuName}}" -pidDeploymentName "${{parameters.processJobId}}$(build.buildId)"'
+
+- task: AzurePowerShell@4
+  displayName: KV - Tags
+  inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{ parameters.keyVaultName }}"'
+     azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: KV - Enable Soft Delete
+  inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Enable-SoftDelete.ps1'
+     ScriptArguments: '-keyVaultName "${{ parameters.keyVaultName }}"'
+     azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: KV - Set Access Policy For Service Connection
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-AccessPolicy.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -keyVaultName "${{ parameters.keyVaultName }}"'
+    azurePowerShellVersion: LatestVersion
+ 
+- task: AzurePowerShell@4
+  displayName: KV - Set Access Policy for Analytics
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+    ScriptArguments: '-vaultName "${{ parameters.keyVaultName }}" -targetObjectId "$(analyticsAppObjectId)" -resourceGroupName "${{ parameters.resourceGroupName }}"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: KV - Set Access Policy for Dev Security Group
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+    ScriptArguments: '-vaultName "${{ parameters.keyVaultName }}" -targetObjectId "${{ parameters.groupId }}" -resourceGroupName "${{ parameters.resourceGroupName }}" -permissions "get,list"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: KV - Set Access Policy for Dev Pod Identity
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+    ScriptArguments: '-vaultName "${{ parameters.keyVaultName }}" -targetObjectId "${{parameters.podId}}" -resourceGroupName "${{ parameters.resourceGroupName }}"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq('${{parameters.deployAks}}', 'false'))
+
+- task: AzureCLI@2
+  displayName: KV - Set Application Configuration Version
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1"
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "$(applicationConfigurationVersionKey)" -secretValue "$(applicationConfigurationVersion)"'
+
+- task: AzureCLI@2
+  displayName: KV - Set Auth Application Secret 
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1"
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "AzureAd--ClientSecret" -secretValue "$(uiAppSecret)"'
+
+- task: AzureCLI@2
+  displayName: KV - Set Availability Application Secret
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "AvailabilityClientSecret" -secretValue "$(availabilityClientSecret)"'
+
+- task: AzureCLI@2
+  displayName: KV - Set Ownership Rule Client Secret
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "OwnershipRuleClientSecret" -secretValue "$(ownershipRuleClientSecret)"'
+
+- task: AzureCLI@2
+  displayName: KV - Set Ownership Rule ClientId
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "OwnershipRuleClientId" -secretValue "$(ownershipRuleClientId)"'
+
+- task: AzureCLI@2
+  displayName: KV - Set Sap Password
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "SapPassword" -secretValue "$(sapPassword)"'
+
+- task: AzureCLI@2
+  displayName: KV - Create DataProtection Key
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-DataProtectionKey.ps1"
+    arguments: '-vaultName "${{ parameters.keyVaultName }}" -keyName "DataProtection"'
+
+- template: ../Infra/redis.flush.yml
+  parameters:
+    serviceConnection : $(serviceConnection)
+    env: '$(env)'
+    storageAccountName: '$(storageAccountName)'
+
+- task: AzureCLI@2
+  displayName: KV - Set SQL Connection String
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "SqlConnectionString" -secretValue "$(sqlconnectionstring)"'
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))
+
+- task: AzureCLI@2
+  displayName: KV - Set ODBC SQL Connection String
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "OdbcSqlConnectionString" -secretValue "$(odbcsqlconnectionstring)"'
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))
+
+- task: AzureCLI@2
+  displayName: KV - Set MSI SQL Connection String
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: ps
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "MsiSqlConnectionString" -secretValue "$(msisqlconnectionstring)"'
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))

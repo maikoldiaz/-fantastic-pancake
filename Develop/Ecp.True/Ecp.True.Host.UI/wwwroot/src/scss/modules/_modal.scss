@@ -1,0 +1,149 @@
+﻿// _modal.scss
+
+#{$ep}-modal {
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index: 10000;
+    &__overlay{
+        position: absolute;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        background-color: $overlay-bg;
+        z-index: 10000;
+        overflow: auto;
+    }
+
+    &__body{
+        position: relative;
+        width: 50%;
+        margin: pxToRem(100) auto pxToRem(20) auto;
+        background: #fff;
+        z-index: 10000000;
+        border-radius: 4px;
+    }
+
+    &__body--large {
+        width: 70%;
+    }
+
+    &__header,&__footer{
+        position: relative;
+        background-color: #F0F0EE;        
+        padding: 0 pxToRem(30);
+        overflow: hidden;
+    }
+    &__header{
+        height: pxToRem(43);
+        border-top-left-radius: pxToRem(4);
+        border-top-right-radius: pxToRem(4);
+    }
+
+    &__footer{
+        height: pxToRem(51);
+        border-bottom-left-radius: pxToRem(4);
+        border-bottom-right-radius: pxToRem(4);
+        &-actions{
+            display: block;
+            padding-top: pxToRem(11);
+            height: 100%;
+        }
+    }
+
+    &__content{
+        padding: pxToRem(35) pxToRem(55);
+
+        &-heading{
+            font-size: pxToRem(16);
+            font-weight: 400;
+            margin-bottom: pxToRem(15);
+        }
+        &--scroll{
+            overflow: auto;
+        }
+    }    
+
+    &__title{
+        font-family: $font-family-sb;
+        font-size: pxToRem(20);
+        color: $black;
+        margin-top: pxToRem(8);
+        @extend .ellipsis;
+        padding-right: pxToRem(20);
+        text-transform: lowercase;
+        &::first-letter{
+            text-transform: uppercase;
+        }
+    }
+
+    &__close{
+        background: #DADADA;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: pxToRem(48);
+        height: pxToRem(43);
+        line-height: pxToRem(43);
+        text-align: center;
+        font-size: pxToRem(14);
+        cursor: pointer;
+    }
+
+    &__txt{
+        padding: 0;
+        margin: 0;
+    }
+    &--sm{
+        & #{$ep}-modal{
+            &__body{
+                width:40%;
+                margin-top: pxToRem(130);
+            }
+        }
+    }
+    &--md{
+        & #{$ep}-modal{
+            &__body{
+                width:60%;
+            }
+        }
+    }
+    &--lg{
+        & #{$ep}-modal{
+            &__body{
+                width:80%;
+            }
+        }
+    }
+
+    &--confirm{
+        & #{$ep}-modal{
+            &__overlay{
+                display: flex;
+                align-items: flex-start;
+            }
+            &__body{
+                display: inline-block;
+                min-width:pxToRem(350);
+                max-width:pxToRem(450);
+                width: auto;
+            }
+
+            &__content{
+                text-align: center;
+            }
+        }
+    }
+}
+
+@media #{$bp-tablet-p}{
+    #{$ep}-modal {
+        &__body{
+            width: 70%;
+        }
+    }
+}

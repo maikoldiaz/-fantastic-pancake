@@ -1,0 +1,12 @@
+﻿// _base.scss
+
+#{$ep}-main {
+    position: relative;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color:map-get($gray, 'F0F0EE');
+    height: 100%;
+    font-size:unquote($base-font-size + 'px');
+    color:$font-color;
+    min-width:pxToRem(1366);
+    overflow-x: auto;
+}

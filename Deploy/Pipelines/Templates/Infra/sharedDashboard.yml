@@ -1,0 +1,10 @@
+steps:
+ - task: AzureResourceGroupDeployment@2
+   displayName: Shared Dashboard- ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Shared Dashboard/deploy.json'
+     overrideParameters: '-subscriptionId "${{parameters.subscriptionId}}" -resourceGroupName "${{parameters.resourceGroupName}}" -applicationInsightsName "${{parameters.applicationInsights}}" -location "${{ parameters.deployLocation }}" -sharedDashboardName "${{ parameters.sharedDashboardName }}" -logAnalyticsName "$(logAnalyticsWorkspaceName)" -env "$(env)"'
+     deploymentOutputs: armOut

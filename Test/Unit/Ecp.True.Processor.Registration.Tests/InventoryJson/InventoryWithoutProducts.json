@@ -1,0 +1,13 @@
+{
+  "SourceSystem": "Source-omn",
+  "DestinationSystem": "Dest-omn",
+  "EventType": "Insert",
+  "InventoryId": 1,
+  "InventoryDate": "2019-09-04T07:19:03.1204835+05:30",
+  "NodeId": 11,
+  "Observations": "Observed",
+  "CreationDate": "2019-09-04T07:19:03.1202318+05:30",
+  "Scenario": "scn",
+  "CreatedBy": "Vinodh",
+  "CreatedDate": "2019-09-04T07:19:03.1201069+05:30"
+}

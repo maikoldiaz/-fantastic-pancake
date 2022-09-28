@@ -1,0 +1,18 @@
+steps:
+  - task: AzurePowerShell@3
+    displayName: Power BI Workspace
+    condition: and(succeeded(), eq(variables['reports'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-PowerBiWorkspace.ps1'
+      ScriptArguments: '-PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId "$(tenant)" -WorkspaceName "$(workspaceName)" -AdminEmail "$(adminEmail)" -EnableAdmin "true"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Reports Rollback
+    condition: and(succeeded(), eq(variables['reports'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Reports.ps1'
+      ScriptArguments: '-WorkspaceId "$(workspaceID)" -TenantId "$(tenantId)" -PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -reportsToDelete "$(reportsToDelete)"'
+      azurePowerShellVersion: LatestVersion

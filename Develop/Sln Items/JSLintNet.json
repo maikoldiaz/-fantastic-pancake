@@ -1,0 +1,29 @@
+﻿{
+  "version": "2.3.0",
+  "output": "Warning",
+  "ignore": [
+  
+  ],
+  "options": {
+    "for": true,
+    "multivar": true,
+    "single": true,
+    "this": true,
+    "white": true
+
+  },
+  "globalVariables": [
+    "$",
+    "Xrm",
+    "FNS",
+    "fns",
+    "document",
+    "jQuery",
+    "FormTypes",
+    "alert",
+    "window",
+    "console",
+    "ceXrmUtilities"
+  ],
+  "runOnBuild": true
+}

@@ -1,0 +1,56 @@
+steps:
+- task: AzurePowerShell@3
+  displayName: Base64 Encode Analytics ClientId
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/ConvertString-ToBase64Encoded.ps1'
+    ScriptArguments: '-StringValue $(analyticsAppClientId) -VariableName analyticsAppClientId'
+    azurePowerShellVersion: LatestVersion
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))
+
+- task: AzurePowerShell@3
+  displayName: Base64 Encode Analytics Secret
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/ConvertString-ToBase64Encoded.ps1'
+    ScriptArguments: '-StringValue $(analyticsAppSecret) -VariableName analyticsAppSecret'
+    azurePowerShellVersion: LatestVersion
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))
+
+- task: AzurePowerShell@3
+  displayName: Base64 Encode TenantId
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/ConvertString-ToBase64Encoded.ps1'
+    ScriptArguments: '-StringValue $(tenantId) -VariableName analyticsTenantId'
+    azurePowerShellVersion: LatestVersion
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))
+
+- task: AzurePowerShell@3
+  displayName: Base64 Encode KV Address
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/ConvertString-ToBase64Encoded.ps1'
+    ScriptArguments: '-StringValue "https://$(keyVault).vault.azure.net/" -VariableName analyticsKeyvault'
+    azurePowerShellVersion: LatestVersion
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: Replace Analytics Secret Values
+  inputs:
+    targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/aks-analytics-secret.yml'
+    actionOnMissing: fail
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))
+
+- task: Kubernetes@1
+  displayName: Create Analytics Secret
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '$(serviceConnection)'
+    azureResourceGroup: "$(sharedResourceGroupName)"
+    kubernetesCluster: '$(aksManagedClustersName)'
+    useClusterAdmin: true
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/aks-analytics-secret.yml'
+  condition:  and(succeeded(), eq(variables['analytics'], 'true'))

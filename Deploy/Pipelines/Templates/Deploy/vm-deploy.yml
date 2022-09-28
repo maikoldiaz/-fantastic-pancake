@@ -1,0 +1,38 @@
+steps:
+ - task: DownloadBuildArtifacts@0
+   displayName: Download Build Artifacts
+   inputs:
+    artifactName: Drop
+    downloadPath: '$(System.ArtifactsDirectory)'
+     
+ - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+   displayName: Set Environment
+   
+ - powershell: |
+     $date=$(Get-Date -Format g);
+     Write-Host "##vso[task.setvariable variable=creationDate]$date"
+   displayName: Set Date
+
+ - template: ../Infra/virtualMachine.yml
+   parameters:
+    displayName: Virtual Machine
+    azureSubscriptionName: '${{parameters.serviceConnection}}'
+    resourceGroupName: '$(resourceGroupName)'
+    vmUsername: '${{parameters.vmUsername}}'
+    vmPassword: '${{parameters.vmPassword}}'
+    deployLocation: '$(deployLocation)'
+    virtualMachineName: '${{parameters.virtualMachineName}}'
+    subnetName: '${{parameters.vmSubnetName}}'
+    vmVnetId: '${{parameters.vmVnetId}}'
+    networkInterfaceName: '${{parameters.vmNicName}}'
+    storageAccountName: '$(storageAccountName)'
+    description: '$(description)'
+    createdBy: '$(createdBy)'
+    responsible: '$(responsible)'
+    projectName: '$(projectName)'
+    companyName: '$(compName)'
+    environment: '$(env)'
+    organizationUnit: '$(organizationUnit)'
+    tier: 'data'
+    dataProfileDataSecurityLevel: '$(dataProfile)'
+    creationDate: '$(creationDate)'

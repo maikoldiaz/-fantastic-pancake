@@ -1,0 +1,89 @@
+﻿// _card.scss
+
+#{$ep}-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-flow: row nowrap;
+    border: solid 1px map-get($gray, 'C1C1C1');
+    border-radius: 5px;
+    background: $white;
+    padding: pxToRem(20);
+
+    &__content {
+        max-width: 70%;
+    }
+
+    &__content__full {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    &__content__lock {
+        opacity: 0.4;
+    }
+
+    &__icn {
+        @include mix-circle(pxToRem(38));
+        line-height: pxToRem(38);
+        text-align: center;
+        border: solid 1px $color-blue-ltr;
+        color: $color-blue-ltr;
+        margin-right: pxToRem(20);
+    }
+
+    &__lbl {
+        font-size: pxToRem(13);
+        color: $card-label;
+    }
+
+    &__data {
+        display: block;
+        font-size: pxToRem(18);
+        font-weight: 700;
+        color: $color-blue-grey;
+        text-transform: uppercase;
+        @extend .ellipsis;
+
+        &--teal {
+            color: $color-blue-teal;
+        }
+
+        &--blue {
+            color: $color-blue-prpl;
+        }
+    }
+
+    &__action {
+        position: absolute;
+        right: pxToRem(20);
+        color: $btn-color;
+        font-size: pxToRem(14);
+        cursor: pointer;
+
+        &--disabled {
+            color: $font-disabled;
+            cursor: not-allowed;
+        }
+    }
+
+    &__pointerEvent {
+        padding-top: 30px;
+        margin-bottom: 1rem;
+        &--on {
+            pointer-events: all;
+        }
+
+        &--off{
+            pointer-events: none;
+            background-color: #f6f6f5;
+            
+        }
+    }
+}
+
+#{$ep}-card-box {
+    background-color: #F0F0EE;
+    box-shadow: 0px 2px 5px #cccccc;
+    border-radius: 6px;
+}

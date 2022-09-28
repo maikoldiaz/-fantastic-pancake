@@ -1,0 +1,102 @@
+// _icons.scss
+
+#{$ep}-icn {
+    display: inline-block;
+    background-image: image('ep_sprites.png');    
+    background-size: auto 27px;
+
+    &--administration{
+        height: pxToRem(22);
+        width: pxToRem(27);
+        background-position: -77px -2px;
+    }
+
+    &--balanceTransporters{
+        @include mix-square(pxToRem(24));
+        background-position: -53px -1px;
+    }
+
+    &--supplyChain{
+        height: pxToRem(19);
+        width: pxToRem(26);
+        background-position: 0 -4px;
+    }
+
+    &--balanceIntegration{
+        height: pxToRem(21);
+        width: pxToRem(25);
+        background-position: -28px -3px;
+    }
+    &--user{
+        @include mix-square(pxToRem(34));
+        background-position: -299px 0px;
+        background-size: auto pxToRem(31);
+    }
+    &--reports{
+        @include mix-square(pxToRem(34));
+        background-position: 35px -1px;
+        background-size: auto pxToRem(38);
+    }
+    &-desktop,
+    &-chatbot,
+    &-phone,
+    &-mail{
+        display: inline-block;
+        width:pxToRem(50);
+    }
+}
+
+@font-face {
+    font-family: 'epIconSheet';
+    src: url('./../../../dist/fonts/epIconSheet.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'epIconDoubleArrow';
+    src: url('./../../../dist/fonts/epIconDoubleArrow.ttf') format('truetype');
+}
+
+#{$ep}-icon {
+    font-style: normal;
+
+    &__detail {
+        font-family: 'epIconSheet';
+        font-size: 1.4em;
+
+        &::before {
+            content: '\e900';
+        }
+    }
+
+    &__double-arrow {
+        font-family: 'epIconDoubleArrow';
+
+        &::before {
+            content: '\e906';
+        }
+    }
+}
+
+
+// _fa icons
+
+.fas{
+    &--success{
+        color: $success;
+    }
+
+    &--error{
+        color: $error;
+    }
+
+    &--warning{
+        color:$alert-warning-dk;
+    }
+
+    &--spin{
+        color:$process;
+        animation: fa-spin 2s linear infinite;
+    }
+    &--primary{
+        color:$btn-color;
+    }
+}

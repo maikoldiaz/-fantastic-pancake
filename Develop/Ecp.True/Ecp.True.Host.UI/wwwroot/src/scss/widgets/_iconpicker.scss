@@ -1,0 +1,37 @@
+#{$ep}-icon {
+    &-picker{
+        $icpkr:&;
+        display: grid;
+        grid-template-columns: auto auto auto auto auto;
+        grid-gap: pxToRem(10);
+        height: pxToRem(250);
+        overflow: auto;
+        &__action{
+            position: relative;
+            border:solid 1px transparent;
+            @include mix-square(72px);
+            border-radius: pxToRem(5);    
+            cursor: pointer;
+            &:hover{
+                border-color:map-get($gray, 'CCCCCC');
+            }
+            & svg{
+                height: pxToRem(68);
+                width: pxToRem(68);
+            }
+        }
+        &__input{
+            opacity: 0.01;
+            &:checked + #{$icpkr}__action{
+                border-color:$btn-color;
+                &:after{
+                    content: "";
+                    background: transparent;
+                    position: absolute;
+                    top: 3px;
+                    left: 3px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+steps:
+- task: AzurePowerShell@4
+  displayName: Service Endpoints - AKS Subnet
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ServiceEndpoint.ps1'
+    ScriptArguments: '-resourceGroup "$(infrastructureResourceGroupName)" -virtualNetworkName "$(virtualNetworkName)" -subnetName "$(aksSubnetName)" -AddServiceEndpoint "$(aksSubnetServiceEndpoint)"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))
+
+- task: AzurePowerShell@4
+  displayName: Service Endpoints - APIM Subnet
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ServiceEndpoint.ps1'
+    ScriptArguments: '-resourceGroup "$(infrastructureResourceGroupName)" -virtualNetworkName "$(virtualNetworkName)" -subnetName "$(apimSubnetName)" -AddServiceEndpoint "$(apimSubnetServiceEndpoint)"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))
+
+- task: AzurePowerShell@4
+  displayName: Service Endpoints - SQL Subnet
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ServiceEndpoint.ps1'
+    ScriptArguments: '-resourceGroup "$(infrastructureResourceGroupName)" -virtualNetworkName "$(virtualNetworkName)" -subnetName "$(sqlSubnetName)" -AddServiceEndpoint "$(sqlSubnetServiceEndpoint)"'
+    azurePowerShellVersion: LatestVersion
+  condition: and(succeeded(), eq('${{parameters.version}}', '2'))

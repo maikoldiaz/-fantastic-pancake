@@ -1,0 +1,24 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Validate blobs
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/PostDeployment/Validate-IfBlobExists.ps1"
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -storageAccountName "$(storageAccountName)" -downloadPath "$(System.ArtifactsDirectory)/Drop/Scripts/PostDeployment"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Trigger data factory pipelines
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/PostDeployment/Trigger-DataFactoryPipelines.ps1"
+      ScriptArguments: '-resourceGroup "$(sharedResourceGroupName)" -dataFactoryName "$(dataFactoryName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Validate delta data
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/PostDeployment/Validate-DataSeed.ps1"
+      ScriptArguments: '-connectionString "$(sqlconnectionstring)"'
+      azurePowerShellVersion: LatestVersion

@@ -1,0 +1,24 @@
+steps:
+ - powershell: |
+     $guid=(New-Guid).Guid
+     Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+   displayName: Set PID Name
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: Provision Identity - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/deploy.json'
+     overrideParameters: '-identityName "${{ parameters.identityName }}" -description "${{parameters.description}}" -createdBy "${{parameters.createdBy}}" -responsible "${{parameters.responsible}}" -projectName "${{parameters.projectName}}" -companyName "${{parameters.companyName}}" -environment "${{parameters.environment}}" -organizationUnit "${{parameters.organizationUnit}}" -tier "${{parameters.tier}}" -dataProfileDataSecurityLevel "${{parameters.dataProfileDataSecurityLevel}}" -creationDate "${{parameters.creationDate}}"'
+     deploymentOutputs: armOut
+     deploymentName: '$(deploymentsuffix)'
+
+ - task: AzurePowerShell@4
+   displayName: Identity - Set Build Variable
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+     azurePowerShellVersion: LatestVersion

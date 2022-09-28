@@ -1,0 +1,35 @@
+  steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: Download Build Artifacts
+    inputs:
+      artifactName: Drop
+      downloadPath: '$(System.ArtifactsDirectory)'
+    condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+
+  - template: ../Infra/fetchSecrets.yml
+    parameters:
+      azureSubscriptionName : '${{parameters.serviceConnection}}'
+      keyVaultName: '$(keyVault)'
+      secretsFilter: '*'
+
+  - task: AzurePowerShell@3
+    displayName: Set Connection String
+    inputs:
+      azureSubscription: '${{parameters.serviceConnection}}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Set-CertificationConnectionString.ps1'
+      ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -DatabaseName "$(databaseName)" -CloneDatabaseName "$(cloneDbName)"'
+      azurePowerShellVersion: LatestVersion
+    condition: succeededOrFailed()
+
+  - task: SqlAzureDacpacDeployment@1
+    displayName:  Certify Data - Trying DACPAC
+    inputs:
+      Database: 'appdb'
+      azureSubscription: '${{parameters.serviceConnection}}'
+      AuthenticationType: 'connectionString'
+      ConnectionString: '$(testbedconnectionstring)'
+      deployType: 'DacpacTask'
+      DeploymentAction: 'Publish'
+      DacpacFile: '$(System.ArtifactsDirectory)/Drop/SQL/bin/Debug/Ecp.True.DI.Sql.dacpac'
+      AdditionalArguments: '/p:BlockOnPossibleDataLoss=False /p:GenerateSmartDefaults=True /v:serverName=null /v:baseUrl=https://$(dnsNameForUI)'
+      IpDetectionMethod: 'AutoDetect'

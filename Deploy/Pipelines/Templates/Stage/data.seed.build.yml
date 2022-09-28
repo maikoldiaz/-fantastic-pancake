@@ -1,0 +1,17 @@
+stages:
+- stage: Build
+  jobs:
+  - job: Config
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: CopyFiles@2
+      displayName: COPY Scripts
+      inputs:
+        SourceFolder:  $(infraScriptPath)
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Artifacts
+      inputs:
+        ArtifactName: Drop

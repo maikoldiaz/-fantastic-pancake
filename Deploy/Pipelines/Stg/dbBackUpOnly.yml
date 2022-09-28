@@ -1,0 +1,22 @@
+variables:
+    - group: true-secrets-nonprd-shared
+    - group: true-secrets-stg
+    - group: true-network-stg
+    - template: ../Templates/Variables/package.yml
+    - template: ../Templates/Variables/infra.yml
+    - template: ../Templates/Variables/non-prod.yml
+    
+pr: none
+trigger: none
+
+stages:
+- stage: Copy
+  jobs:
+  - job: Copy
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Templates/package.yml
+      parameters:
+        infra: 'true'
+- template: ../Templates/Stage/db.backuponly.yml

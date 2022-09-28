@@ -1,0 +1,33 @@
+steps:
+- task: UsePythonVersion@0
+  displayName: Set Python Version
+  inputs:
+    versionSpec: '3.6'
+
+- script: |
+    python -m pip install --upgrade pip
+    python -m pip install redis
+  displayName: Install Redis
+
+- task: AzurePowerShell@4
+  displayName: Get Redis Key
+  inputs:
+     azureSubscription: "$(ServiceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Redis/Get-RedisKey.ps1'
+     ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -redisName "$(redisCacheName)"'
+     azurePowerShellVersion: LatestVersion
+
+- task: PythonScript@0
+  displayName: Flush Redis
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Redis/redisFlush.py'
+    arguments: '-n "$(redisCacheName).redis.cache.windows.net" -p "$(rediskey)"'
+
+- task: AzurePowerShell@4
+  displayName: Delete Redis Key
+  inputs:
+     azureSubscription: "$(ServiceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Redis/Remove-RedisKey.ps1'
+     ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -storageAccountName "${{parameters.storageAccountName}}" -containerName "dataprotectionkeys" -blobName "keys.xml"'
+     azurePowerShellVersion: LatestVersion

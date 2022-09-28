@@ -1,0 +1,18 @@
+steps:
+- task: HelmInstaller@1
+  displayName: 'Install Helm'
+  inputs:
+    helmVersionToInstall: 3.4.0
+
+- bash: |
+   helm package --version $(build.buildId) --destination ${{ parameters.destination }} ${{ parameters.chartPath }}
+  displayName: 'Helm package'
+
+- task: AzureCLI@1
+  displayName: 'Push helm chart'
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    scriptLocation: inlineScript
+    inlineScript: |
+         az login --service-principal -u $(aksServicePrincipalProfileClientId) -p $(aksServicePrincipalProfileSecret) -t $(tenantId)
+         az acr helm push -n ${{ parameters.registryName }} ${{ parameters.helmPackagePath }}

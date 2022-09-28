@@ -1,0 +1,71 @@
+steps:
+- task: CopyFiles@2
+  displayName: COPY Scripts
+  inputs:
+    SourceFolder:  $(infraScriptPath)
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
+
+- task: AzurePowerShell@4
+  displayName: Set KV Access Policy For Service Connection
+  inputs:
+    azureSubscription: "$(serviceConnection)"
+    ScriptPath: '$(Build.ArtifactStagingDirectory)/Scripts/Set-KeyVault-AccessPolicy.ps1'
+    ScriptArguments: '-resourceGroupName "$(sharedResourceGroupName)" -keyVaultName "$(keyvaultShared)"'
+    azurePowerShellVersion: LatestVersion
+
+- template: ../Infra/fetchSecrets.yml
+  parameters:
+    azureSubscriptionName : '$(serviceConnection)'
+    keyVaultName: '$(keyvaultShared)'
+    secretsFilter: '*'
+
+- task: AzurePowerShell@4
+  displayName: Download AKS Certificate
+  inputs:
+    azureSubscription: "$(serviceConnection)"
+    ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+    ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(aksCertNameInKeyVault)" -password "$(sslCertPasswordForAks)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "$(aksCertNameInKeyVault)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: Get AKS Certificate
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptType: 'InlineScript'
+    Inline: 'Get-ChildItem -Path $(System.ArtifactsDirectory)'
+    azurePowerShellVersion: 'LatestVersion'
+
+- task: Bash@3
+  displayName: Create Key
+  inputs:
+    targetType: 'inline'
+    script: |
+      openssl pkcs12 -in $(System.ArtifactsDirectory)/$(aksCertNameInKeyVault).pfx -nocerts -nodes -out $(Build.ArtifactStagingDirectory)/$(aksCertName).key -password pass:"$(sslCertPasswordForAks)" -passin pass:"$(sslCertPasswordForAks)"
+
+- task: Bash@3
+  displayName: Create Cert
+  inputs:
+    targetType: 'inline'
+    script: |
+      openssl pkcs12 -clcerts -nokeys -in $(System.ArtifactsDirectory)/$(aksCertNameInKeyVault).pfx -out $(Build.ArtifactStagingDirectory)/$(aksCertName).crt -password pass:"$(sslCertPasswordForAks)" -passin pass:"$(sslCertPasswordForAks)"
+
+- task: AzurePowerShell@4
+  displayName: Download APIM Certificate
+  inputs:
+    azureSubscription: "$(serviceConnection)"
+    ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+    ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(apiCertNameInKeyvault)" -password "$(sslCertPasswordForApi)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "$(dnsNameForApi)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzurePowerShell@4
+  displayName: Download UI Certificate
+  inputs:
+    azureSubscription: "$(serviceConnection)"
+    ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+    ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(uiCertNameInKeyVault)" -password "$(sslCertPasswordForUI)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "$(dnsNameForUI)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifacts
+  inputs:
+    ArtifactName: Drop

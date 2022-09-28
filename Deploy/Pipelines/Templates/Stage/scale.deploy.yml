@@ -1,0 +1,121 @@
+stages:
+  - stage: Scaling
+    jobs:
+      - deployment: Scaling
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envInfra)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: 'Download Build Artifacts'
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - powershell: |
+                    $date=$(Get-Date -Format g);
+                    Write-Host "##vso[task.setvariable variable=creationDate]$date"
+                  displayName: 'Set Date Tag'
+
+                - template: ../Infra/fetchSecrets.yml
+                  parameters:
+                    azureSubscriptionName: '$(serviceConnection)'
+                    keyVaultName: '$(keyVault)'
+                    secretsFilter: '*'
+
+                - task: AzurePowerShell@4
+                  displayName: 'Scaling Environment'
+                  inputs:
+                    azureSubscription: $(serviceConnection)
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Environment.ps1'
+                    ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -keyvaultName "$(keyVault)" -scaleup "$(scaleup)" -numberOfworkersUI "$(numberOfworkersUI)" -numberOfworkersFA "$(numberOfworkersFA)" -webAppsForAppSettingsUpdate "$(webAppsForAppSettingsUpdate)" -appServicePlanNameFA "$(appServicePlanName)" -appServicePlanNameUI "$(appServicePlanNameUI)" -tierUI "$(tierUI)" -tierFA "$(tierFA)" -workerSizeUI "$(workerSizeUI)" -workerSizeFA "$(workerSizeFA)" -serviceBusNameSpaceName "$(serviceBusNamespaceNameInt)" -deployRegion "$(region)" -funcAppArrayForScaling "$(funcAppArrayForScaling)" -webAppNameUI "$(appServiceNameUI)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq(variables['restartOnly'], 'false'))
+
+                - task: AzurePowerShell@4
+                  displayName: Rename DB TRUE-BACKUP
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-DBRename.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerNameFullName "$(sqlServerName)" -DatabaseName "$(databaseName)" -userIdRestore "$(dbUserIdRestore)" -userPasswordRestore "$(dbUserPasswordRestore)" -oldDB "$(databaseName)" -renameDB "$(databaseName)backup"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'), eq(variables['restartOnly'], 'false'))
+
+                - task: AzurePowerShell@4
+                  displayName: Rename DB PERF-TRUE
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-DBRename.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerNameFullName "$(sqlServerName)" -DatabaseName "$(databaseName)" -userIdRestore "$(dbUserIdRestore)" -userPasswordRestore "$(dbUserPasswordRestore)" -oldDB "$(databaseName)perf" -renameDB "$(databaseName)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'), eq(variables['restartOnly'], 'false'))
+
+                - task: AzurePowerShell@4
+                  displayName: Rename DB TRUE-PERF
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-DBRename.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerNameFullName "$(sqlServerName)" -DatabaseName "$(databaseName)" -userIdRestore "$(dbUserIdRestore)" -userPasswordRestore "$(dbUserPasswordRestore)" -oldDB "$(databaseName)" -renameDB "$(databaseName)perf"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'false'), eq(variables['restartOnly'], 'false'))
+
+                - task: AzurePowerShell@4
+                  displayName: Rename DB BACKUP-TRUE
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-DBRename.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerNameFullName "$(sqlServerName)" -DatabaseName "$(databaseName)" -userIdRestore "$(dbUserIdRestore)" -userPasswordRestore "$(dbUserPasswordRestore)" -oldDB "$(databaseName)backup" -renameDB "$(databaseName)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'false'), eq(variables['restartOnly'], 'false'))
+
+                - template: ../Deploy/db.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    downloadArtifacts: 'true'
+
+                - task: AzurePowerShell@4
+                  displayName: Create Queues
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ServiceBusQueues.ps1'
+                    ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -namespaceName "$(serviceBusNamespaceNameInt)-PREMIUM" -sessionQueues "$(sessionQueues)" -normalQueues "$(normalQueues)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'), eq(variables['restartOnly'], 'false'))
+
+                - task: AzurePowerShell@3
+                  displayName: Service Bus Config
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-ServiceBusConfig.ps1'
+                    ScriptArguments: '-Namespace "$(serviceBusNamespaceNameInt)-PREMIUM" -TenantId "$(tenantId)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+                - task: AzurePowerShell@3
+                  displayName: Service Bus Config
+                  inputs:
+                    azureSubscription: '$(serviceConnection)'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-ServiceBusConfig.ps1'
+                    ScriptArguments: '-Namespace "$(serviceBusNamespaceNameInt)" -TenantId "$(tenantId)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq('${{parameters.scaleup}}', 'false'))
+
+                - task: ExtractFiles@1
+                  displayName: 'Extract Config Files'
+                  inputs:
+                    archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.ConfigurationManager.zip'
+                    destinationFolder: '$(System.ArtifactsDirectory)\Config'
+                    cleanDestinationFolder: false
+
+                - script: dotnet.exe $(System.ArtifactsDirectory)\Config\Ecp.True.ConfigurationManager.dll $(storageconnectionstring) "" "$(forceUpdateConfigs)" $(serviceBusConfig)
+                  displayName: 'Running Configuration Manager'
+
+                - template: ../Infra/msi.yml
+                  parameters:
+                    scaleup: '${{parameters.scaleup}}'
+                    azureSubscriptionName: '$(serviceConnection)'
+
+                - template: ../restartServices.yml

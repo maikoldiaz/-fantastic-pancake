@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "1.0"
+description: Flow API Helm Chart
+name: ecptrue-flow
+version: 0.1.0

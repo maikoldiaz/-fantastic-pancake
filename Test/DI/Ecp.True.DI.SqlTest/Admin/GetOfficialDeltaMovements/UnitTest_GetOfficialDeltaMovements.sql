@@ -1,0 +1,64 @@
+EXEC Admin.usp_GetOfficialDeltaMovements 
+
+--MovementTransactionID	MovementId											MovementTypeId	SourceNodeId	SourceNodeSegmentID	SourceNodeNodeOrder	SourceNodeSystem	DestinationNodeId	DestinationNodeSegmentID	DestinationNodeOrder	DestinationNodeSystem	SourceProductId	DestinationProductId	SystemId	OwnerId	OwnershipValue
+--20993					77e319cba08b441f251fda59cbe65ca1397f5d163a010f4595	139211			31227				137162				922376				137199				31226				137162						922376				137199					10000002372			10000002372			NULL		139215	60.00
+--20993					77e319cba08b441f251fda59cbe65ca1397f5d163a010f4595	139211			31227				137162				922376				137199				31226				137162						922376				137199					10000002372			10000002372			NULL		29		40.00
+
+
+
+
+	--WITH CteMovementsData
+	--AS
+	--(
+	--	SELECT   Mov.[MovementTransactionID]
+	--			,Mov.[MovementId]
+	--			,Mov.[MovementTypeId]
+	--			,Mov.[SourceNodeId]
+	--			,Mov.[DestinationNodeId]
+	--			,Mov.[SourceProductId]
+	--			,Mov.[DestinationProductId]
+	--			,Mov.[SystemId]
+	--			,Mov.[NetStandardVolume]
+	--			,Mov.[DeltaTicketId]
+	--			,Mov.[OperationalDate]
+	--			,Mov.[SourceProductTypeId]
+	--			,Mov.[DestinationProductTypeId]
+	--			,Mov.[MeasurementUnit]
+	--			,Mov.[SegmentId]
+	--			--,ISNULL(LastModifiedDate,CreatedDate) AS DateValue
+	--			,CAST(MovPeriod.[StartTime]AS DATE) As Startdate
+	--			,CAST(MovPeriod.[EndTime]  AS DATE) As EndDate
+	--			,t.startdate as ticketstartdate
+	--			,t.enddate as ticketenddate
+	--			,t.TicketId
+	--		    ,ROW_NUMBER()OVER(PARTITION BY Mov.MovementId
+	--							  ORDER     BY Mov.MovementTransactionId DESC)Rnum
+	--	FROM Admin.view_MovementInformation Mov
+	--	INNER JOIN Offchain.MovementPeriod MovPeriod
+	--	ON Mov.[MovementTransactionId] = MovPeriod.[MovementTransactionId]
+	--	JOIN Admin.Ticket t on Mov.SegmentId = t.CategoryElementId
+	--	WHERE Mov.ScenarioId = 2
+	--	--AND Mov.SegmentId = @TicketSegmentId
+	--	AND CAST(MovPeriod.[StartTime]AS DATE) = t.startdate 
+	--	AND CAST(MovPeriod.[EndTime]  AS DATE)= t.enddate  
+	--)
+	--SELECT	 Mov.[MovementTransactionID]
+	--,ticketid, startdate, enddate, ticketstartdate, ticketenddate
+	--		,Mov.[MovementId]
+	--		,Mov.[MovementTypeId]
+	--		,Mov.[SourceNodeId]
+	--		,Mov.[DestinationNodeId]
+	--		,Mov.[SourceProductId]
+	--		,Mov.[DestinationProductId]
+	--		,Mov.[SystemId]
+	--		,Mov.[NetStandardVolume]
+	--		,Mov.[DeltaTicketId]
+	--		,Mov.[OperationalDate]
+	--		--,Mov.[DateValue]
+	--		,Mov.[SourceProductTypeId]
+	--		,Mov.[DestinationProductTypeId]
+	--		,Mov.[MeasurementUnit]
+	--		,Mov.[SegmentId]
+	--FROM CteMovementsData Mov
+	--WHERE Rnum = 1
+	--AND [NetStandardVolume] > 0 

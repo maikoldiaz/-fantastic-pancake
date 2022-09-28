@@ -1,0 +1,175 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Certify - Security Groups.
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-SecurityGroups.ps1'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Certify - AZ SQL MSI group owner
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-SecurityGroupOwner.ps1'
+      scriptType: ps
+      arguments: '-sqlMsiGroupId "$(sqlMsiGroupId)" -servicePrincipal "$(sqlMsiServicePrincipalId)"'
+
+  - task: AzureCLI@2
+    displayName: Certify - UI App
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-AppPermissions.ps1'
+      scriptType: ps
+      arguments: '-permissions "$(uiApp)" -appId "$(uiAppClientId)"'
+
+  - task: AzureCLI@2
+    displayName: Certify - API App
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-AppPermissions.ps1'
+      scriptType: ps
+      arguments: '-permissions "$(apiApp)" -appId $(apiAppClientId)'
+
+  - task: AzureCLI@2
+    displayName: Certify - Flow App
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-AppPermissions.ps1'
+      scriptType: ps
+      arguments: '-permissions "$(flowApp)" -appId $(flowAppClientId)'
+
+  - task: AzureCLI@2
+    displayName: Certify - SAP App
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-AppPermissions.ps1'
+      scriptType: ps
+      arguments: '-permissions "$(sapApp)" -appId $(sapAppClientId)'
+
+  - task: AzureCLI@2
+    displayName: Certify - Analytics App
+    inputs:
+      azureSubscription: "${{ parameters.serviceConnection }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-AppPermissions.ps1'
+      scriptType: ps
+      arguments: '-permissions "$(analyticsApp)" -appId $(analyticsAppClientId)'
+
+  - task: AzurePowerShell@4
+    displayName: Certify - AAS App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(aasAppClientId)" -clientSecret "$(aasAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - AKS AAD Profile Server App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(aksAadProfileServerAppID)" -clientSecret "$(aksAadProfileServerAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - AKS Service Principal Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(aksServicePrincipalProfileClientId)" -clientSecret "$(aksServicePrincipalProfileSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - Analytics Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(analyticsAppClientId)" -clientSecret "$(analyticsAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - API Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(apiAppClientId)" -clientSecret "$(apiAppClientSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - APIM Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(apimAppClientId)" -clientSecret "$(apimAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - APIM Dev Portal Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(apimDevPortalAppClientId)" -clientSecret "$(apimDevPortalAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - Blockchain Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(bcAppClientId)" -clientSecret "$(bcAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - Flow Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(flowAppClientId)" -clientSecret "$(flowAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - PowerBI Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(powerBIAppID)" -clientSecret "$(powerBIAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - SAP Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(sapAppClientId)" -clientSecret "$(sapAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - UI Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(uiAppClientId)" -clientSecret "$(uiAppSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Certify - Availability Client App
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Certify/Validate-Apps.ps1"
+      ScriptArguments: '-clientId "$(availabilityClientId)" -clientSecret "$(availabilityClientSecret)" -tenant "$(tenant)"'
+      azurePowerShellVersion: LatestVersion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

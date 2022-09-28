@@ -1,0 +1,17 @@
+steps:
+ - task: AzureResourceGroupDeployment@2
+   displayName: AAS - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Analysis Services/deploy.json'
+     overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -analysisServicesName "$(analysisServicesName)" -skuName "$(aasSkuName)" -skuTier "$(aasSku)" -aasAdminMembers "$(aasAdminMembers)"'
+
+ - task: AzurePowerShell@4
+   displayName: AAS - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(analysisServicesName)"'
+     azurePowerShellVersion: LatestVersion

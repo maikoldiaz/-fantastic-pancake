@@ -1,0 +1,146 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "eastus",
+                "westus2",
+                "japaneast",
+                "northeurope",
+                "westeurope",
+                "southeastasia"
+            ],
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "isDev": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "deployScriptUpdateTag": {
+            "type": "string",
+            "defaultValue": "[if(parameters('isDev'), utcNow(), '')]"
+        },
+        "consortiumName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 48
+        },
+        "serviceTier": {
+            "type": "string",
+            "allowedValues": [
+                "Development",
+                "Business",
+                "Enterprise"
+            ]
+        },
+        "contactEmail": {
+            "type": "string"
+        },
+        "isMigration": {
+            "type": "bool"
+        },
+        "migrationBlobKey": {
+            "type": "secureString",
+            "defaultValue": ""
+        },
+        "migrationSasToken": {
+            "type": "secureString",
+            "defaultValue": ""
+        },
+        "migrationExtractDataUrl": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "crossTenant": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "applicationResourceName": {
+            "type": "string",
+            "defaultValue": "7f48c6af64dd4728806a6c12b7db1c40"
+        },
+        "managedResourceGroupId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "managedIdentity": {
+            "type": "object",
+            "defaultValue": {}
+        }
+    },
+    "variables": {
+        "managedResourceGroupId": "[if(empty(parameters('managedResourceGroupId')),concat(subscription().id,'/resourceGroups/',take(concat(resourceGroup().name,'-',uniquestring(resourceGroup().id),uniquestring(parameters('applicationResourceName'))),90)),parameters('managedResourceGroupId'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-06-01",
+            "name": "pid-CBC371CC-5052-479B-B48E-51BB779545E4",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": []
+              }
+            }
+        },
+        {
+            "type": "Microsoft.Solutions/applications",
+            "apiVersion": "2017-09-01",
+            "location": "[resourceGroup().Location]",
+            "kind": "MarketPlace",
+            "name": "[parameters('applicationResourceName')]",
+            "plan": {
+                "name": "qbs-abs-migration",
+                "product": "quorum-blockchain-service-preview",
+                "publisher": "consensys",
+                "version": "0.9.1"
+            },
+            "identity": "[if(empty(parameters('managedIdentity')),json('null'),parameters('managedIdentity'))]",
+            "properties": {
+                "managedResourceGroupId": "[variables('managedResourceGroupId')]",
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "isDev": {
+                        "value": "[parameters('isDev')]"
+                    },
+                    "deployScriptUpdateTag": {
+                        "value": "[parameters('deployScriptUpdateTag')]"
+                    },
+                    "consortiumName": {
+                        "value": "[parameters('consortiumName')]"
+                    },
+                    "serviceTier": {
+                        "value": "[parameters('serviceTier')]"
+                    },
+                    "contactEmail": {
+                        "value": "[parameters('contactEmail')]"
+                    },
+                    "isMigration": {
+                        "value": "[parameters('isMigration')]"
+                    },
+                    "migrationBlobKey": {
+                        "value": "[parameters('migrationBlobKey')]"
+                    },
+                    "migrationSasToken": {
+                        "value": "[parameters('migrationSasToken')]"
+                    },
+                    "migrationExtractDataUrl": {
+                        "value": "[parameters('migrationExtractDataUrl')]"
+                    },
+                    "crossTenant": {
+                        "value": "[parameters('crossTenant')]"
+                    }
+                },
+                "jitAccessPolicy": null
+            }
+        }
+    ]
+}

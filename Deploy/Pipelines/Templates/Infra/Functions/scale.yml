@@ -1,0 +1,108 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Scale - UI ASP
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(appServicePlanNameUI)" -type "$(appserviceplan)" -tier "$(appServicePlanUITier)" -workerSize "$(appServicePlanUIWorkerSize)" -numberOfworkers "$(appServicePlanUIWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appServicePlan}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - ASP
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(appServicePlanName)" -type "$(appserviceplan)" -tier "$(appServicePlanTier)" -workerSize "$(appServicePlanWorkerSize)" -numberOfworkers "$(appServicePlanWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appServicePlan}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Shared ASP
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(sharedAppServicePlanName)" -type "$(appserviceplan)" -tier "$(appServicePlanSharedTier)" -workerSize "$(appServicePlanSharedWorkerSize)" -numberOfworkers "$(appServicePlanSharedWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appServicePlan}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Reporting ASP
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(appServicePlanNameReporting)" -type "$(appserviceplan)" -tier "$(appServicePlanRepTier)" -workerSize "$(appServicePlanRepWorkerSize)" -numberOfworkers "$(appServicePlanRepWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appServicePlan}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Calculate FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(calFunctionAppName)" -numberOfworkers "$(calFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Blockchain FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(bcFunctionAppName)" -numberOfworkers "$(bcFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Homologate FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(transformFunctionAppName)" -numberOfworkers "$(transformFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Ownership FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(ownershipFunctionAppName)" -numberOfworkers "$(ownershipFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Deadletter FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(dlFunctionAppName)" -numberOfworkers "$(dlFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Availability FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(availabilityFunctionAppName)" -numberOfworkers "$(availabilityFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Delta FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(deltaFunctionAppName)" -numberOfworkers "$(deltaFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Scale - Reporting FA
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Scale-Service.ps1'
+      ScriptArguments: '-type "$(webapp)" -resourceGroupName "$(resourceGroupName)" -resourceName "$(reportingFunctionAppName)" -numberOfworkers "$(reportingFunctionAppWorkerCount)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.appService}}', 'true'))

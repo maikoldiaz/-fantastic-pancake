@@ -1,0 +1,89 @@
+﻿// _chart.scss
+
+#{$ep}-chart {
+    width:100%;
+    margin: auto;
+    &__leg{
+        padding-right: pxToRem(10);
+        margin-top:pxToRem(-70);
+        min-width: pxToRem(150);
+        max-width: pxToRem(250);
+        max-height: pxToRem(200);
+        &-itm{
+            display: flex;
+            justify-content: space-between;
+            flex-flow: row nowrap;
+            color:$chart-leg;
+            font-size: pxToRem(14);
+            margin-bottom: pxToRem(14);
+        }
+        &-title{
+            word-break: break-all;
+            position: relative;
+            padding-left: pxToRem(22);
+        }
+        &-val{
+            color:$chart-val;
+            font-family: $font-family-sb;
+            font-size: pxToRem(16);
+            margin-left: pxToRem(20);
+            float: right;
+
+            &:after{
+                @extend .clearfix;
+            }
+        }
+
+        &-typ{
+            &-square{
+                position: absolute;
+                top:pxToRem(5);
+                left: 0;
+                @include mix-square(pxToRem(12));
+                margin-right: pxToRem(8);
+            }
+        }
+    }
+
+    &-wrap{
+        border: solid 1px map-get($gray, 'D4D4D4');
+        border-radius: pxToRem(5);
+        background: $white;
+        overflow: hidden;
+        &__header{
+            background-color: map-get($gray, 'F3F3F4');
+            padding: pxToRem(12) pxToRem(15);
+            border-bottom: solid 1px map-get($gray, 'D4D4D4');
+        }
+
+        &__title{
+            font-size: pxToRem(20);
+            color:$ep-font-color;
+            text-transform: uppercase;
+            font-family: $font-family-sb;
+        }
+        &__body{
+            padding: pxToRem(30);
+            height: pxToRem(450);
+        }
+        &__ph{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: pxToRem(390);
+            img{
+                object-fit: contain;
+                width: 100%;
+                height: pxToRem(300);
+            }
+        }
+    }
+
+    &--leg-b{
+        #{$ep}-chart{
+            &__leg{
+                margin-top: 0;
+            }
+        }
+    }
+}

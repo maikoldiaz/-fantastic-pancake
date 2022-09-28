@@ -1,0 +1,537 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowAlphanumericWithSpecialCharactersAndSpaceMessage" xml:space="preserve">
+    <value>5009-Only alphanumeric spaces and special characters like ':' '_' '-' are allowed</value>
+  </data>
+  <data name="CategoryCreatedSuccessfully" xml:space="preserve">
+    <value>Category created successfully</value>
+  </data>
+  <data name="CategoryElementCreatedSuccessfully" xml:space="preserve">
+    <value>Category element created successfully</value>
+  </data>
+  <data name="CategoryElementNameAlreadyExists" xml:space="preserve">
+    <value>5006-The category element name already exists</value>
+  </data>
+  <data name="CategoryElementNameRequired" xml:space="preserve">
+    <value>5002-Category element name is required</value>
+  </data>
+  <data name="CategoryElementNotExists" xml:space="preserve">
+    <value>5051-The category element does not exist</value>
+  </data>
+  <data name="CategoryElementUpdatedSuccessfully" xml:space="preserve">
+    <value>Category element updated successfully</value>
+  </data>
+  <data name="CategoryGrouperIsRequired" xml:space="preserve">
+    <value>5029-The category grouper is required</value>
+  </data>
+  <data name="CategoryIdRequired" xml:space="preserve">
+    <value>5031-The category id is required</value>
+  </data>
+  <data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>5005-The category name must be unique</value>
+  </data>
+  <data name="CategoryNameRequired" xml:space="preserve">
+    <value>5001-Category name is required</value>
+  </data>
+  <data name="CategoryNotExist" xml:space="preserve">
+    <value>The category does not exist</value>
+  </data>
+  <data name="CategoryNotExists" xml:space="preserve">
+    <value>5050-The category does not exist</value>
+  </data>
+  <data name="CategoryStatusIsRequired" xml:space="preserve">
+    <value>5010-The category status is required</value>
+  </data>
+  <data name="CategoryUpdateSuccessfully" xml:space="preserve">
+    <value>Category updated successfully</value>
+  </data>
+  <data name="DescriptionMaxLength1000" xml:space="preserve">
+    <value>5007-The description can contain maximum of 1000 characters</value>
+  </data>
+  <data name="DuplicateEntityInsert" xml:space="preserve">
+    <value>5026-This entity already exists</value>
+  </data>
+  <data name="DuplicateNodeStorageLocationId" xml:space="preserve">
+    <value>5047-The node storage location id must be unique</value>
+  </data>
+  <data name="DuplicateStorageLocationProductId" xml:space="preserve">
+    <value>5048-The node storage location product id must be unique</value>
+  </data>
+  <data name="ElementDoesNotExist" xml:space="preserve">
+    <value>The category element does not exist</value>
+  </data>
+  <data name="ElementStatusRequired" xml:space="preserve">
+    <value>5032-The category element status is required</value>
+  </data>
+  <data name="EntityNameMustBeUnique" xml:space="preserve">
+    <value>5025-The entity name must be unique</value>
+  </data>
+  <data name="EntityNotExists" xml:space="preserve">
+    <value>5028-The related entity does not exist</value>
+  </data>
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>5027-The entity does not exist</value>
+  </data>
+  <data name="HomologationDoesNotExists" xml:space="preserve">
+    <value>Homologation does not exist</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_GROUPVALIDATION" xml:space="preserve">
+    <value>5053-A homologation must have at least one homologation group</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_MAPPINGVALIDATION" xml:space="preserve">
+    <value>5055-A homologation group must have at least one data mapping</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_OBJECTSVALIDATION" xml:space="preserve">
+    <value>5054-A homologation group must have at least one homologation of objects</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_SAMESYSTEMVALIDATION" xml:space="preserve">
+    <value>5067-The input and output system should be different</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_SUCCESS" xml:space="preserve">
+    <value>Homologation created successfully</value>
+  </data>
+  <data name="HOMOLOGATION_CREATE_SYSTEMSVALIDATION" xml:space="preserve">
+    <value>5066-At least one of the input or output systems must correspond to the TRUE system</value>
+  </data>
+  <data name="HOMOLOGATION_DATASOURCEID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5059-The data source identifier in the TRUE system is mandatory</value>
+  </data>
+  <data name="HOMOLOGATION_DESTINATIONSYSTEMID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5058-The destination system identifier is mandatory</value>
+  </data>
+  <data name="HOMOLOGATION_DESTINATIONVALUE_LENGTHVALIDATION" xml:space="preserve">
+    <value>5065-The value in the destination system can contain a maximum of 100 characters</value>
+  </data>
+  <data name="HOMOLOGATION_DESTINATIONVALUE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5066-The value in the destination system is mandatory</value>
+  </data>
+  <data name="HOMOLOGATION_DUPLICATEDESTINATIONVALUE" xml:space="preserve">
+    <value>5072-The destination value used by the mapping should be unique for the same system</value>
+  </data>
+  <data name="HOMOLOGATION_DUPLICATEGROUPTYPEID" xml:space="preserve">
+    <value>5068-Homologation groups should not be repeated</value>
+  </data>
+  <data name="HOMOLOGATION_DUPLICATEOBJECT" xml:space="preserve">
+    <value>5069-Homologation object  should not be repeated</value>
+  </data>
+  <data name="HOMOLOGATION_DUPLICATESOURCEVALUE" xml:space="preserve">
+    <value>5070-The source value used by the mapping should be unique for the same system</value>
+  </data>
+  <data name="HOMOLOGATION_INVALIDSYSTEMID" xml:space="preserve">
+    <value>5071-The related system does not exist</value>
+  </data>
+  <data name="HOMOLOGATION_SAMESOURCEANDDESTINATION" xml:space="preserve">
+    <value>5065-The homologation between this systems already exists</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCEOBJECTNAME_FORMATVALIDATION" xml:space="preserve">
+    <value>5061-The object name in the source system only allows letters without spaces</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCEOBJECTNAME_LENGTHVALIDATION" xml:space="preserve">
+    <value>5060-The object name in the source system can contain a maximum of 30 characters</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCEOBJECTNAME_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5062-The object name in the source system is mandatory</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCESYSTEMID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5057-The source system identifier is mandatory</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCEVALUE_LENGTHVALIDATION" xml:space="preserve">
+    <value>5063-The value in the source system can contain a maximum of 100 characters</value>
+  </data>
+  <data name="HOMOLOGATION_SOURCEVALUE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5064-The value in the source system is mandatory</value>
+  </data>
+  <data name="InvalidNodeId" xml:space="preserve">
+    <value>5040-The node identifier is invalid</value>
+  </data>
+  <data name="InvalidNodeStorageLocations" xml:space="preserve">
+    <value>5041-The node storage location is invalid</value>
+  </data>
+  <data name="InvalidProductLocations" xml:space="preserve">
+    <value>5042-The product is invalid</value>
+  </data>
+  <data name="Max1000Characters" xml:space="preserve">
+    <value>5013-The node description can contain maximum 1000 characters</value>
+  </data>
+  <data name="Max150Characters" xml:space="preserve">
+    <value>5011-The name can contain maximum 150 characters</value>
+  </data>
+  <data name="Max20Characters" xml:space="preserve">
+    <value>5012-The logistic center can contain maximum 20 characters</value>
+  </data>
+  <data name="NameMaxLength150" xml:space="preserve">
+    <value>5004-The name can contain maximum 150 characters</value>
+  </data>
+  <data name="NODECONNECTION_CONNECTION_ALREADYEXISTS" xml:space="preserve">
+    <value>5071-A connection between the nodes already exists​</value>
+  </data>
+  <data name="NODECONNECTION_CONNECTION_NOTFOUND" xml:space="preserve">
+    <value>There is no connection for the origin and destination nodes received​</value>
+  </data>
+  <data name="NODECONNECTION_CREATE_SUCCESS" xml:space="preserve">
+    <value>Connection created successfully</value>
+  </data>
+  <data name="NODECONNECTION_DELETE_CONFLICT" xml:space="preserve">
+    <value>5069-Unable to delete the connection because it has movements​ associated  with it</value>
+  </data>
+  <data name="NODECONNECTION_DELETE_SUCCESS" xml:space="preserve">
+    <value>Connection removed successfully</value>
+  </data>
+  <data name="NODECONNECTION_DESCRIPTION_LENGTHVALIDATION" xml:space="preserve">
+    <value>5067-The description of the node connection should not have more than 300 characters</value>
+  </data>
+  <data name="NODECONNECTION_DESTINATIONNODEID_NOTFOUND" xml:space="preserve">
+    <value>5066-Destination node identifier not found​</value>
+  </data>
+  <data name="NODECONNECTION_DESTINATIONNODEID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5065-The destination node identifier is mandatory</value>
+  </data>
+  <data name="NODECONNECTION_SOURCENODEID_NOTFOUND" xml:space="preserve">
+    <value>5064-Source node identifier not found​</value>
+  </data>
+  <data name="NODECONNECTION_SOURCENODEID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5063-The source node identifier is mandatory</value>
+  </data>
+  <data name="NODECONNECTION_SOURCE_DESTINATION_CANNOTSAME" xml:space="preserve">
+    <value>5070- Not Available</value>
+  </data>
+  <data name="NODECONNECTION_STATUS_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5062-NODECONNECTION_STATUS_REQUIREDVALIDATION</value>
+  </data>
+  <data name="NODECONNECTION_UPDATE_SUCCESS" xml:space="preserve">
+    <value>Connection updated successfully</value>
+  </data>
+  <data name="INVALID_NODE_STATUS_FOR_CONNECTION" xml:space="preserve">
+    <value>Cannot create connections to or from inactive nodes</value>
+  </data>
+  <data name="NodeCreateSuccess" xml:space="preserve">
+    <value>Node created successfully</value>
+  </data>
+  <data name="NodeDoesNotExists" xml:space="preserve">
+    <value>The node does not exist</value>
+  </data>
+  <data name="NodeMustBeActive" xml:space="preserve">
+    <value>5033-The node must be active</value>
+  </data>
+  <data name="NodeNameMustBeUnique" xml:space="preserve">
+    <value>5015-The node name must be unique</value>
+  </data>
+  <data name="NodeNameRequired" xml:space="preserve">
+    <value>5016-The node name is required</value>
+  </data>
+  <data name="NodeSendToSapRequired" xml:space="preserve">
+    <value>5034-The node must have Send To SAP value</value>
+  </data>
+  <data name="NodeShouldHaveAtleastOneStore" xml:space="preserve">
+    <value>5022-A node should have atleast one storage location</value>
+  </data>
+  <data name="NodeStorageLocationIdRequired" xml:space="preserve">
+    <value>5039-The node storage location id is required</value>
+  </data>
+  <data name="NodeStorageLocationMustBeActive" xml:space="preserve">
+    <value>5035-The node storage location must be active</value>
+  </data>
+  <data name="NodeStorageLocationNameRequired" xml:space="preserve">
+    <value>5043-The node storage location name is required</value>
+  </data>
+  <data name="NodeStorageLocationSendToSapRequired" xml:space="preserve">
+    <value>5036-The node storage location must have Send to SAP value</value>
+  </data>
+  <data name="NodeTypeRequired" xml:space="preserve">
+    <value>5017-The node type is required</value>
+  </data>
+  <data name="NodeUpdateSuccess" xml:space="preserve">
+    <value>Node updated successfully</value>
+  </data>
+  <data name="NotNullConstraintsError" xml:space="preserve">
+    <value>5030-The entity does not exist</value>
+  </data>
+  <data name="OneOrMoreProductDoesNotBelongToPassedStorageLocation" xml:space="preserve">
+    <value>5046-One or more product does not belong to storage location</value>
+  </data>
+  <data name="OneOrMoreProductDoesNotBelongToStorageLocation" xml:space="preserve">
+    <value>5045-One or more product does not belong to storage location</value>
+  </data>
+  <data name="OneOrMoreStorageLocationDoesNotExists" xml:space="preserve">
+    <value>5044-One or more storage location does not exist</value>
+  </data>
+  <data name="OnlyAlphaNumericAllowed" xml:space="preserve">
+    <value>5003-Only alphanumeric characters are allowed</value>
+  </data>
+  <data name="OperatorRequired" xml:space="preserve">
+    <value>5019-The operator is required</value>
+  </data>
+  <data name="ProductIdRequired" xml:space="preserve">
+    <value>5038-The product id is required</value>
+  </data>
+  <data name="ProductMustBeActive" xml:space="preserve">
+    <value>5037-The product must be active</value>
+  </data>
+  <data name="SapCodeRequired" xml:space="preserve">
+    <value>5020-The SAP code is required</value>
+  </data>
+  <data name="SegmentRequired" xml:space="preserve">
+    <value>5018-The segment is required</value>
+  </data>
+  <data name="StorageNameMustBeUnique" xml:space="preserve">
+    <value>5024-The storage name must be unique</value>
+  </data>
+  <data name="StoreShouldHaveAtLeastOneProduct" xml:space="preserve">
+    <value>5023-A storage location should have atleast one product</value>
+  </data>
+  <data name="TypeRequired" xml:space="preserve">
+    <value>5021-The type is required</value>
+  </data>
+  <data name="HOMOLOGATION_NOTFOUND" xml:space="preserve">
+    <value>6011-There are no homologations with that ID</value>
+  </data>
+  <data name="HOMOLOGATION_GROUP_NOTFOUND" xml:space="preserve">
+    <value>6010-There are no homologation groups  with that ID</value>
+  </data>
+  <data name="RegisterFileActionTypeRequired" xml:space="preserve">
+    <value>5075-Register file action type is required.</value>
+  </data>
+  <data name="RegisterFileBlobPathMaxLength500" xml:space="preserve">
+    <value>5077-The blob path of register blob path should not have more than 500 characters</value>
+  </data>
+  <data name="RegisterFileBlobPathRequired" xml:space="preserve">
+    <value>5076-Register file blob path is required.</value>
+  </data>
+  <data name="RegisterFileNameRequired" xml:space="preserve">
+    <value>5074-Register file name is required.</value>
+  </data>
+  <data name="RegisterFilesUploadedSuccessfully" xml:space="preserve">
+    <value>5078-Regiater files uploaded successfully.</value>
+  </data>
+  <data name="RegisterFileUploadFileIdRequired" xml:space="preserve">
+    <value>5073-Register file upload file id is required.</value>
+  </data>
+  <data name="RegisterFileUploadIdMustBeUnique" xml:space="preserve">
+    <value>5072-File upload id must be unique.</value>
+  </data>
+  <data name="OnlyGuidIsAllowed" xml:space="preserve">
+    <value>5079-Only guid is allowed in register file upload id.</value>
+  </data>
+  <data name="NODE_ASSOCIATION_SUCCESS" xml:space="preserve">
+    <value>5072-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</value>
+  </data>
+  <data name="OWNERID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5080-The owner identifier is mandatory</value>
+  </data>
+  <data name="OWNERSHIPPERCENTAGE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5081-The ownership percentage is mandatory</value>
+  </data>
+  <data name="OWNERSHIPVALUE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5082-The ownership value is mandatory</value>
+  </data>
+  <data name="NODECONNECTION_PRODUCTID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5083-The product identifier is mandatory</value>
+  </data>
+  <data name="CommentMaxLength1000" xml:space="preserve">
+    <value>The comments can contain maximum of 1000 characters.</value>
+  </data>
+  <data name="OperationalCutOffSaveSuccess" xml:space="preserve">
+    <value>Operational cutoff saved successfully.</value>
+  </data>
+  <data name="CommentsRequired" xml:space="preserve">
+    <value>The comments are required.</value>
+  </data>
+  <data name="NODECONNECTIONPRODUCT_UPDATE_SUCCESS" xml:space="preserve">
+    <value>5085-Updated successfully</value>
+  </data>
+  <data name="NODESTORAGELOCATIONPRODUCT_UPDATE_SUCCESS" xml:space="preserve">
+    <value>5086-Updated successfully</value>
+  </data>
+  <data name="INVALID_PRIORITY" xml:space="preserve">
+    <value>5087-The priority should be a value between 1 and 10</value>
+  </data>
+  <data name="INVENTORY_TANK_LENGTHVALIDATION" xml:space="preserve">
+    <value>5083-Tank Name should not have more than 20 characters.</value>
+  </data>
+  <data name="NodeTypeDoesNotExist" xml:space="preserve">
+    <value>5090-Node Type does not exist</value>
+  </data>
+  <data name="OperatorDoesNotExist" xml:space="preserve">
+    <value>5091-Operator does not exist</value>
+  </data>
+  <data name="SegmentDoesNotExist" xml:space="preserve">
+    <value>5092-Segment does not exist</value>
+  </data>
+  <data name="NODECONNECTIONPRODUCTOWNERS_UPDATE_SUCCESS" xml:space="preserve">
+    <value>5093-Updated successfully</value>
+  </data>
+  <data name="NODECONNECTION_PRODUCT_NOTEXISTS" xml:space="preserve">
+    <value>5094-Node connection doesn't have that product</value>
+  </data>
+  <data name="InvalidGroupType" xml:space="preserve">
+    <value>The Group Type is invalid</value>
+  </data>
+  <data name="InvalidInputType" xml:space="preserve">
+    <value>Given Input type is invalid.</value>
+  </data>
+  <data name="HOMOLOGATION_GROUP_DELETE_SUCCESS" xml:space="preserve">
+    <value>Homologation group successfully deleted</value>
+  </data>
+  <data name="HOMOLOGATION_UPDATE_SUCCESS" xml:space="preserve">
+    <value>Updated Successfully</value>
+  </data>
+  <data name="RetryMessageError" xml:space="preserve">
+    <value>It is not possible to retry messages related to technical exceptions. These types of exceptions must be resolved in the source system. Uncheck messages that have the option retry on the grid disabled</value>
+  </data>
+  <data name="CategoryNameAlreadyExist" xml:space="preserve">
+    <value>El nombre de la categoría ya existe.</value>
+  </data>
+  <data name="NODECOSTCENTER_STATUS_REQUIREDVALIDATION" xml:space="preserve">
+    <value>6012 - The node cost center status is required "IsActive"</value>
+  </data>
+  <data name="NODECOSTCENTER_SOURCENODE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>6013 - The node cost center source node is required "SourceNodeId"</value>
+  </data>
+  <data name="NODECOSTCENTER_MOVEMENTTYPE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>6015 - The node cost center movement type is required "MovementTypeId"</value>
+  </data>
+  <data name="NODECOSTCENTER_COSTCENTER_REQUIREDVALIDATION" xml:space="preserve">
+    <value>6016 - The node cost center costCenter is required "CostCenterId"</value>
+  </data>
+  <data name="NODECOSTCENTER_CREATE_SUCCESS" xml:space="preserve">
+    <value>6016 - Nodo-Centro created successfully</value>
+  </data>
+  <data name="NODECOSTCENTER_ALREADYEXISTSACTIVE" xml:space="preserve">
+    <value>6017 - The node cost center already exists and is active</value>
+  </data>
+  <data name="NODECOSTCENTER_ALREADYEXISTSINACTIVE" xml:space="preserve">
+    <value>6018 - The node cost center already exists and is inactive</value>
+  </data>
+  <data name="NODECOSTCENTER_NOTEXISTS" xml:space="preserve">
+    <value>6019 - The node cost center doesn't exists</value>
+  </data>
+  <data name="NODECOSTCENTER_DELETE_SUCCESS" xml:space="preserve">
+    <value>6020 - node cost center deleted successfully</value>
+  </data>
+  <data name="NODECOSTCENTER_UPDATE_SUCCESS" xml:space="preserve">
+    <value>6021 - nodo cost center updated succesfully</value>
+  </data>
+  <data name="NODECOSTCENTER_HASMOVEMENTS" xml:space="preserve">
+    <value>6022 - node cost center has movements</value>
+  </data>
+  <data name="START_DATE_MUST_BE_LESS_THAN_END_DATE" xml:space="preserve">
+    <value>6024-Start Date must be less than End Date</value>
+  </data>
+</root>

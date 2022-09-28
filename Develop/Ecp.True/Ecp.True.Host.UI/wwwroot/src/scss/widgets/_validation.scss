@@ -1,0 +1,71 @@
+﻿// _validation.scss
+
+#{$ep}-validation {
+    $ftr:&;
+    position: relative;
+
+    &__header{
+        position: relative;
+        font-size: pxToRem(16);
+        font-family: $font-family-sb;
+        margin-bottom: pxToRem(25);
+    }
+
+    &__lst{
+        position: relative;
+        border-left: dashed 2px #D3D3D3;
+        padding-left: pxToRem(35);
+    }
+
+    &__itm{
+        position: relative;
+        margin-bottom: pxToRem(25);
+        min-height: pxToRem(30);
+
+        &-icn{
+            position: absolute;
+            left: pxToRem(-46);
+            top: pxToRem(0);
+            @include mix-circle(pxToRem(20));
+            font-size: pxToRem(12);
+            text-align: center;
+            line-height: pxToRem(20);
+            color: $white;
+
+            &.success{
+                background-color: $success;
+            }
+
+            &.error{
+                background-color: $error;
+            }
+
+            &.warning{
+                background-color: transparent;
+                & .fa-exclamation-triangle{
+                    background-color: $white;
+                }
+            }
+        }
+
+        &-title{
+            font-size: pxToRem(14);
+        }
+
+        &-desc{
+            margin: 0;
+            font-size: pxToRem(14);
+        }
+
+        &-body{
+            padding: pxToRem(20) 0 pxToRem(20) pxToRem(45);
+        }
+        &:last-child{
+            margin-bottom: 0;
+        }
+
+        &-tbl{
+            width: 100%;
+        }
+    }
+}

@@ -1,0 +1,62 @@
+// React Tooltip Overrides
+#{$ep}-tooltip{
+    $tip:&;
+    opacity: 1;
+    z-index: 10000;
+    &.rc-tooltip-hidden{
+        display: none;
+    }
+
+    & .rc-tooltip-inner{
+        font-family: $font-family;
+        padding: pxToRem(12) pxToRem(14);
+        font-size: pxToRem(14);
+        border-radius: pxToRem(6);
+        background-color: map-get($gray, 'F7F7F7');
+    }
+
+    &.rc-tooltip-placement-bottom{
+        .rc-tooltip-arrow{
+            border-bottom-color: map-get($gray, 'F7F7F7');
+        }
+    } 
+
+    &.rc-tooltip-placement-bottomLeft{
+        .rc-tooltip-arrow{
+            border-bottom-color: map-get($gray, 'F7F7F7');
+        }
+    }
+
+    &.rc-tooltip-placement-topLeft{
+        .rc-tooltip-arrow{
+            border-top-color: map-get($gray, 'F7F7F7');
+        }
+    }
+
+    &--lt{
+        & .rc-tooltip-inner{
+            background-color: $white;
+            border: solid 1px map-get($gray, 'C1C1C1');
+            color:$font-color;
+        }
+        &.rc-tooltip-placement-bottom .rc-tooltip-arrow {
+            @include mix-square(pxToRem(10));
+            border:1px solid map-get($gray, 'C1C1C1');
+            background-color: $white;
+            transform: rotate(45deg);
+            border-right: none;
+            border-bottom: none;
+        }
+    }
+    &--ar-l{
+        &.rc-tooltip-placement-bottom .rc-tooltip-arrow{
+            left: pxToRem(50);
+        }
+    }
+    &__body{
+        text-transform: lowercase;
+        &:first-letter{
+            text-transform: uppercase;
+        }
+    }
+}

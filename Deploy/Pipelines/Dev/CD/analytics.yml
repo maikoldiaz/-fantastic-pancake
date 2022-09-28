@@ -1,0 +1,87 @@
+variables:
+- group: true-secrets-nonprd-shared
+- group: true-secrets-dev
+- group: true-network-dev
+- group: true-automation
+- template: ../../Templates/Variables/package.yml
+- template: ../../Templates/Variables/infra.yml
+- template: ../../Templates/Variables/non-prod.yml
+
+trigger:
+      branches :
+       include: 
+        - master
+      paths:
+        include:
+         - Develop/Ecp.True/DI/Ecp.True.DI.Analytics/*
+
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAnalytics
+    timeoutInMinutes: 30 
+    pool:
+     vmImage: 'ubuntu-latest'
+    steps:
+    - template: ../../Templates/package.yml
+      parameters:
+        infra: 'true'
+
+    - template: ../../Templates/Build/aks.build.yml
+      parameters:
+        projectName: $(analyticsProjectName)
+        dockerfile: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics/Dockerfile'
+        path: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics'
+        analytics: 'true'
+
+- stage: Deploy
+  jobs:
+  - deployment: Analytics
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+              
+          - template: ../../Templates/Deploy/aks.deploy.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              azureResourceGroup: $(sharedResourceGroupName)
+              kubernetesCluster: $(aksClusterName)
+              namespace: $(aksNamespace)
+              projectName: $(analyticsProjectName)
+              releaseName: $(analyticsProjectName)
+              chartName: $(imageRegistryName)/$(analyticsProjectName)
+              tag: '$(build.buildId)'
+              cpuLimits: $(apiMediumCpuLimits)
+              memoryLimits: $(apiMediumMemoryLimits)
+              memoryRequests: $(apiMediumMemoryRequests)
+              cpuRequests: $(apiMediumCpuRequests)
+              replicaCount: $(apiMediumReplicaCount)
+              analytics: 'true'
+  
+          - template: ../../Templates/Infra/apim.refresh.yml
+            parameters:
+              azureSubscriptionName : $(serviceConnection)
+              resourceGroupName : $(sharedResourceGroupName)
+              swaggerUrl: $(openAPIUrlAnalytics)
+              apiDisplayName: $(apimAnalyticsDisplayName)
+              apimApiPath: $(analyticsPath)
+              serviceUrl: $(analyticsApiUrl)
+
+          - template: ../../Templates/Deploy/automation.yml 
+            parameters:
+              azureSubscriptionName : '$(serviceConnection)'
+              canExecuteAutomation: '$(dev)'
+              keyVaultName: '$(keyVault)'
+              automation: 'true'

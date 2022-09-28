@@ -1,0 +1,31 @@
+variables:
+  - template: ./Templates/Variables/package.yml
+  - template: ./Templates/Variables/infra.yml
+
+schedules:
+# M-F 3:00 AM (UTC + 5:30) India
+- cron: "30 22 * * *"
+  displayName: Daily Deployments Deletion
+  branches:
+    include:
+    - master
+
+# set pr trigger to none to prevent daily build running against master branch changess
+pr: none
+
+trigger: none
+
+stages:
+- stage: DeleteDeployments
+  jobs:
+  - job: Delete
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+     - task: AzurePowerShell@4
+       displayName: 'Delete Deployments'
+       inputs:
+         azureSubscription: $(serviceConnection)
+         ScriptPath: '$(infraScriptPath)/Delete-Deployments.ps1'
+         ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentsLimit "$(deploymentslimit)"'
+         azurePowerShellVersion: LatestVersion

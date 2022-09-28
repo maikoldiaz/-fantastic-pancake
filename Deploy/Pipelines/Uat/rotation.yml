@@ -1,0 +1,16 @@
+variables:
+- group: true-threshold
+- group: true-secrets-nonprd-shared
+- group: true-secrets-uat
+- group: true-network-uat
+- group: true-mq-uat
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/non-prod.yml
+  
+trigger: none
+pr: none
+  
+stages:
+- template: ../Templates/Stage/infra.build.yml
+- template: ../Templates/Stage/key.rotation.yml

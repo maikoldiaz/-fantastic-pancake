@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# S3242: Method parameters should be declared with base types
+dotnet_diagnostic.S3242.severity = none
+
+# S1067: Expressions should not be too complex
+dotnet_diagnostic.S1067.severity = none

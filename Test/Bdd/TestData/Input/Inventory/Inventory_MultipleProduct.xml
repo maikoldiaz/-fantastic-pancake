@@ -1,0 +1,59 @@
+﻿<INVENTORIES>
+  <SYSTEM>SINOPER</SYSTEM>
+  <INVENTORY ACTION="INSERT">
+    <LOCATIONID>AYACUCHO</LOCATIONID>
+    <LOCATIONTYPE>CRUD</LOCATIONTYPE>
+    <CASE>Operativo</CASE>
+    <DATE>2019-12-03</DATE>
+    <COMMODITIES>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDOS IMPORTADOS</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0821020190815</BATCHID>
+        <ORDEN>2</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>100000</VALUE>
+            <UOM>Bbl</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100000</VALUE>
+              <UOM>Bbl</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+	  <COMMODITY>
+        <COMMODITYNAME>CRUDO CAMPO MAMBO</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0821020190815</BATCHID>
+        <ORDEN>2</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>100000</VALUE>
+            <UOM>Bbl</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100000</VALUE>
+              <UOM>Bbl</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+    </COMMODITIES>
+  </INVENTORY>
+</INVENTORIES>

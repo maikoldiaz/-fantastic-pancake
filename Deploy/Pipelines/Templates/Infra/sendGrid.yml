@@ -1,0 +1,18 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Sendgrid - Accept Terms
+    inputs:
+       azureSubscription: "${{ parameters.azureSubscriptionName }}"
+       ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Terms/Accept-Terms.ps1'
+       ScriptArguments: '-publisher "Sendgrid" -product "sendgrid_azure" -name "free"'
+       azurePowerShellVersion: LatestVersion
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Sendgrid - ARM
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: "${{ parameters.resourceGroupName }}"
+      location: "${{ parameters.deployLocation }}"
+      csmFile: "$(System.ArtifactsDirectory)/Drop/Templates/Send Grid/deploy.json"
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -accountName "$(sendGridName)" -accountPassword "$(sendGridPassword)"'
+      deploymentOutputs: armOut

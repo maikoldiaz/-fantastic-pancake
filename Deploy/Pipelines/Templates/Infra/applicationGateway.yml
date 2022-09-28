@@ -1,0 +1,38 @@
+steps:
+ - template: ../Infra/fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '$(serviceConnection)'
+     keyVaultName: '$(keyVaultShared)'
+     secretsFilter: '*'
+
+ - task: AzurePowerShell@4
+   displayName: AG - Role Assignment
+   inputs:
+     azureSubscription: "$(sharedServiceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-AzRoleAssignment.ps1'
+     ScriptArguments: '-ObjectId "$(appGatewayServiceObjectId)" -RoleDefinitionName "Network Contributor" -ResourceGroupName "$(appGatewayResourceGroupName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: AG - Configure
+   inputs:
+     azureSubscription: "$(sharedServiceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-AppGatewayConfigurations.ps1'
+     ScriptArguments: '-httpListenerHostName "$(dnsNameForUI)" -BackendHttpHostName "$(dnsNameForUI)" -ResourceGroupName "$(appGatewayResourceGroupName)" -AppGatewayName "$(appGatewaySharedName)" -CertPwd "$(sslCertPasswordForUI)" -CertFilepath "$(System.ArtifactsDirectory)/Drop/$(dnsNameForUI).pfx" -backendPoolName "$(appGatewaybackendPoolName)" -BackendFqdns "$(appServiceNameUI).azurewebsites.net" -frontendportName "$(appGatewayFrontEndportName)" -httpListenerName "$(appGatewayListenerName)" -probeConfigName "$(appGatewayProbeConfigName)" -backendHttpSettingsName "$(appGatewayBackendHttpSettingsName)" -RuleName "$(appGatewayRuleName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: AG - UI Custom Domain
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-CustomDomain.ps1'
+     ScriptArguments: ' -ResourceGroupName "${{ parameters.resourceGroupName }}" -WebAppName "$(appServiceNameUI)" -CustomHostName "$(dnsNameForUI)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: AG - UI SSL Binding
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bind-SSL.ps1'
+     ScriptArguments: '-WebAppName "$(appServiceNameUI)" -ResourceGroupName "${{parameters.resourceGroupName}}" -DnsName "$(dnsNameForUI)" -CertificateFilePath $(System.ArtifactsDirectory)/Drop/$(dnsNameForUI).pfx -CertificatePassword "$(sslCertPasswordForUI)"'
+     azurePowerShellVersion: LatestVersion

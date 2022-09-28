@@ -1,0 +1,5269 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "factoryName": {
+      "type": "string",
+      "metadata": "Data Factory name"
+    },
+    "AzureBlobStorage_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'AzureBlobStorage'"
+    },
+    "LS_AzureSqlDB_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'LS_AzureSqlDB'"
+    }
+  },
+  "variables": {
+    "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_DeltaNodeApprover')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "description": "Use to upload the excel of delta node approvers to database",
+        "activities": [
+          {
+            "name": "Copy Delta Node Approval Excel",
+            "type": "Copy",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "ExcelSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink",
+                "preCopyScript": "delete from admin.DeltaNodeApproval",
+                "disableMetricsCollection": false
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "IdNodo / NodeId",
+                      "type": "Int64",
+                      "physicalType": "String"
+                    },
+                    "sink": {
+                      "name": "NodeId",
+                      "type": "Int32",
+                      "physicalType": "int"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Nivel / Level",
+                      "type": "Int64",
+                      "physicalType": "String"
+                    },
+                    "sink": {
+                      "name": "Level",
+                      "type": "Int32",
+                      "physicalType": "int"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Aprobadores / Approvers",
+                      "type": "String",
+                      "physicalType": "String"
+                    },
+                    "sink": {
+                      "name": "Approvers",
+                      "type": "String",
+                      "physicalType": "nvarchar"
+                    }
+                  }
+                ],
+                "typeConversion": true,
+                "typeConversionSettings": {
+                  "allowDataTruncation": true,
+                  "treatBooleanAsNumber": false
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DataApprovers",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "AzureSqlDataApprovers",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DataApprovers')]",
+        "[concat(variables('factoryId'), '/datasets/AzureSqlDataApprovers')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_OperativeMovementsHistory')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "description": " ",
+        "activities": [
+          {
+            "name": "ArchiveCsvFileOnSuccess",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Arch_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Ins_PipelineLog",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "InProgress",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_PipelineLog_Success",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Successful",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_RunId",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_UpdateOperativeMovementsRunId]",
+              "storedProcedureParameters": {
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnSuccess",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnSuccess",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "LoadDataCsvToStgSql",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Ins_PipelineLog",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink"
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "STARTTICK_DT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "OperationalDate",
+                      "type": "DateTime"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "DESTINO",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationNode",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "DESTINO_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationNodeType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "MOVEMENT_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "MovementType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ORIGEN",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceNode",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ORIGEN_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceNodeType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PRODUCTO",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PRODUCTO_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProductType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "RELACION_TT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "TransferPoint",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Agua_Campo",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "FieldWaterProduction",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Campo",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceField",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Casos Correlacionados",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "RelatedSourceField",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "VALUE_FL",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "NetStandardVolume",
+                      "type": "Decimal"
+                    }
+                  }
+                ]
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_OperativeMovements_SQL",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "LoadDataCsvToSql",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_Insert_OperativeMovements]",
+              "storedProcedureParameters": {
+                "EndDate": {
+                  "value": {
+                    "value": "@pipeline().parameters.EndDate",
+                    "type": "Expression"
+                  },
+                  "type": "DateTime"
+                },
+                "LoadType": {
+                  "value": {
+                    "value": "@pipeline().parameters.LoadType",
+                    "type": "Expression"
+                  },
+                  "type": "Int32"
+                },
+                "StartDate": {
+                  "value": {
+                    "value": "@pipeline().parameters.StartDate",
+                    "type": "Expression"
+                  },
+                  "type": "DateTime"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure_Stage",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError_Stage",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToStgSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure_Stage",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure_Stage",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovements_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          }
+        ],
+        "parameters": {
+          "LoadType": {
+            "type": "int",
+            "defaultValue": 1
+          },
+          "StartDate": {
+            "type": "string",
+            "defaultValue": "2016-06-01"
+          },
+          "EndDate": {
+            "type": "string",
+            "defaultValue": "2020-05-31"
+          }
+        },
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DS_Src_OperativeMovements_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Arch_OperativeMovements_Blb')]",
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Err_OperativeMovements_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_OperativeMovements_SQL')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_OperativeMovementswithOwnerShip')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "Ins_PipelineLog",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "InProgress",
+                  "type": "String"
+                },
+                "ErrorMessage": {
+                  "value": ""
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnSuccess",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Arch_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Success",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Successful",
+                  "type": "String"
+                },
+                "ErrorMessage": {
+                  "value": ""
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeMovementswithOwnerShipHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_RunId",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_UpdateOperativeMovementsWithOwnershipRunId]",
+              "storedProcedureParameters": {
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnSuccess",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnSuccess",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "LoadDataCsvToStgSql",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Ins_PipelineLog",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink"
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "FECHA_CONT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "OperationalDate",
+                      "type": "DateTime"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "MOVEMENT_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "MovementType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PDTO_ORIG",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ALM_ORG",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceStorageLocation",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PDTO_DEST",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ALM_DEST",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationStorageLocation",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "VALOR",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "OwnershipVolume",
+                      "type": "Decimal"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "RELACION_TT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "TransferPoint",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Mes",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "Month",
+                      "type": "Int32"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Año",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "Year",
+                      "type": "Int32"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "DiasMes",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DayOfMonth",
+                      "type": "Int32"
+                    }
+                  }
+                ]
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_OperativeMovementswithOwnership_SQL",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "LoadDataCsvToSql",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "Analytics.usp_Insert_OperativeMovementsWithOwnership",
+              "storedProcedureParameters": {
+                "EndDate": {
+                  "value": {
+                    "value": "@pipeline().parameters.EndDate",
+                    "type": "Expression"
+                  },
+                  "type": "DateTime"
+                },
+                "LoadType": {
+                  "value": {
+                    "value": "@pipeline().parameters.LoadType",
+                    "type": "Expression"
+                  },
+                  "type": "Int32"
+                },
+                "StartDate": {
+                  "value": {
+                    "value": "@pipeline().parameters.StartDate",
+                    "type": "Expression"
+                  },
+                  "type": "DateTime"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure_Stage",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "*"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeMovementswithOwnerShipHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError_Stage",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToStgSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure_Stage",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure_Stage",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeMovementwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          }
+        ],
+        "parameters": {
+          "LoadType": {
+            "type": "int",
+            "defaultValue": 1
+          },
+          "StartDate": {
+            "type": "string",
+            "defaultValue": "2016-06-01"
+          },
+          "EndDate": {
+            "type": "string",
+            "defaultValue": "2020-05-31"
+          }
+        },
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Src_OperativeMovementwithOwnership_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Arch_OperativeMovementwithOwnership_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Err_OperativeMovementswithOwnerShipHistory_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_OperativeMovementswithOwnership_SQL')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_OperativeNodeRelationShipHistory')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "LoadDataCsvToStgSql",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Ins_PipelineLog",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_OP_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink",
+                "preCopyScript": "TRUNCATE TABLE Analytics.Stage_OperativeNodeRelationship",
+                "disableMetricsCollection": false
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "RELACION_TT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "TransferPoint",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Campo",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceField",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Agua_Campo",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "FieldWaterProduction",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Casos Correlacionados",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "RelatedSourceField",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "DESTINO",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationNode",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "DESTINO_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationNodeType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "MOVEMENT_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "MovementType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ORIGEN",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceNode",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ORIGEN_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceNodeType",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PRODUCTO",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PRODUCTO_TP",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProductType",
+                      "type": "String"
+                    }
+                  }
+                ]
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_OperativeNodeRelationship_SQL",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Ins_PipelineLog",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "InProgress",
+                  "type": "String"
+                },
+                "ErrorMessage": {
+                  "value": null
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnSuccess",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_OP_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Arch_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "upd_PipelineLog_Success",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Successful",
+                  "type": "String"
+                },
+                "ErrorMessage": {
+                  "value": null
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnSuccess",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnSuccess",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "Upd_RunId",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_UpdateOperativeNodeRelationshipRunId]",
+              "storedProcedureParameters": {
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_OP_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError_Stage",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToStgSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeNodeRelationShip_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "LoadStgToSQL",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "Analytics.usp_Insert_OperativeNodeRelationship"
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadStgToSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DS_Src_OperativeNodeRelationShip_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_OperativeNodeRelationship_SQL')]",
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Arch_OperativeNodeRelationShip_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Err_OperativeNodeRelationShip_Blb')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_OperativeNodeRelationShipwithOwnerShipHistory')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "LoadDataCsvToStgSql",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Ins_PipelineLog",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_TT_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink",
+                "preCopyScript": "TRUNCATE TABLE Analytics.Stage_OperativeNodeRelationshipWithOwnership",
+                "disableMetricsCollection": false
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "PDTO_ORIG",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "SourceProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ALM_ORG",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "LogisticSourceCenter",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "PDTO_DEST",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "DestinationProduct",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ALM_DEST",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "LogisticDestinationCenter",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "RELACION_TT",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "TransferPoint",
+                      "type": "String"
+                    }
+                  }
+                ]
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_OperativeNodeRelationshipwithOwnership_SQL",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Ins_PipelineLog",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "InProgress",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnSuccess",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_TT_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Arch_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Success",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Successful",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_RunId",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_UpdateOperativeNodeRelationshipWithOwnershipRunId]",
+              "storedProcedureParameters": {
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnSuccess",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnSuccess",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError_Stage",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToStgSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true
+              }
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "RELACION_NODOS_TT_TRUE.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".txt"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OperativeNodeRelationShipwithOwnership_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "LoadStgToSQL",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "Analytics.usp_Insert_OperativeNodeRelationshipWithOwnership"
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadStgToSQL",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadStgToSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DS_Src_OperativeNodeRelationShipwithOwnership_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_OperativeNodeRelationshipwithOwnership_SQL')]",
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Arch_OperativeNodeRelationShipwithOwnership_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Err_OperativeNodeRelationShipwithOwnership_Blb')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_OwnershipPercentageValuesHistory')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "description": " ",
+        "activities": [
+          {
+            "name": "ArchiveCsvFileOnSuccess",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataStgToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "OwnershipPercentageValues.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Arch_OwnershipPercentageValues_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Ins_PipelineLog",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": {
+                    "value": "@pipeline().Pipeline",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "InProgress",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Upd_PipelineLog_Success",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataStgToSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": "",
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Successful",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataStgToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "OwnershipPercentageValues.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OwnershipPercentageValues_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataStgToSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataStgToSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnSuccess",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnSuccess",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true,
+                "wildcardFileName": "OwnershipPercentageValues.csv"
+              }
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true,
+                "wildcardFileName": "OwnershipPercentageValues.csv"
+              }
+            }
+          },
+          {
+            "name": "LoadDataCsvToStgSql",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Ins_PipelineLog",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "OwnershipPercentageValues.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink",
+                "preCopyScript": "TRUNCATE TABLE [Analytics].[Stage_OwnershipPercentageValues]",
+                "disableMetricsCollection": false
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "operationalDate",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "OperationalDate",
+                      "type": "DateTime"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "transferPoint",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "TransferPoint",
+                      "type": "String"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "ownershipPercentage",
+                      "type": "String"
+                    },
+                    "sink": {
+                      "name": "OwnershipPercentage",
+                      "type": "Decimal"
+                    }
+                  }
+                ]
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_OwnershipPercentageValuesHistory_SQL",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "LoadDataStgToSql",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_UpsertOwnershipPercentageValuesHistory]",
+              "storedProcedureParameters": {
+                "ExecutionId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "ArchiveCsvFileOnFailure_Stage",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "DelimitedTextSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "wildcardFileName": "OwnershipPercentageValues.csv",
+                  "enablePartitionDiscovery": false
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextReadSettings"
+                }
+              },
+              "sink": {
+                "type": "DelimitedTextSink",
+                "storeSettings": {
+                  "type": "AzureBlobStorageWriteSettings"
+                },
+                "formatSettings": {
+                  "type": "DelimitedTextWriteSettings",
+                  "quoteAllText": true,
+                  "fileExtension": ".csv"
+                }
+              },
+              "enableStaging": false
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Err_OwnershipPercentageValues_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Upd_PipelineLog_Failure_WithError_Stage",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "LoadDataCsvToStgSql",
+                "dependencyConditions": [
+                  "Failed"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "[[Analytics].[usp_SaveAdflog]",
+              "storedProcedureParameters": {
+                "ErrorMessage": {
+                  "value": {
+                    "value": "@activity('LoadDataCsvToStgSql').error.message",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Name": {
+                  "value": "",
+                  "type": "String"
+                },
+                "RunId": {
+                  "value": {
+                    "value": "@pipeline().RunId",
+                    "type": "Expression"
+                  },
+                  "type": "String"
+                },
+                "Status": {
+                  "value": "Failed",
+                  "type": "String"
+                }
+              }
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "DeleteFilesFrom SourceOnFailure_Stage",
+            "type": "Delete",
+            "dependsOn": [
+              {
+                "activity": "ArchiveCsvFileOnFailure_Stage",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "dataset": {
+                "referenceName": "DS_Src_OwnershipPercentageValuesHistory_Blb",
+                "type": "DatasetReference",
+                "parameters": {}
+              },
+              "enableLogging": false,
+              "storeSettings": {
+                "type": "AzureBlobStorageReadSettings",
+                "recursive": true,
+                "wildcardFileName": "OwnershipPercentageValues.csv"
+              }
+            }
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DS_Src_OwnershipPercentageValuesHistory_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Arch_OwnershipPercentageValues_Blb')]",
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Err_OwnershipPercentageValues_Blb')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_OwnershipPercentageValuesHistory_SQL')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/AzureSqlDataApprovers')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "DeltaNodeApprovalId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "NodeId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "Level",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "Approvers",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "LastModifiedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LastModifiedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          }
+        ],
+        "typeProperties": {
+          "schema": "Admin",
+          "table": "DeltaNodeApproval"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Arch_OperativeMovements_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('MOV_OP_CONSOLIDADOS_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativemovementshistory",
+            "container": "archivefiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Arch_OperativeMovementwithOwnership_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('MOV_TT_CONSOLIDADOS_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativemovementswithownershiphistory",
+            "container": "archivefiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Arch_OperativeNodeRelationShip_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('RELACION_NODOS_OP_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativenoderelationship",
+            "container": "archivefiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          },
+          {
+            "name": "Campo",
+            "type": "String"
+          },
+          {
+            "name": "Agua_Campo",
+            "type": "String"
+          },
+          {
+            "name": "Casos Correlacionados",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO_TP",
+            "type": "String"
+          },
+          {
+            "name": "MOVEMENT_TP",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN_TP",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO_TP",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Arch_OperativeNodeRelationShipwithOwnership_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('RELACION_NODOS_TT_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativenoderelationshipwithownership",
+            "container": "archivefiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Arch_OwnershipPercentageValues_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('OwnershipPercentageValues_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "ownershippercentagevalues",
+            "container": "archivefiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_OperativeMovements_SQL')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "OperationalDate",
+            "type": "date"
+          },
+          {
+            "name": "DestinationNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationNodeType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "MovementType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceNodeType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceProductType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "TransferPoint",
+            "type": "nvarchar"
+          },
+          {
+            "name": "FieldWaterProduction",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceField",
+            "type": "nvarchar"
+          },
+          {
+            "name": "RelatedSourceField",
+            "type": "nvarchar"
+          },
+          {
+            "name": "NetStandardVolume",
+            "type": "decimal",
+            "precision": 18,
+            "scale": 2
+          },
+          {
+            "name": "SourceSystem",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LoadDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "ExecutionID",
+            "type": "uniqueidentifier"
+          },
+          {
+            "name": "CreatedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "LastModifiedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LastModifiedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          }
+        ],
+        "typeProperties": {
+          "schema": "Analytics",
+          "table": "Stage_OperativeMovements"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_OperativeMovementswithOwnership_SQL')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "OperativeMovementsWithOwnershipId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "OperationalDate",
+            "type": "date"
+          },
+          {
+            "name": "MovementType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceStorageLocation",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationStorageLocation",
+            "type": "nvarchar"
+          },
+          {
+            "name": "OwnershipVolume",
+            "type": "decimal",
+            "precision": 29,
+            "scale": 16
+          },
+          {
+            "name": "TransferPoint",
+            "type": "nvarchar"
+          },
+          {
+            "name": "Month",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "Year",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "DayOfMonth",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "SourceSystem",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LoadDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "ExecutionID",
+            "type": "uniqueidentifier"
+          },
+          {
+            "name": "CreatedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "LastModifiedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LastModifiedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          }
+        ],
+        "typeProperties": {
+          "schema": "Analytics",
+          "table": "Stage_OperativeMovementsWithOwnership"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_OperativeNodeRelationship_SQL')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "OperativeNodeRelationshipId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "TransferPoint",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceField",
+            "type": "nvarchar"
+          },
+          {
+            "name": "FieldWaterProduction",
+            "type": "nvarchar"
+          },
+          {
+            "name": "RelatedSourceField",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationNodeType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "MovementType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceNodeType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceProductType",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceSystem",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LoadDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "ExecutionID",
+            "type": "uniqueidentifier"
+          },
+          {
+            "name": "CreatedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "LastModifiedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LastModifiedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          }
+        ],
+        "typeProperties": {
+          "schema": "Analytics",
+          "table": "Stage_OperativeNodeRelationship"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_OperativeNodeRelationshipwithOwnership_SQL')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "OperativeNodeRelationshipWithOwnershipId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "SourceProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceStorageLocation",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationProduct",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationStorageLocation",
+            "type": "nvarchar"
+          },
+          {
+            "name": "TransferPoint",
+            "type": "nvarchar"
+          },
+          {
+            "name": "SourceSystem",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LoadDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "ExecutionID",
+            "type": "uniqueidentifier"
+          },
+          {
+            "name": "SourceNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "DestinationNode",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LogisticSourceCenter",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LogisticDestinationCenter",
+            "type": "nvarchar"
+          },
+          {
+            "name": "IsDeleted",
+            "type": "bit"
+          },
+          {
+            "name": "Notes",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "CreatedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "LastModifiedBy",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LastModifiedDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          }
+        ],
+        "typeProperties": {
+          "schema": "Analytics",
+          "table": "Stage_OperativeNodeRelationshipWithOwnership"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_OwnershipPercentageValuesHistory_SQL')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "OperationalDate",
+            "type": "date"
+          },
+          {
+            "name": "TransferPoint",
+            "type": "nvarchar"
+          },
+          {
+            "name": "OwnershipPercentage",
+            "type": "decimal",
+            "precision": 5,
+            "scale": 2
+          },
+          {
+            "name": "SourceSystem",
+            "type": "nvarchar"
+          },
+          {
+            "name": "LoadDate",
+            "type": "datetime",
+            "precision": 23,
+            "scale": 3
+          },
+          {
+            "name": "ExecutionID",
+            "type": "uniqueidentifier"
+          }
+        ],
+        "typeProperties": {
+          "schema": "Analytics",
+          "table": "Stage_OwnershipPercentageValues"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Err_OperativeMovements_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('MOV_OP_CONSOLIDADOS_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativemovementshistory",
+            "container": "errorfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Err_OperativeMovementswithOwnerShipHistory_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('MOV_TT_CONSOLIDADOS_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativemovementswithownershiphistory",
+            "container": "errorfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Err_OperativeNodeRelationShip_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('RELACION_NODOS_OP_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativenoderelationship",
+            "container": "errorfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          },
+          {
+            "name": "Campo",
+            "type": "String"
+          },
+          {
+            "name": "Agua_Campo",
+            "type": "String"
+          },
+          {
+            "name": "Casos Correlacionados",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO_TP",
+            "type": "String"
+          },
+          {
+            "name": "MOVEMENT_TP",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN_TP",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO_TP",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Err_OperativeNodeRelationShipwithOwnership_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('RELACION_NODOS_TT_TRUE_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "operativenoderelationshipwithownership",
+            "container": "errorfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Err_OwnershipPercentageValues_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": {
+              "value": "@concat('OwnershipPercentageValues_',formatDateTime(addhours(utcnow(),-5),'yyyy-MM-dd HHmmss'),'.csv')",
+              "type": "Expression"
+            },
+            "folderPath": "ownershippercentagevalues",
+            "container": "errorfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          },
+          {
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_OperativeMovements_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "MOV_OP_CONSOLIDADOS_TRUE.csv",
+            "container": "operativemovementshistory"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "STARTTICK_DT",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO_TP",
+            "type": "String"
+          },
+          {
+            "name": "MOVEMENT_TP",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN_TP",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO_TP",
+            "type": "String"
+          },
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          },
+          {
+            "name": "Agua_Campo",
+            "type": "String"
+          },
+          {
+            "name": "Campo",
+            "type": "String"
+          },
+          {
+            "name": "Casos Correlacionados",
+            "type": "String"
+          },
+          {
+            "name": "VALUE_FL",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_OperativeMovementwithOwnership_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "MOV_TT_CONSOLIDADOS_TRUE.csv",
+            "container": "operativemovementswithownershiphistory"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "FECHA_CONT",
+            "type": "String"
+          },
+          {
+            "name": "MOVEMENT_TP",
+            "type": "String"
+          },
+          {
+            "name": "PDTO_ORIG",
+            "type": "String"
+          },
+          {
+            "name": "ALM_ORG",
+            "type": "String"
+          },
+          {
+            "name": "PDTO_DEST",
+            "type": "String"
+          },
+          {
+            "name": "ALM_DEST",
+            "type": "String"
+          },
+          {
+            "name": "VALOR",
+            "type": "String"
+          },
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          },
+          {
+            "name": "Mes",
+            "type": "String"
+          },
+          {
+            "name": "Año",
+            "type": "String"
+          },
+          {
+            "name": "DiasMes",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_OperativeNodeRelationShip_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "RELACION_NODOS_OP_TRUE.csv",
+            "container": "nodes"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          },
+          {
+            "name": "Campo",
+            "type": "String"
+          },
+          {
+            "name": "Agua_Campo",
+            "type": "String"
+          },
+          {
+            "name": "Casos Correlacionados",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO",
+            "type": "String"
+          },
+          {
+            "name": "DESTINO_TP",
+            "type": "String"
+          },
+          {
+            "name": "MOVEMENT_TP",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN",
+            "type": "String"
+          },
+          {
+            "name": "ORIGEN_TP",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO",
+            "type": "String"
+          },
+          {
+            "name": "PRODUCTO_TP",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_OperativeNodeRelationShipwithOwnership_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "RELACION_NODOS_TT_TRUE.csv",
+            "container": "nodes"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "PDTO_ORIG",
+            "type": "String"
+          },
+          {
+            "name": "ALM_ORG",
+            "type": "String"
+          },
+          {
+            "name": "PDTO_DEST",
+            "type": "String"
+          },
+          {
+            "name": "ALM_DEST",
+            "type": "String"
+          },
+          {
+            "name": "RELACION_TT",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_OwnershipPercentageValuesHistory_Blb')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "OwnershipPercentageValues.csv",
+            "container": "workfiles"
+          },
+          "columnDelimiter": ",",
+          "escapeChar": "\\",
+          "firstRowAsHeader": true,
+          "quoteChar": "\""
+        },
+        "schema": [
+          {
+            "name": "operationalDate",
+            "type": "String"
+          },
+          {
+            "name": "transferPoint",
+            "type": "String"
+          },
+          {
+            "name": "ownershipPercentage",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DataApprovers')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Excel",
+        "typeProperties": {
+          "sheetName": "ApproversByNode",
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "DataApprovers.xlsx",
+            "container": "deltanodeapprovers"
+          },
+          "firstRowAsHeader": true
+        },
+        "schema": [
+          {
+            "name": "IdNodo / NodeId",
+            "type": "String"
+          },
+          {
+            "name": "Nodo / Node",
+            "type": "String"
+          },
+          {
+            "name": "Nivel / Level",
+            "type": "String"
+          },
+          {
+            "name": "Aprobadores / Approvers",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/AzureBlobStorage')]",
+      "type": "Microsoft.DataFactory/factories/linkedServices",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "annotations": [],
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+          "connectionString": "[parameters('AzureBlobStorage_connectionString')]"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/LS_AzureSqlDB')]",
+      "type": "Microsoft.DataFactory/factories/linkedServices",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "annotations": [],
+        "type": "AzureSqlDatabase",
+        "typeProperties": {
+          "connectionString": "[parameters('LS_AzureSqlDB_connectionString')]"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/ADF_DataPartners')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "CopyCSVtoStageSQLTable",
+            "type": "Copy",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "ExcelSource",
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true
+                }
+              },
+              "sink": {
+                "type": "AzureSqlSink",
+                "preCopyScript": "TRUNCATE TABLE [Admin].[Stage_PartnerOwnerMapping]",
+                "disableMetricsCollection": false
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "mappings": [
+                  {
+                    "source": {
+                      "name": "Id Gran Propietario / Grand Owner Id",
+                      "type": "String",
+                      "physicalType": "String"
+                    },
+                    "sink": {
+                      "name": "GrandOwnerId",
+                      "type": "Int32",
+                      "physicalType": "int"
+                    }
+                  },
+                  {
+                    "source": {
+                      "name": "Id Socio Propietario / Partner Owner Id",
+                      "type": "String",
+                      "physicalType": "String"
+                    },
+                    "sink": {
+                      "name": "PartnerOwnerId",
+                      "type": "Int32",
+                      "physicalType": "int"
+                    }
+                  }
+                ],
+                "typeConversion": true,
+                "typeConversionSettings": {
+                  "allowDataTruncation": true,
+                  "treatBooleanAsNumber": false
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "DS_Src_DataPartners",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DS_Dest_DataPartners",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "LoadStagetoMainTbl",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [
+              {
+                "activity": "CopyCSVtoStageSQLTable",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "Admin.usp_Insert_DataPartners"
+            },
+            "linkedServiceName": {
+              "referenceName": "LS_AzureSqlDB",
+              "type": "LinkedServiceReference"
+            }
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/datasets/DS_Src_DataPartners')]",
+        "[concat(variables('factoryId'), '/datasets/DS_Dest_DataPartners')]",
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Src_DataPartners')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "AzureBlobStorage",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Excel",
+        "typeProperties": {
+          "sheetName": "PartnersAssociation",
+          "location": {
+            "type": "AzureBlobStorageLocation",
+            "fileName": "DataPartners.xlsx",
+            "container": "datapartners"
+          },
+          "firstRowAsHeader": true
+        },
+        "schema": [
+          {
+            "name": "Id Gran Propietario / Grand Owner Id",
+            "type": "String"
+          },
+          {
+            "name": "Gran Propietario / Grand Owner",
+            "type": "String"
+          },
+          {
+            "name": "Id Socio Propietario / Partner Owner Id",
+            "type": "String"
+          },
+          {
+            "name": "Socio Propietario / Partner Owner",
+            "type": "String"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+      ]
+    },
+    {
+      "name": "[concat(parameters('factoryName'), '/DS_Dest_DataPartners')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "LS_AzureSqlDB",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": [
+          {
+            "name": "PartnerOwnerMappingId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "GrandOwnerId",
+            "type": "int",
+            "precision": 10
+          },
+          {
+            "name": "PartnerOwnerId",
+            "type": "int",
+            "precision": 10
+          }
+        ],
+        "typeProperties": {
+          "schema": "Admin",
+          "table": "Stage_PartnerOwnerMapping"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDB')]"
+      ]
+    }
+  ]
+}

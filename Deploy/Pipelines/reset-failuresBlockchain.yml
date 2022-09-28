@@ -1,0 +1,54 @@
+parameters:
+- name: env
+  type: string
+  values: 
+  - 'dev-app'
+  - 'uat-app'
+  - 'qas-app'
+  - 'stg-app'
+  - 'prd-app'
+  default: 'dev-app'
+- name: isCritical
+  type: string
+  values:
+  - 'true'
+  - 'false'
+  default: 'false'
+- name: takeRecords
+  type: number
+
+variables:
+  - ${{ if eq(parameters.env, 'dev-app') }}:
+    - group: true-secrets-dev
+    - group: true-secrets-nonprd-shared
+  - ${{ if eq(parameters.env, 'uat-app') }}:
+    - group: true-secrets-uat
+    - group: true-secrets-nonprd-shared
+  - ${{ if eq(parameters.env, 'stg-app') }}:
+    - group: true-secrets-stg
+  - ${{ if eq(parameters.env, 'qas-app') }}:
+    - group: true-secrets-qas
+    - group: true-secrets-nonprd-shared
+  - ${{ if eq(parameters.env, 'prd-app') }}:
+    - group: true-secrets-prd
+
+stages:
+
+  - stage: ReconciliateBlockChain
+    jobs:
+      - deployment: Run
+        pool:
+          vmImage: ubuntu-latest
+        environment: ${{ parameters.env }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Build.SourcesDirectory)/Deploy/Scripts/Reset-FailuresBlockchain.ps1'
+                    arguments: '-ModulePath "$(Build.SourcesDirectory)/Deploy/Scripts/Modules" -tenantId "$(tenantId)" -clientId "$(apiAppClientId)" -clientSecret "$(apiAppClientSecret)" -apiBaseUrl "$(apiBaseUrl)" -isCritical "${{ parameters.isCritical }}" -takeRecords "${{ parameters.takeRecords }}"'
+                    failOnStderr: true
+                    showWarnings: true
+                    pwsh: true

@@ -1,0 +1,14 @@
+﻿{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+     "file": "[InputPath]\\*Tests\\*\\*", 
+      "_justification": "Skip Analysis on Tests projects"
+    },
+    {
+     "file": "[InputPath]\\Develop\\Ecp.True\\Ecp.True.Host.UI\\node_modules", 
+      "_justification": "Skip Analysis on npm modules"
+    }
+  ]
+
+}

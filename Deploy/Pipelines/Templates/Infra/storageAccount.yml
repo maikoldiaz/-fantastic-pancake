@@ -1,0 +1,132 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Storage Account - ARM
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      resourceGroupName: '${{ parameters.resourceGroupName }}'
+      location: '${{ parameters.deployLocation }}'
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Storage Account/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -storageAccountType "${{ parameters.storageAccountType }}" -containerNames "${{parameters.containerNames}}" -storageAccountName "${{ parameters.storageAccountName }}"'
+      deploymentOutputs: armOut
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: Storage Account - Add Logs Retention Policy
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RetentionPolicy.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -storageAccountName "$(storageAccountName)" -retentionDays "$(storageAccountLogRetentionDays)"'
+      azurePowerShellVersion: LatestVersion
+      
+  - task: AzurePowerShell@4
+    displayName: Storage Account - Tags
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{ parameters.storageAccountName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Storage Account - Enable Blob Soft Delete
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Enable-BlobStorageSoftDelete.ps1'
+      ScriptArguments: '-retentionDays "$(blobStorageRetentionDays)" -storageAccountName "${{ parameters.storageAccountName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Storage Account - Set Build Variable
+    name: SetStorageOutputVariable
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Storage Account - Set Storage Connection string In KV
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "$(storageAccountKeyName)" -secretValue "$(ou_StorageAccountConnectionStringValue)"'
+
+  - task: AzureCLI@2
+    displayName: Storage Account - Set Storage Access Key In Key-Vault
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "$(storageAccessKeyName)" -secretValue "$(ou_storageAccountKey)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Storage Account - MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(adsGroupPrincipalId)" -resourceName "$(storageAccountName)" -roleDefinitionName "Storage Blob Data Contributor" -resourceType "Microsoft.Storage/storageAccounts"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), ne(variables['env'], 'prd'))
+
+  - task: AzurePowerShell@3
+    displayName: Adding SQL Config
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SQLConfig.ps1'
+      ScriptArguments: '-TenantId "$(tenantId)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: ExtractFiles@1
+    displayName: Extract Config Files
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.ConfigurationManager.zip'
+      destinationFolder: '$(System.ArtifactsDirectory)'
+      cleanDestinationFolder: false
+
+  - script: dotnet.exe $(System.ArtifactsDirectory)\Ecp.True.ConfigurationManager.dll $(ou_StorageAccountConnectionStringValue) $(skipConfigsOnInfraDeployment) "$(forceUpdateConfigs)" $(sqlconfig)
+    displayName: Add Azure Table Configuration
+
+  - task: AzureKeyVault@1
+    displayName: Get All Key Vault Secrets
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      keyVaultName: $(keyVault)
+      secretsFilter: '*'
+
+  - task: AzurePowerShell@3
+    displayName: Storage Account - Upload DAT Files
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Upload-FilesToStorage.ps1'
+      ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -FilePath "$(System.ArtifactsDirectory)\Drop\Files\dat\" -StorageConnectionString "$(StorageConnectionString)" -ContainerName "$(datFilesContainerName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@3
+    displayName: Storage Account - Upload CSV files
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Upload-FilesToStorage.ps1'
+      ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -FilePath "$(System.ArtifactsDirectory)\Drop\Files\csv\" -StorageConnectionString "$(StorageConnectionString)" -ContainerName "$(csvContainerNames)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Storage Account - Set Data Protection Connection string In KV
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "Settings--StorageConnectionString" -secretValue "$(ou_StorageAccountConnectionStringValue)"'
+
+  - task: AzurePowerShell@4
+    displayName: Storage Account - Enable Audit
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-StorageAuditing.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -storageAccountName "${{ parameters.storageAccountName }}"'
+      azurePowerShellVersion: LatestVersion

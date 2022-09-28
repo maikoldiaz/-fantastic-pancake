@@ -1,0 +1,1869 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite id="0" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\utilities.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\utilities.spec.js" hostname="localhost" tests="49" failures="0" time="20.404" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="api service" name="hasProperty" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should retrun true if tow objects are equal" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should retrun true if tow objects with different properties length" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should retrun true if tow objects with different properties" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should retrun true if tow objects with different Array properties" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should verify Date types" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should verify Function types" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDeepEqual- Should verify Object types" time="0">
+    </testcase>
+    <testcase classname="api service" name="isEqual - Should retrun true if tow objects are equal" time="0">
+    </testcase>
+    <testcase classname="api service" name="areEqualArrays - Should retrun true if tow objects are equal" time="0">
+    </testcase>
+    <testcase classname="api service" name="getPropsCount - Should count valid properties" time="0">
+    </testcase>
+    <testcase classname="api service" name="loadScript - Should Load script" time="0">
+    </testcase>
+    <testcase classname="api service" name="normalize" time="0">
+    </testcase>
+    <testcase classname="api service" name="denormalize" time="0">
+    </testcase>
+    <testcase classname="api service" name="toCsv" time="0">
+    </testcase>
+    <testcase classname="api service" name="groupBy" time="0">
+    </testcase>
+    <testcase classname="api service" name="normalizedGroupBy" time="0">
+    </testcase>
+    <testcase classname="api service" name="calculatePartition" time="0">
+    </testcase>
+    <testcase classname="api service" name="isChrome" time="0">
+    </testcase>
+    <testcase classname="api service" name="isDefault" time="0">
+    </testcase>
+    <testcase classname="api service" name="getChartTitle" time="0">
+    </testcase>
+    <testcase classname="api service" name="getChartAxisLabels" time="0">
+    </testcase>
+    <testcase classname="api service" name="validateMissingValuesInArray" time="0">
+    </testcase>
+    <testcase classname="api service" name="getSessionId" time="0">
+    </testcase>
+    <testcase classname="api service" name="findExcept" time="0">
+    </testcase>
+    <testcase classname="api service" name="isUndefined" time="0">
+    </testcase>
+    <testcase classname="api service" name="contains" time="0">
+    </testcase>
+    <testcase classname="api service" name="find" time="0">
+    </testcase>
+    <testcase classname="api service" name="getArrayOrDefault" time="0">
+    </testcase>
+    <testcase classname="api service" name="pluralize" time="0">
+    </testcase>
+    <testcase classname="api service" name="findOne" time="0">
+    </testcase>
+    <testcase classname="api service" name="findEvery" time="0">
+    </testcase>
+    <testcase classname="api service" name="checkIfDateTime" time="0">
+    </testcase>
+    <testcase classname="api service" name="checkIfNumber" time="0">
+    </testcase>
+    <testcase classname="api service" name="filterArrayElements" time="0">
+    </testcase>
+    <testcase classname="api service" name="distinct" time="0">
+    </testcase>
+    <testcase classname="api service" name="toTitleCase" time="0">
+    </testcase>
+    <testcase classname="api service" name="toCamelCase" time="0">
+    </testcase>
+    <testcase classname="api service" name="toLowerCase" time="0">
+    </testcase>
+    <testcase classname="api service" name="toUpperCase" time="0">
+    </testcase>
+    <testcase classname="api service" name="toPascalCase" time="0">
+    </testcase>
+    <testcase classname="api service" name="sanitizeCell" time="0">
+    </testcase>
+    <testcase classname="api service" name="getValueOrDefault" time="0">
+    </testcase>
+    <testcase classname="api service" name="removeSpaces" time="0">
+    </testcase>
+    <testcase classname="api service" name="normalizeBoolean" time="0">
+    </testcase>
+    <testcase classname="api service" name="getExtension" time="0">
+    </testcase>
+    <testcase classname="api service" name="isNumber" time="0">
+    </testcase>
+    <testcase classname="api service" name="isIE" time="0">
+    </testcase>
+    <testcase classname="api service" name="formatBytes" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="1" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\addComment.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\addComment.spec.js" hostname="localhost" tests="5" failures="0" time="18.875" timestamp="2020-02-17T07:07:56">
+    <properties>
+    </properties>
+    <testcase classname="InitAddComment" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="InitAddComment" name="find controls" time="0">
+    </testcase>
+    <testcase classname="InitAddComment" name="should cancel add comment when cancel button is clicked " time="0">
+    </testcase>
+    <testcase classname="InitAddComment" name="should call handleSubmit when submit button is clicked" time="0">
+    </testcase>
+    <testcase classname="InitAddComment" name="should check when operational cut name not exists in detail" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="2" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\nodeTags\displayErrors.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\nodeTags\displayErrors.spec.js" hostname="localhost" tests="3" failures="0" time="42.534" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="displayErrors" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="displayErrors" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="displayErrors" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="3" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\controlLimit.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\controlLimit.spec.js" hostname="localhost" tests="6" failures="0" time="42.958" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="ControlLimit" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ControlLimit" name="should have cancel and submit button" time="0">
+    </testcase>
+    <testcase classname="ControlLimit" name="should give error when click on save and Control Limit is not given" time="0">
+    </testcase>
+    <testcase classname="ControlLimit" name="should give error when click on save, isTransfer is true and algorithm is not given" time="0">
+    </testcase>
+    <testcase classname="ControlLimit" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <testcase classname="ControlLimit" name="should call handleSubmit method when form submits and it should be called with correct values" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="4" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformationSection.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformationSection.spec.js" hostname="localhost" tests="2" failures="0" time="43.052" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="Transformation Section" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Transformation Section" name="should select source node" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="5" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionDetails.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionDetails.spec.js" hostname="localhost" tests="4" failures="0" time="44.604" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="ConnectionDetails" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ConnectionDetails" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="ConnectionDetails" name="should build columns for the grid" time="0">
+    </testcase>
+    <testcase classname="ConnectionDetails" name="should have connection and controlLimit controls" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="6" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformation.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformation.spec.js" hostname="localhost" tests="4" failures="0" time="44.809" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="Transformation Section" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Transformation Section" name="should call handleSubmit method when form submits and it should be called with correct values" time="0">
+    </testcase>
+    <testcase classname="Transformation Section" name="should unmount component" time="0">
+    </testcase>
+    <testcase classname="Transformation Section" name="should update component" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="7" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\reducers.spec.js" hostname="localhost" tests="3" failures="0" time="3.178" timestamp="2020-02-17T07:08:15">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for operational node cut" name="should set node error detail" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational node cut" name="receive last operational ticket" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational node cut" name="should handle default case" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="8" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\actions.spec.js" hostname="localhost" tests="11" failures="0" time="3.694" timestamp="2020-02-17T07:08:16">
+    <properties>
+    </properties>
+    <testcase classname="node connection actions" name="should receive Get Connection Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should get Connection Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should receive Update Connection Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should Update Connection Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should Init Product Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should receive Update Product Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should Update Product Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should receive Get Owners Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should get Owners Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should receive Update Owners Action" time="0">
+    </testcase>
+    <testcase classname="node connection actions" name="should Update Owners Action" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="9" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\actions.spec.js" hostname="localhost" tests="17" failures="0" time="3.364" timestamp="2020-02-17T07:08:17">
+    <properties>
+    </properties>
+    <testcase classname="Actions for Operational cut" name="should set pending transaction errors." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should set unbalances." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should receive last ticket." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should set ticket information" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="Should request last ticket" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="Request pending transacton errors." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="Request unbalances." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="Request save ticket." time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should init CutOff" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should increment CutOff" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should add comment" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should init add Comment" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should confirm cut off" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should receive ticket details" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should request ticket details" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should reset ticket Details" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational cut" name="should initialize ticket error" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="10" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionAttributes.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionAttributes.spec.js" hostname="localhost" tests="3" failures="0" time="48.407" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="ConnectionAttributes" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ConnectionAttributes" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="ConnectionAttributes" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="11" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\reducers.spec.js" hostname="localhost" tests="15" failures="0" time="3.581" timestamp="2020-02-17T07:08:18">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for transform settings" name="should receive source nodes" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should receive destination nodes" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should receive source products" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should receive destination products" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should search source nodes" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should clear search nodes" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should create transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should create transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should reset transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should delete transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should clear transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should initialize edit transformation" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="check for default case" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should get transformation info" time="0">
+    </testcase>
+    <testcase classname="Reducer for transform settings" name="should get transformation info for second message type" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="12" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\actions.spec.js" hostname="localhost" tests="13" failures="0" time="3.282" timestamp="2020-02-17T07:08:18">
+    <properties>
+    </properties>
+    <testcase classname="Actions for transport settings" name="should get source nodes" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should get destination nodes" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should get source products" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should get destination products" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should request search source nodes" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should clear search source nodes" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should create transformation" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should update transformation" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should get transformation info" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should delete transformation" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should reset  transformation" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should clear transformation data" time="0">
+    </testcase>
+    <testcase classname="Actions for transport settings" name="should initialize edit" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="13" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\reducers.common.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\reducers.common.spec.js" hostname="localhost" tests="67" failures="0" time="6.072" timestamp="2020-02-17T07:08:16">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for shared Component" name="should handle action INIT_CATEGORY_ELEMENT_FILTER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action REQUEST_CATEGORY_ELEMENTS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action RECEIVE_CATEGORY_ELEMENTS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action CATEGORY_ELEMENT_FILTER_ON_SELECT_CATEGORY" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action SAVE_CATEGORY_ELEMENT_FILTER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action BOOTSTRAP_APP_SUCCESS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action APP_READY" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action APP_MENU_ITEM_TOGGLE" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action APP_MENU_TOGGLE" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle Default action for Root reducer" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action CLOSE_MODAL" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action OPEN_MODAL" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle default action for modal reducer" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action OPEN_CONFIRM" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action CLOSE_CONFIRM" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle default action for confirm modal." time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action SHOW_LOADER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action HIDE_LOADER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle default action for Loader" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action CHANGE_TAB" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle default action for tab" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action SHOW_NOTIFICATION" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action HIDE_NOTIFICATION" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action TOGGLE_PAGE_ACTIONS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="should handle action DISABLE_PAGE_ACTIONS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="addComment- should handle add comment action for addComment reducer" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="addComment- should handle initialize add comment action for addComment reducer" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="addComment- should handle default action for addComment reducer" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="INIT_GRID- Should handle grid initialization" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="INIT_GRID- Should handle grid initialization for resumed state" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="RECEIVE_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="REFRESH_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="REFRESH_SILENT_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="SELECT_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="SELECT_GRID_DATA- handle selection" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="SELECT_ALL_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="CLEAR_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="APPLY_FILTER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="RESET_FILTER" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="DISABLE_ITEMS_GRID" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="REMOVE_GRID_DATA" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="grid - Handle default action" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="INIT_FLYOUT" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="OPEN_FLYOUT" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="CLOSE_FLYOUT" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="FLYOUT- Should handle default action" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="GET_CATEGORY_ELEMENTS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="GET_PROPERTY_RULES" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="Shared - Should handle default action." time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="INIT_WIZARD" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="WIZARD_SET_STEP" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="WIZARD_PREV_STEP" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="WIZARD_NEXT_STEP" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="WIZARD- Should handle default action" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="Notification - Should handle default action" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -INIT_ALL_ITEMS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -INIT_TARGET_ITEMS" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -SELECT_SOURCE_ITEM:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -SELECT_TARGET_ITEM:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -SEARCH_SOURCE_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -SEARCH_TARGET_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -MOVE_SOURCE_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -MOVE_ALL_SOURCE_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect -MOVE_TARGET_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect - MOVE_ALL_TARGET_ITEMS:" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="dualSelect - should handle default action" time="0">
+    </testcase>
+    <testcase classname="Reducers for shared Component" name="pageActions- Should handle default action" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="14" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\ticketDetail.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\ticketDetail.spec.js" hostname="localhost" tests="3" failures="0" time="49.438" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="ticket Detail Chart" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ticket Detail Chart" name="should mount successfully and find Control" time="0">
+    </testcase>
+    <testcase classname="ticket Detail Chart" name="should mount successfully and find Control when status in progress" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="15" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridUtils.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridUtils.spec.js" hostname="localhost" tests="5" failures="0" time="4.85" timestamp="2020-02-17T07:08:19">
+    <properties>
+    </properties>
+    <testcase classname="Grid Utils" name="should build Text Column" time="0">
+    </testcase>
+    <testcase classname="Grid Utils" name="should build Date Column" time="0">
+    </testcase>
+    <testcase classname="Grid Utils" name="should build Select Column" time="0">
+    </testcase>
+    <testcase classname="Grid Utils" name="should build Action Column" time="0">
+    </testcase>
+    <testcase classname="Grid Utils" name="should build Header Column" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="16" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\ticketsGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\ticketsGrid.spec.js" hostname="localhost" tests="4" failures="0" time="57.006" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="ticket Grid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ticket Grid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="ticket Grid" name="should build columns for the grid" time="0">
+    </testcase>
+    <testcase classname="ticket Grid" name="should call edit actions on click of buttons" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="17" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\components\elementsGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\components\elementsGrid.spec.js" hostname="localhost" tests="4" failures="0" time="7.559" timestamp="2020-02-17T07:08:22">
+    <properties>
+    </properties>
+    <testcase classname="elementsGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="elementsGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="elementsGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <testcase classname="elementsGrid" name="should call edit actions on click of buttons" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="18" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\components\createLogistics.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\components\createLogistics.spec.js" hostname="localhost" tests="4" failures="0" time="10.27" timestamp="2020-02-17T07:08:20">
+    <properties>
+    </properties>
+    <testcase classname="CreateLogistics" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="CreateLogistics" name="find Control" time="0">
+    </testcase>
+    <testcase classname="CreateLogistics" name="should give error when click on save and Segment is not selected" time="0">
+    </testcase>
+    <testcase classname="CreateLogistics" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="19" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadGrid.spec.js" hostname="localhost" tests="3" failures="0" time="59.51" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="fileUploadGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="fileUploadGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="fileUploadGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="20" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\components\errorGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\components\errorGrid.spec.js" hostname="localhost" tests="4" failures="0" time="9.649" timestamp="2020-02-17T07:08:23">
+    <properties>
+    </properties>
+    <testcase classname="control error grid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="control error grid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="control error grid" name="should build columns for the grid" time="0">
+    </testcase>
+    <testcase classname="control error grid" name="should call edit actions on click of buttons" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="21" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\components\createCategory.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\components\createCategory.spec.js" hostname="localhost" tests="4" failures="0" time="6.149" timestamp="2020-02-17T07:08:27">
+    <properties>
+    </properties>
+    <testcase classname="CreateCategory" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="CreateCategory" name="find Control" time="0">
+    </testcase>
+    <testcase classname="CreateCategory" name="should give error when click on save and name is not given" time="0">
+    </testcase>
+    <testcase classname="CreateCategory" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="22" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\layouts\app.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\layouts\app.spec.jsx" hostname="localhost" tests="1" failures="0" time="12.935" timestamp="2020-02-17T07:08:21">
+    <properties>
+    </properties>
+    <testcase classname="app" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="23" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\totalRecordsChart.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\totalRecordsChart.spec.js" hostname="localhost" tests="1" failures="0" time="8.772" timestamp="2020-02-17T07:08:26">
+    <properties>
+    </properties>
+    <testcase classname="records Created Chart" name="should mount with data" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="24" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\components\createElement.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\components\createElement.spec.js" hostname="localhost" tests="4" failures="0" time="8.974" timestamp="2020-02-17T07:08:26">
+    <properties>
+    </properties>
+    <testcase classname="CreateElement" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="CreateElement" name="find Control" time="0">
+    </testcase>
+    <testcase classname="CreateElement" name="should give error when click on save and name is not given" time="0">
+    </testcase>
+    <testcase classname="CreateElement" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="25" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersPie.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersPie.spec.js" hostname="localhost" tests="1" failures="0" time="13.994" timestamp="2020-02-17T07:08:21">
+    <properties>
+    </properties>
+    <testcase classname="OwnersPie" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="26" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\components\ownershipNodeErrorDetails.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\components\ownershipNodeErrorDetails.spec.js" hostname="localhost" tests="3" failures="0" time="6.785" timestamp="2020-02-17T07:08:30">
+    <properties>
+    </properties>
+    <testcase classname="errorsGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="errorsGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="errorsGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="27" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\uploadFile.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\uploadFile.spec.js" hostname="localhost" tests="11" failures="0" time="64.975" timestamp="2020-02-17T07:07:32">
+    <properties>
+    </properties>
+    <testcase classname="upload File" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should count number of options in reinject upload case " time="0">
+    </testcase>
+    <testcase classname="upload File" name="should mount successfully and find Control" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should show invalid file in case of invalid file or data " time="0">
+    </testcase>
+    <testcase classname="upload File" name="should check validate excel not call when button is disabled" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should cancel file upload when cancel button is clicked " time="0">
+    </testcase>
+    <testcase classname="upload File" name="should check validate excel is called" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should add file when file is browsed " time="0">
+    </testcase>
+    <testcase classname="upload File" name="should throw required error for segment on click of submit" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should throw required error for action on click of submit" time="0">
+    </testcase>
+    <testcase classname="upload File" name="should render required only action when component type is CONTRACT" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="28" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformSettingsPanel.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformSettingsPanel.spec.js" hostname="localhost" tests="1" failures="0" time="8.551" timestamp="2020-02-17T07:08:30">
+    <properties>
+    </properties>
+    <testcase classname="Transform Settings Panel" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="29" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\recordsCreatedChart.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\components\recordsCreatedChart.spec.js" hostname="localhost" tests="1" failures="0" time="7.655" timestamp="2020-02-17T07:08:31">
+    <properties>
+    </properties>
+    <testcase classname="records Created Chart" name="should mount with data" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="30" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\errorGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\errorGrid.spec.js" hostname="localhost" tests="3" failures="0" time="6.39" timestamp="2020-02-17T07:08:33">
+    <properties>
+    </properties>
+    <testcase classname="errorGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="errorGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="errorGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="31" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\components\categoriesGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\components\categoriesGrid.spec.js" hostname="localhost" tests="4" failures="0" time="7.544" timestamp="2020-02-17T07:08:33">
+    <properties>
+    </properties>
+    <testcase classname="categoriesGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="categoriesGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="categoriesGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <testcase classname="categoriesGrid" name="should call edit actions on click of buttons" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="32" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\appRouter.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\appRouter.spec.jsx" hostname="localhost" tests="1" failures="0" time="6.612" timestamp="2020-02-17T07:08:35">
+    <properties>
+    </properties>
+    <testcase classname="should render app router page" name="should render app router page" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="33" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\components\ownershipNodeGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\components\ownershipNodeGrid.spec.js" hostname="localhost" tests="3" failures="0" time="9.318" timestamp="2020-02-17T07:08:32">
+    <properties>
+    </properties>
+    <testcase classname="ownershipNodeGrid" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ownershipNodeGrid" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="ownershipNodeGrid" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="34" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\properties.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\properties.spec.js" hostname="localhost" tests="4" failures="0" time="7.032" timestamp="2020-02-17T07:08:35">
+    <properties>
+    </properties>
+    <testcase classname="Node Connection Properties" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Node Connection Properties" name="find Controls" time="0">
+    </testcase>
+    <testcase classname="Node Connection Properties" name="should give error when form submitted and values are not given" time="0">
+    </testcase>
+    <testcase classname="Node Connection Properties" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="35" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\initTicket.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\initTicket.spec.js" hostname="localhost" tests="2" failures="0" time="8.413" timestamp="2020-02-17T07:08:36">
+    <properties>
+    </properties>
+    <testcase classname="InitTicket" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="InitTicket" name="find Control" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="36" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\attributes\components\properties.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\attributes\components\properties.spec.js" hostname="localhost" tests="4" failures="0" time="8.807" timestamp="2020-02-17T07:08:37">
+    <properties>
+    </properties>
+    <testcase classname="Node Properties" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Node Properties" name="find Controls" time="0">
+    </testcase>
+    <testcase classname="Node Properties" name="should give error when form submitted and values are not given" time="0">
+    </testcase>
+    <testcase classname="Node Properties" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="37" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\filters\categoryElementFilter.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\filters\categoryElementFilter.spec.jsx" hostname="localhost" tests="1" failures="0" time="6.274" timestamp="2020-02-17T07:08:40">
+    <properties>
+    </properties>
+    <testcase classname="category element filter" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="38" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\components\cutoffreportFilter.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\components\cutoffreportFilter.spec.js" hostname="localhost" tests="2" failures="0" time="11.571" timestamp="2020-02-17T07:08:35">
+    <properties>
+    </properties>
+    <testcase classname="CutoffReportFilter" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="CutoffReportFilter" name="should click checkbox" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="39" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownership.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownership.spec.js" hostname="localhost" tests="3" failures="0" time="8.589" timestamp="2020-02-17T07:08:38">
+    <properties>
+    </properties>
+    <testcase classname="Ownership" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Ownership" name="should have find and cancel buttons" time="0">
+    </testcase>
+    <testcase classname="Ownership" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="40" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationCriteria.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationCriteria.spec.js" hostname="localhost" tests="1" failures="0" time="7.814" timestamp="2020-02-17T07:08:39">
+    <properties>
+    </properties>
+    <testcase classname="Ownership Calculation Criteria" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="41" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\uncertainty.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\uncertainty.spec.js" hostname="localhost" tests="4" failures="0" time="8.612" timestamp="2020-02-17T07:08:39">
+    <properties>
+    </properties>
+    <testcase classname="Uncertainty" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Uncertainty" name="should have cancel and submit button" time="0">
+    </testcase>
+    <testcase classname="Uncertainty" name="should give error when click on save and uncertainty is not given" time="0">
+    </testcase>
+    <testcase classname="Uncertainty" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="42" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionProducts.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\connectionProducts.spec.js" hostname="localhost" tests="3" failures="0" time="6.172" timestamp="2020-02-17T07:08:41">
+    <properties>
+    </properties>
+    <testcase classname="ConnectionProducts" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ConnectionProducts" name="should pass the grid name for the grid" time="0">
+    </testcase>
+    <testcase classname="ConnectionProducts" name="should build columns for the grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="43" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridFilters.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridFilters.spec.jsx" hostname="localhost" tests="2" failures="0" time="5.727" timestamp="2020-02-17T07:08:42">
+    <properties>
+    </properties>
+    <testcase classname="grid filters" name="should mount select filter successfully" time="0">
+    </testcase>
+    <testcase classname="grid filters" name="should mount DateFilter filter successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="44" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformationGrid.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\components\transformationGrid.spec.js" hostname="localhost" tests="2" failures="0" time="5.332" timestamp="2020-02-17T07:08:43">
+    <properties>
+    </properties>
+    <testcase classname="transformation Grid" name="should mount successfully for movement grid" time="0">
+    </testcase>
+    <testcase classname="transformation Grid" name="should mount successfully for inventory grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="45" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersWizard.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersWizard.spec.js" hostname="localhost" tests="1" failures="0" time="6.562" timestamp="2020-02-17T07:08:43">
+    <properties>
+    </properties>
+    <testcase classname="Uncertainty" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="46" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationConfirmation.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationConfirmation.spec.js" hostname="localhost" tests="2" failures="0" time="4.846" timestamp="2020-02-17T07:08:44">
+    <properties>
+    </properties>
+    <testcase classname="Ownership Calculation Confirmation" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Ownership Calculation Confirmation" name="should update successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="47" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\confirmCutoff.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\components\confirmCutoff.spec.js" hostname="localhost" tests="4" failures="0" time="4.412" timestamp="2020-02-17T07:08:46">
+    <properties>
+    </properties>
+    <testcase classname="ConfirmCutoff" name="find controls" time="0">
+    </testcase>
+    <testcase classname="ConfirmCutoff" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="ConfirmCutoff" name="should cancel add comment when cancel button is clicked " time="0">
+    </testcase>
+    <testcase classname="ConfirmCutoff" name="should call handleSubmit when submit button is clicked" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="48" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersSelect.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\components\ownersSelect.spec.js" hostname="localhost" tests="3" failures="0" time="3.469" timestamp="2020-02-17T07:08:47">
+    <properties>
+    </properties>
+    <testcase classname="OwnersSelect" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="OwnersSelect" name="should have cancel and next button" time="0">
+    </testcase>
+    <testcase classname="OwnersSelect" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="49" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\wizard\wizard.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\wizard\wizard.spec.js" hostname="localhost" tests="2" failures="0" time="3.728" timestamp="2020-02-17T07:08:47">
+    <properties>
+    </properties>
+    <testcase classname="wizard" name="should mount wizard" time="0">
+    </testcase>
+    <testcase classname="wizard" name="should mount wizard component" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="50" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadGridFilter.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadGridFilter.spec.js" hostname="localhost" tests="1" failures="0" time="4.208" timestamp="2020-02-17T07:08:47">
+    <properties>
+    </properties>
+    <testcase classname="fileUploadGrid" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="51" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\notification\notification.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\notification\notification.spec.jsx" hostname="localhost" tests="3" failures="0" time="3.766" timestamp="2020-02-17T07:08:48">
+    <properties>
+    </properties>
+    <testcase classname="notification" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="notification" name="should click to close" time="0">
+    </testcase>
+    <testcase classname="notification" name="should open modal on click of link" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="52" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\modulePage.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\modulePage.spec.jsx" hostname="localhost" tests="1" failures="0" time="3.606" timestamp="2020-02-17T07:08:48">
+    <properties>
+    </properties>
+    <testcase classname="should render Module page" name="should render Module page" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="53" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\appMenu.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\appMenu.spec.jsx" hostname="localhost" tests="1" failures="0" time="4.389" timestamp="2020-02-17T07:08:48">
+    <properties>
+    </properties>
+    <testcase classname="should render app menu page" name="should render app menu page" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="54" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\manageNode\autoOrderNodes.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\node\manageNode\autoOrderNodes.spec.js" hostname="localhost" tests="3" failures="0" time="3.805" timestamp="2020-02-17T07:08:48">
+    <properties>
+    </properties>
+    <testcase classname="Auto Order Nodes" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Auto Order Nodes" name="find Controls" time="0">
+    </testcase>
+    <testcase classname="Auto Order Nodes" name="should call onClose on click of cancel button" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="55" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\breadcrumbs\breadcrumbs.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\breadcrumbs\breadcrumbs.spec.jsx" hostname="localhost" tests="3" failures="0" time="3.803" timestamp="2020-02-17T07:08:49">
+    <properties>
+    </properties>
+    <testcase classname="Breadcrumbs" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Breadcrumbs" name="should mount successfully without current module state" time="0">
+    </testcase>
+    <testcase classname="Breadcrumbs" name="should mount successfully with current module state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="56" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\layouts\appHeader.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\layouts\appHeader.spec.jsx" hostname="localhost" tests="2" failures="0" time="3.664" timestamp="2020-02-17T07:08:49">
+    <properties>
+    </properties>
+    <testcase classname="app Header" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="app Header" name="should logout onClick of Logout" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="57" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\components\errorDetail.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\components\errorDetail.spec.js" hostname="localhost" tests="2" failures="0" time="3.898" timestamp="2020-02-17T07:08:49">
+    <properties>
+    </properties>
+    <testcase classname="Transformation Section" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="Transformation Section" name="should unmount component" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="58" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\bootStrapService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\bootStrapService.spec.js" hostname="localhost" tests="7" failures="0" time="2.084" timestamp="2020-02-17T07:08:52">
+    <properties>
+    </properties>
+    <testcase classname="bootstrap Service" name="should bootstrap" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should registerAppBootstrapper and bootstrapApp" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should getAllReducers" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should getRouterConfig" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should getDefaultRoute" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should getModalConfig" time="0">
+    </testcase>
+    <testcase classname="bootstrap Service" name="should registerReducer" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="59" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\excelService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\excelService.spec.js" hostname="localhost" tests="1" failures="0" time="2.425" timestamp="2020-02-17T07:08:52">
+    <properties>
+    </properties>
+    <testcase classname="excel Service" name="should call validate excel" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="60" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\pageActions.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\pageActions.spec.jsx" hostname="localhost" tests="1" failures="0" time="3.371" timestamp="2020-02-17T07:08:51">
+    <properties>
+    </properties>
+    <testcase classname="should render page actions" name="should render page actions" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="61" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\dualSelect\dualSelect.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\dualSelect\dualSelect.spec.jsx" hostname="localhost" tests="1" failures="0" time="3.425" timestamp="2020-02-17T07:08:51">
+    <properties>
+    </properties>
+    <testcase classname="should render dual select" name="should render dual select" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="62" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\grid.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\grid.spec.jsx" hostname="localhost" tests="1" failures="0" time="3.636" timestamp="2020-02-17T07:08:51">
+    <properties>
+    </properties>
+    <testcase classname="add operator" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="63" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\cutoffReportFilterBuilder.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\cutoffReportFilterBuilder.spec.js" hostname="localhost" tests="2" failures="0" time="1.668" timestamp="2020-02-17T07:08:53">
+    <properties>
+    </properties>
+    <testcase classname="CutOff Report Filter Builder Validate" name="should return filter for no ownership calculation" time="0">
+    </testcase>
+    <testcase classname="CutOff Report Filter Builder Validate" name="should return filter for ownership calculation" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="64" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridSelect.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridSelect.spec.jsx" hostname="localhost" tests="2" failures="0" time="3.173" timestamp="2020-02-17T07:08:52">
+    <properties>
+    </properties>
+    <testcase classname="gridSelect" name="should mount successfully" time="0">
+    </testcase>
+    <testcase classname="gridSelect" name="should click checkbox" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="65" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\blobService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\blobService.spec.js" hostname="localhost" tests="3" failures="0" time="2.28" timestamp="2020-02-17T07:08:53">
+    <properties>
+    </properties>
+    <testcase classname="blob Service" name="should call initialize blobService" time="0">
+    </testcase>
+    <testcase classname="blob Service" name="should call uploadToBlob blobService" time="0">
+    </testcase>
+    <testcase classname="blob Service" name="should call getDownloadLink blobService" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="66" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\reducers.cutoff.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\operationalCut\reducers.cutoff.spec.js" hostname="localhost" tests="11" failures="0" time="1.814" timestamp="2020-02-17T07:08:53">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for operational cut" name="should receive last ticket" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should set ticket info." time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should set pending transactions error" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should set unbalances." time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should receive last ticket." time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should init cutoff process state." time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="@@redux-form/CHANGE" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="@@redux-form/CHANGE when meta form is not initTicket" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should complete cutoff process" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should increment cutoff process" time="0">
+    </testcase>
+    <testcase classname="Reducer for operational cut" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="67" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationValidations.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\components\ownershipCalculationValidations.spec.js" hostname="localhost" tests="1" failures="0" time="3.678" timestamp="2020-02-17T07:08:52">
+    <properties>
+    </properties>
+    <testcase classname="Ownership Calculation Validations" name="should mount successfully" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="68" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\pageRouter.spec.jsx" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\router\pageRouter.spec.jsx" hostname="localhost" tests="1" failures="0" time="4.219" timestamp="2020-02-17T07:08:52">
+    <properties>
+    </properties>
+    <testcase classname="should render page router page" name="should render page router page" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="69" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\reducers.spec.js" hostname="localhost" tests="5" failures="0" time="1.316" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for Category" name="should handle action RECEIVE_GET_CATEGORIES" time="0">
+    </testcase>
+    <testcase classname="Reducers for Category" name="should handle action RECEIVE_ADD_CATEGORY" time="0">
+    </testcase>
+    <testcase classname="Reducers for Category" name="should handle action RECEIVE_UPDATE_CATEGORY" time="0">
+    </testcase>
+    <testcase classname="Reducers for Category" name="should handle action REQUEST_EDIT_INITIALIZE_CATEGORY" time="0">
+    </testcase>
+    <testcase classname="Reducers for Category" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="70" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.309" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="Actions for ownership balance" name="should request Ownership Calculation Dates" time="0">
+    </testcase>
+    <testcase classname="Actions for ownership balance" name="should set Ownership Calculation Info" time="0">
+    </testcase>
+    <testcase classname="Actions for ownership balance" name="should request Ownership Calculation Validations" time="0">
+    </testcase>
+    <testcase classname="Actions for ownership balance" name="should execute Ownership Calculation" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="71" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\actions.spec.js" hostname="localhost" tests="7" failures="0" time="1.271" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="Actions for file uploads" name="should add file on file registration" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should receive file registration upload status" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should receive file registration upload access info" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should perform on file registration validation" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should perform on file registration reinject" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should reinject file registration upload pop up" time="0">
+    </testcase>
+    <testcase classname="Actions for file uploads" name="should set selected file" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="72" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\navigationService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\navigationService.spec.js" hostname="localhost" tests="8" failures="0" time="1.432" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="navigation Service" name="should return modulePath" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should return basePath" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should navigateTo" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should navigateToModule" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should return paramByName" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should return isDetail" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should handleError" time="0">
+    </testcase>
+    <testcase classname="navigation Service" name="should return getCurrentFeatureName" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="73" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\reducers.spec.js" hostname="localhost" tests="4" failures="0" time="1.262" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for Element" name="should handle action RECEIVE_ADD_CATEGORYELEMENT" time="0">
+    </testcase>
+    <testcase classname="Reducers for Element" name="should handle action RECEIVE_UPDATE_CATEGORYELEMENT" time="0">
+    </testcase>
+    <testcase classname="Reducers for Element" name="should handle action REQUEST_EDIT_INITIALIZE_CATEGORYELEMENT" time="0">
+    </testcase>
+    <testcase classname="Reducers for Element" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="74" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\middlewares\fetchMiddleware.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\middlewares\fetchMiddleware.spec.js" hostname="localhost" tests="6" failures="0" time="1.346" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="fetchMiddleware" name="should handle actions without having fetchConfig" time="0">
+    </testcase>
+    <testcase classname="fetchMiddleware" name="should handle actions without having show progress property" time="0">
+    </testcase>
+    <testcase classname="fetchMiddleware" name="should handle actions without header information" time="0">
+    </testcase>
+    <testcase classname="fetchMiddleware" name="should handle actions with header information" time="0">
+    </testcase>
+    <testcase classname="fetchMiddleware" name="should handle actions with capability information" time="0">
+    </testcase>
+    <testcase classname="fetchMiddleware" name="should handle actions with method other than GET" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="75" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\nodeConnection\Attributes\reducers.spec.js" hostname="localhost" tests="6" failures="0" time="1.275" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="reducer test for node connection" name="should handle Receive Get Connection Action" time="0">
+    </testcase>
+    <testcase classname="reducer test for node connection" name="should handle Receive Update Connection Action" time="0">
+    </testcase>
+    <testcase classname="reducer test for node connection" name="should handle Init Product Action" time="0">
+    </testcase>
+    <testcase classname="reducer test for node connection" name="should handle Receive Update Product Action" time="0">
+    </testcase>
+    <testcase classname="reducer test for node connection" name="should handle Receive Get Owners Action" time="0">
+    </testcase>
+    <testcase classname="reducer test for node connection" name="should handle Receive Update Node Connection Owners Action" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="76" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\actions.spec.js" hostname="localhost" tests="18" failures="0" time="1.342" timestamp="2020-02-17T07:08:55">
+    <properties>
+    </properties>
+    <testcase classname="should init Category ElementFilter" name="should init Category ElementFilter" time="0">
+    </testcase>
+    <testcase classname="should request/response category elements" name="should request/response category elements" time="0">
+    </testcase>
+    <testcase classname="should get category elemnets of select category" name="should get category elemnets of select category" time="0">
+    </testcase>
+    <testcase classname="should save category elemnets filter" name="should save category elemnets filter" time="0">
+    </testcase>
+    <testcase classname="should request/recieve App Info" name="should request/recieve App Info" time="0">
+    </testcase>
+    <testcase classname="should app ready" name="should app ready" time="0">
+    </testcase>
+    <testcase classname="should toggle menu item" name="should toggle menu item" time="0">
+    </testcase>
+    <testcase classname="should toggle menu" name="should toggle menu" time="0">
+    </testcase>
+    <testcase classname="should add comment" name="should add comment" time="0">
+    </testcase>
+    <testcase classname="should init add comment" name="should init add comment" time="0">
+    </testcase>
+    <testcase classname="should show Loader" name="should show Loader" time="0">
+    </testcase>
+    <testcase classname="should hide Loader" name="should hide Loader" time="0">
+    </testcase>
+    <testcase classname="should open Modal" name="should open Modal" time="0">
+    </testcase>
+    <testcase classname="should close Modal" name="should close Modal" time="0">
+    </testcase>
+    <testcase classname="should open Confirm" name="should open Confirm" time="0">
+    </testcase>
+    <testcase classname="should close Confirm" name="should close Confirm" time="0">
+    </testcase>
+    <testcase classname="should change Tab" name="should change Tab" time="0">
+    </testcase>
+    <testcase classname="should configure Grid" name="should configure Grid" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="77" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\actions.spec.js" hostname="localhost" tests="3" failures="0" time="1.281" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="Actions for Element" name="should request create Element" time="0">
+    </testcase>
+    <testcase classname="Actions for Element" name="should request update Element" time="0">
+    </testcase>
+    <testcase classname="Actions for Element" name="should request initialize edit" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="78" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\asyncValidate.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\transformSettings\asyncValidate.spec.js" hostname="localhost" tests="1" failures="0" time="1.379" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="TransformSettings async validate" name="should raise transformation already exist error" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="79" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownershipNode\actions.spec.js" hostname="localhost" tests="3" failures="0" time="1.305" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="Actions for Operational Node" name="should initialize node error detail" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational Node" name="Should request last ownership ticket" time="0">
+    </testcase>
+    <testcase classname="Actions for Operational Node" name="should receive last ownership ticket." time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="80" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\grid\gridService.spec.js" hostname="localhost" tests="9" failures="0" time="1.446" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="Actions for gridService" name="should process" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should toggleAll" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should toggleSelection" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should onPageChange" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should onPageSizeChange" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should onSortedChange" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should buildGridState" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should buildGridApiUrl" time="0">
+    </testcase>
+    <testcase classname="Actions for gridService" name="should buildOdataQuery" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="81" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ownership\reducers.spec.js" hostname="localhost" tests="7" failures="0" time="1.501" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for ownership balance" name="@@redux-form/CHANGE" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="@@redux-form/CHANGE when meta form is not ownershipCalculationCriteria" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="should receive ownership calculation dates" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="should receive ownership calculation validation" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="should set ownership calculation info" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="should receive and create ownership calculation ticket" time="0">
+    </testcase>
+    <testcase classname="Reducer for ownership balance" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="82" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.399" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="Actions for logistics" name="should create the logistics ticket" time="0">
+    </testcase>
+    <testcase classname="Actions for logistics" name="should get last ownership performed date for the selected segment" time="0">
+    </testcase>
+    <testcase classname="Actions for logistics" name="should set initial date" time="0">
+    </testcase>
+    <testcase classname="Actions for logistics" name="should clear logistics ownership create request data" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="83" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\apiService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\apiService.spec.js" hostname="localhost" tests="41" failures="0" time="1.467" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="api service" name="should build api for query nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for queryById nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for update nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for queryProducts nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for updateProduct nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getOwners nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for updateOwners nodeConnection" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for query node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getById node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for update node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for queryProducts node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for updateProduct node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for updateOwners node" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for query nodeTagging" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for queryTags nodeTagging" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for tagNode nodeTagging" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for query category" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for query all category" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for createOrUpdate category" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for validateCategoryName category" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for query fileUpload" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for create fileUpload" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getUploadAccessInfo fileUpload" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getReadAccessInfo fileUpload" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getAppInfo" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getCategoryElements" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getElements" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for get last operational ticket" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getTickets" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for get last ticket" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for get ticket Information" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for operationalCutOff for getPendingTransactionErrors" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for operationalCutOff for getUnbalances" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for operationalCutOff for saveOperationalCutOff" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for operationalCutOff for validate" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for transformation for create" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for transformation for query" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for transformation for getInfo" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for transformation for validate" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for transformation for delete" time="0">
+    </testcase>
+    <testcase classname="api service" name="should build api for getOwnershipNode" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="84" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\dateService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\dateService.spec.js" hostname="localhost" tests="10" failures="0" time="1.422" timestamp="2020-02-17T07:08:56">
+    <properties>
+    </properties>
+    <testcase classname="date service" name="dateService format" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService isValid" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService invalid date" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService now" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService add" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService subtract" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService getDiff" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService parse" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService no format parse" time="0">
+    </testcase>
+    <testcase classname="date service" name="dateService null parse" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="85" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\reducers.spec.js" hostname="localhost" tests="5" failures="0" time="1.565" timestamp="2020-02-17T07:08:57">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for control errors" name="should initialize add error comment" time="0">
+    </testcase>
+    <testcase classname="Reducer for control errors" name="should receive error comment" time="0">
+    </testcase>
+    <testcase classname="Reducer for control errors" name="should set selected data" time="0">
+    </testcase>
+    <testcase classname="Reducer for control errors" name="should set error detail" time="0">
+    </testcase>
+    <testcase classname="Reducer for control errors" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="86" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\pbiFilterBuilder.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\pbiFilterBuilder.spec.js" hostname="localhost" tests="1" failures="0" time="1.515" timestamp="2020-02-17T07:08:57">
+    <properties>
+    </properties>
+    <testcase classname="pbi Filter Builder Validate" name="should build filter" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="87" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.169" timestamp="2020-02-17T07:08:57">
+    <properties>
+    </properties>
+    <testcase classname="ticket chart actions" name="should request ticket details" time="0">
+    </testcase>
+    <testcase classname="ticket chart actions" name="should receive ticket details" time="0">
+    </testcase>
+    <testcase classname="ticket chart actions" name="should reset ticket details" time="0">
+    </testcase>
+    <testcase classname="ticket chart actions" name="should initialize ticket error" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="88" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\asyncValidate.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageElement\asyncValidate.spec.js" hostname="localhost" tests="1" failures="0" time="1.321" timestamp="2020-02-17T07:08:57">
+    <properties>
+    </properties>
+    <testcase classname="Element async validate" name="should raise element name already exist error" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="89" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\reducer.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\reducer.spec.js" hostname="localhost" tests="7" failures="0" time="1.279" timestamp="2020-02-17T07:08:58">
+    <properties>
+    </properties>
+    <testcase classname="Reducer for file uploads" name="should add a new file" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should receive file registration upload status" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should receive file registration upload access info" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should perform on file registration validation" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should perform on file registration reinject" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should perform on reset file registration upload pop up" time="0">
+    </testcase>
+    <testcase classname="Reducer for file uploads" name="should set the selected file" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="90" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\reducers\fileUpload.reducer.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\reducers\fileUpload.reducer.spec.js" hostname="localhost" tests="8" failures="0" time="1.237" timestamp="2020-02-17T07:08:58">
+    <properties>
+    </properties>
+    <testcase classname="reducer test for file upload" name="should handle Add New File" time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should receive file upload status" time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should receive upload file acces info" time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should receive upload file read info" time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should receive file registration validation" time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should reinject file registration " time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should register upload popup " time="0">
+    </testcase>
+    <testcase classname="reducer test for file upload" name="should return default state" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="91" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\ticketChart\reducers.spec.js" hostname="localhost" tests="4" failures="0" time="1.17" timestamp="2020-02-17T07:08:58">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for Ticket Chart" name="should receive ticket info detail" time="0">
+    </testcase>
+    <testcase classname="Reducers for Ticket Chart" name="should not change receive ticket info detail" time="0">
+    </testcase>
+    <testcase classname="Reducers for Ticket Chart" name="should reset ticket info detail" time="0">
+    </testcase>
+    <testcase classname="Reducers for Ticket Chart" name="should handle default" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="92" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\serverValidator.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\serverValidator.spec.js" hostname="localhost" tests="3" failures="0" time="1.173" timestamp="2020-02-17T07:08:58">
+    <properties>
+    </properties>
+    <testcase classname="server validator service" name="should call validateCategoryName" time="0">
+    </testcase>
+    <testcase classname="server validator service" name="should call validateTicket" time="0">
+    </testcase>
+    <testcase classname="server validator service" name="should call validateTransformation" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="93" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\asyncValidate.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\asyncValidate.spec.js" hostname="localhost" tests="1" failures="0" time="1.334" timestamp="2020-02-17T07:08:58">
+    <properties>
+    </properties>
+    <testcase classname="Category async validate" name="should raise category name already exist error" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="94" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\filters\categoryElementFilterBuilder.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\components\filters\categoryElementFilterBuilder.spec.js" hostname="localhost" tests="4" failures="0" time="1.167" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="categoryElementFilterBuilder" name="should return empty filter query if category element is empty" time="0">
+    </testcase>
+    <testcase classname="categoryElementFilterBuilder" name="should handle if categoryelements length is 1 or greater than 3" time="0">
+    </testcase>
+    <testcase classname="categoryElementFilterBuilder" name="should handle categoryelements length == 3" time="0">
+    </testcase>
+    <testcase classname="categoryElementFilterBuilder" name="should handle categoryelements length == 2" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="95" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadFilterBuilder.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\fileUpload\components\fileUploadFilterBuilder.spec.js" hostname="localhost" tests="6" failures="0" time="1.31" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="fileUploadFilterBuilder" name="should return empty filter" time="0">
+    </testcase>
+    <testcase classname="fileUploadFilterBuilder" name="should handle initial Date filter" time="0">
+    </testcase>
+    <testcase classname="fileUploadFilterBuilder" name="should handle final Date filter" time="0">
+    </testcase>
+    <testcase classname="fileUploadFilterBuilder" name="should handle state filter" time="0">
+    </testcase>
+    <testcase classname="fileUploadFilterBuilder" name="should handle user filter" time="0">
+    </testcase>
+    <testcase classname="fileUploadFilterBuilder" name="should handle action filter" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="96" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.464" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="should get selected category" name="should get selected category" time="0">
+    </testcase>
+    <testcase classname="should get selected element" name="should get selected element" time="0">
+    </testcase>
+    <testcase classname="should save cutoff report filter" name="should save cutoff report filter" time="0">
+    </testcase>
+    <testcase classname="should request search nodes" name="should request search nodes" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="97" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\category\manageCategory\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.495" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="should request get Categories" name="should request get Categories" time="0">
+    </testcase>
+    <testcase classname="Actions for Category" name="should request create Category" time="0">
+    </testcase>
+    <testcase classname="Actions for Category" name="should request update Category" time="0">
+    </testcase>
+    <testcase classname="Actions for Category" name="should request initialize edit" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="98" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\scenarioService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\scenarioService.spec.js" hostname="localhost" tests="2" failures="0" time="1.437" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="scenario service" name="get scenarios should return scenarios" time="0">
+    </testcase>
+    <testcase classname="scenario service" name="get scenarios should return feature" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="99" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\reports\cutOff\reducers.spec.js" hostname="localhost" tests="4" failures="0" time="1.798" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for reports" name="should handle action CUTOFF_REPORT_FILTER_ON_SELECT_CATEGORY" time="0">
+    </testcase>
+    <testcase classname="Reducers for reports" name="should handle action CUTOFF_REPORT_FILTER_ON_SELECT_ELEMENT" time="0">
+    </testcase>
+    <testcase classname="Reducers for reports" name="should handle action RECEIVE_SEARCH_NODES" time="0">
+    </testcase>
+    <testcase classname="Reducers for reports" name="should handle action SAVE_CUTOFF_REPORT_FILTER" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="100" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\constants.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\constants.spec.js" hostname="localhost" tests="35" failures="0" time="1.302" timestamp="2020-02-17T07:09:00">
+    <properties>
+    </properties>
+    <testcase classname="constants" name="should return constants for Config_Constants DEV" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for Config_Constants PROD" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ResponsiveBreakpoints DESKTOPMIN" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ResponsiveBreakpoints MOBILEMIN" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ResponsiveBreakpoints MOBILEMAX" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ResponsiveBreakpoints TABLETMIN" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ResponsiveBreakpoints TABLETMAX" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for RouterActions Button" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for RouterActions Dropdown" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for NotificationType Success" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for NotificationType Error" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for NotificationType Warning" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for NotificationType Info" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for Modes Create" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for Modes Read" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for Modes Update" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for Modes Delete" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors a" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors b" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors c" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors d" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors e" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors f" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors g" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors h" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors i" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors j" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors k" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors l" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors m" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors n" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors o" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors p" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors q" time="0">
+    </testcase>
+    <testcase classname="constants" name="should return constants for ChartColors r" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="101" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\reducers.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\logistics\reducers.spec.js" hostname="localhost" tests="4" failures="0" time="2.056" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="Reducers for Logistics" name="should handle action RECEIVE_ADD_LOGISTICS_TICKET" time="0">
+    </testcase>
+    <testcase classname="Reducers for Logistics" name="should handle action RECEIVE_DATE_FOR_SEGMENT" time="0">
+    </testcase>
+    <testcase classname="Reducers for Logistics" name="should handle action SET_INITIAL_DATE" time="0">
+    </testcase>
+    <testcase classname="Reducers for Logistics" name="should handle action CLEAR_LOGISTICS_OWNERSHIP_REQUEST_DATA" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="102" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\httpService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\httpService.spec.js" hostname="localhost" tests="9" failures="0" time="1.034" timestamp="2020-02-17T07:09:00">
+    <properties>
+    </properties>
+    <testcase classname="http service" name="should build api for read antiforgery token" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getCurrentCulture" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getParamByName" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getModuleName" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getSubModuleName" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getDetailsModuleName" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for hasHash" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getCurrentPathName" time="0">
+    </testcase>
+    <testcase classname="http service" name="should build api for getQueryString" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="103" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\actions.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\areas\error\actions.spec.js" hostname="localhost" tests="4" failures="0" time="1.97" timestamp="2020-02-17T07:08:59">
+    <properties>
+    </properties>
+    <testcase classname="Actions for control errors" name="should initialize add comment modal" time="0">
+    </testcase>
+    <testcase classname="Actions for control errors" name="should save error comments" time="0">
+    </testcase>
+    <testcase classname="Actions for control errors" name="should set selected data" time="0">
+    </testcase>
+    <testcase classname="Actions for control errors" name="should get error detail" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="104" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\authService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\authService.spec.js" hostname="localhost" tests="5" failures="0" time="0.926" timestamp="2020-02-17T07:09:01">
+    <properties>
+    </properties>
+    <testcase classname="auth service" name="should get Name" time="0">
+    </testcase>
+    <testcase classname="auth service" name="should get userId" time="0">
+    </testcase>
+    <testcase classname="auth service" name="should get Image" time="0">
+    </testcase>
+    <testcase classname="auth service" name="should check return true if the user is authorized" time="0">
+    </testcase>
+    <testcase classname="auth service" name="should check return false if the user is not authorized" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="105" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\responsiveService.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\common\services\responsiveService.spec.js" hostname="localhost" tests="1" failures="0" time="1.533" timestamp="2020-02-17T07:09:00">
+    <properties>
+    </properties>
+    <testcase classname="responsive service" name="should build api for query nodeConnection" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+  <testsuite id="106" name="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\actions\fileUpload.action.spec.js" errors="0" package="C:\Users\jasharma\Source\repos\True\Develop\Ecp.True\Ecp.True.Host.UI\wwwroot\src\js\__tests__\actions\fileUpload.action.spec.js" hostname="localhost" tests="6" failures="0" time="1.976" timestamp="2020-02-17T07:09:00">
+    <properties>
+    </properties>
+    <testcase classname="file upload actions" name="should initiate Add File Action" time="0">
+    </testcase>
+    <testcase classname="file upload actions" name="should initiate File Registration Action" time="0">
+    </testcase>
+    <testcase classname="file upload actions" name="should receive File Registration Upload Access Info" time="0">
+    </testcase>
+    <testcase classname="file upload actions" name="should validate File Registration" time="0">
+    </testcase>
+    <testcase classname="file upload actions" name="should Register new file upload" time="0">
+    </testcase>
+    <testcase classname="file upload actions" name="should upload file Access Info" time="0">
+    </testcase>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+</testsuites>

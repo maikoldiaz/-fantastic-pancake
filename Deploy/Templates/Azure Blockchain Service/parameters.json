@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "bcMemberName": {
+      "value": "redisCacheName"
+    },
+    "consortiumName": {
+      "value": "Basic"
+    },
+    "memberPassword": {
+      "value": "C"
+    },
+    "consortiumManagementAccountPassword": {
+      "value": 1
+    },
+    "enableNonSslPort": {
+      "value": false
+    },
+    "diagnosticsEnabled": {
+      "value": true
+    },
+    "logAnalyticsWorkspaceName": {
+      "value": "logAnalyticsWorkspaceName"
+    },
+    "pidDeploymentName": {
+      "value": "name"
+    }
+  }
+}

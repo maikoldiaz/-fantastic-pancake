@@ -1,0 +1,34 @@
+﻿steps:
+  - ${{ if eq(parameters['ui'], 'true') }}:
+      - template: ./ui.build.yml
+
+  # Ignore UTs as they will run as part of either api CI or release build via functions.build.yml
+  - ${{ if eq(parameters['api'], 'true') }}:
+      - template: ./api.build.yml
+        parameters:
+          tests: 'false'
+
+  - ${{ if eq(parameters['app'], 'true') }}:
+      - template: ./functions.build.yml
+        parameters:
+          tests: 'false'
+
+  - ${{ if eq(parameters['db'], 'true') }}:
+      - template: ./db.build.yml
+
+  - ${{ if eq(parameters['blockchain'], 'true') }}:
+      - template: ./blockchain.build.yml
+
+  - ${{ if eq(parameters['config'], 'true') }}:
+      - template: ./config.build.yml
+
+  - ${{ if eq(parameters['certs'], 'true') }}:
+      - template: ./rotation.build.yml
+
+  - template: ../package.yml
+    parameters:
+      db: '${{parameters.db}}'
+      infra: 'true'
+      credScan: 'false'
+      tests: '${{parameters.tests}}'
+      spell: 'true'

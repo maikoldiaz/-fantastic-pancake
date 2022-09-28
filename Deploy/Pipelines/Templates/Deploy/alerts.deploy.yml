@@ -1,0 +1,742 @@
+steps:
+- task: DownloadBuildArtifacts@0
+  displayName: Download Build Artifacts
+  inputs:
+    artifactName: Drop
+    downloadPath: '$(System.ArtifactsDirectory)'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Action Group
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-acrId "$(acrId)" -actionGroupName "$(actionGroupName)" -actionGroupShortName "$(actionGroupShortName)" -status "true" -nameList "$(nameList)" -emailList "$(emailList)" -deployActionGroup "true" -deployScheduledAlert "false"'
+  condition: and(succeeded(), eq(variables['deployActionGroup'], 'true'))
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Unhealthy Resources Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-acrId "$(acrId)" -actionGroupId "$(actionGroupName)" -alertName "$(trueUnhealthyResources)" -resourceGroupName "${{ parameters.resourceGroupName }}" -status ${{ parameters.status }} -deployHealthAlert "true" -deployScheduledAlert "false"'
+
+- task: AzureCLI@2
+  displayName: UI App Service CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiAppServicePlanCPUConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/serverfarms/$(appServicePlanName)-UI" -condition "avg cpupercentage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High CPU" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: UI App Service Http 404 Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiAppServicePlanHttp404AlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/sites/$(appServiceNameUI)" -condition "total http404 > $(http404ErrorThresholdCount)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Http 404 Failures" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: UI App Service Http 401 Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiAppServicePlanHttp401AlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/sites/$(appServiceNameUI)" -condition "total http401 > $(http401Or403ErrorThresholdCount)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Http 401 Failures" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: UI App Service Http 403 Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiAppServicePlanHttp403AlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/sites/$(appServiceNameUI)" -condition "total http403 > $(http401Or403ErrorThresholdCount)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Http 403 Failures" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: Function Apps CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(functionsServicePlanCPUConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/serverfarms/$(appServicePlanName)" -condition "avg cpupercentage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High CPU" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: UI App Service Memory Consumption Alert 
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiAppServicePlanMemoryConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/serverfarms/$(appServicePlanName)-UI" -condition "avg memorypercentage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Memory Consumption" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: Function Apps Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(functionsServicePlanMemoryConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/serverfarms/$(appServicePlanName)" -condition "avg memorypercentage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Memory Consumption" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: UI App Service Server Error Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(uiServerErrorsAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Web/sites/$(appServiceNameUI)" -condition "total http5xx >= $(httpErrorThresholdCount)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Server errors" -status "${{ parameters.status }}"'
+
+# - task: AzureCLI@2
+#   displayName: Blockchain Service CPU Consumption Alert
+#   inputs:
+#     azureSubscription: "${{ parameters.serviceConnection }}"
+#     scriptType: ps
+#     scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+#     arguments: '-acrId "$(acrId)" -alertName "$(blockChainCpuConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Blockchain/blockchainMembers/$(blockchainMemberName)" -condition "avg cpuusagepercentageindouble > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High CPU consumption" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: Blockchain Service Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(blockChainMemoryConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.Blockchain/blockchainMembers/$(blockchainMemberName)" -condition "avg memoryusagepercentageindouble > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Memory consumption" -status "${{ parameters.status }}"'
+        
+- task: AzurePowerShell@4
+  displayName: Admin AKS Controller CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''cpuLimitNanoCores''; let usageCounterName = ''cpuUsageNanoCores''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName and ControllerName !contains_cs ''ecptrue-ana'' and ControllerName !contains_cs ''ecptrue-flow'' and ControllerName !contains_cs ''nginx'' and ControllerName !contains_cs ''ecptrue-sap'' | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueControllerCpuConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Analytics AKS Controller CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''cpuLimitNanoCores''; let usageCounterName = ''cpuUsageNanoCores''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-ana''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueAnalyticsControllerCpuConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: SAP AKS Controller CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''cpuLimitNanoCores''; let usageCounterName = ''cpuUsageNanoCores''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-sap''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueSapControllerCpuConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Flow AKS Controller CPU Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''cpuLimitNanoCores''; let usageCounterName = ''cpuUsageNanoCores''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-sap''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueFlowControllerCpuConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Admin Controller Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''memoryLimitBytes''; let usageCounterName = ''memoryRssBytes''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName and ControllerName !contains_cs ''ecptrue-ana'' and ControllerName !contains_cs ''ecptrue-flow'' and ControllerName !contains_cs ''nginx'' and ControllerName !contains_cs ''ecptrue-sap'' | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueControllerMemoryConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Analytics AKS Controller Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''memoryLimitBytes''; let usageCounterName = ''memoryRssBytes''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-ana''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueAnalyticsControllerMemoryConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: SAP AKS Controller Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''memoryLimitBytes''; let usageCounterName = ''memoryRssBytes''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-sap''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueSapControllerMemoryConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Flow AKS controller Memory Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}"
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(percentageThreshold)
+                      -query "let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 5m; let capacityCounterName = ''memoryLimitBytes''; let usageCounterName = ''memoryRssBytes''; let clusterName = toupper(''$(aksClusterName)''); let controllerName = ''ecptrue-sap''; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | where ControllerName contains_cs controllerName | extend InstanceName = strcat(ClusterId, ''/'', ContainerName), ContainerName = strcat(controllerName, ''/'', tostring(split(ContainerName, ''/'')[1])) | distinct Computer, InstanceName, ContainerName | join hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ObjectName == ''K8SContainer'' | where CounterName == capacityCounterName | summarize LimitValue = max(CounterValue) by Computer, InstanceName, bin(TimeGenerated, trendBinSize) | project Computer, InstanceName, LimitStartTime = TimeGenerated, LimitEndTime = TimeGenerated + trendBinSize, LimitValue ) on Computer, InstanceName | join kind=inner hint.strategy=shuffle ( Perf | where TimeGenerated < endDateTime + trendBinSize | where TimeGenerated >= startDateTime - trendBinSize | where ObjectName == ''K8SContainer'' | where CounterName == usageCounterName | project Computer, InstanceName, UsageValue = CounterValue, TimeGenerated ) on Computer, InstanceName | where TimeGenerated >= LimitStartTime and TimeGenerated < LimitEndTime | project Computer, ContainerName, TimeGenerated, UsagePercent = UsageValue * 100.0 / LimitValue | summarize AggregatedValue = avg(UsagePercent) by bin(TimeGenerated, trendBinSize) , ContainerName"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(ecptrueFlowControllerMemoryConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Admin Cluster Disk Consumption Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ScheduledAlert.ps1'
+    ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" 
+                      -consecutiveThresholdCount $(consecutiveThresholdCount)
+                      -frequency $(clusterEventFrequency)
+                      -windowSize $(clusterEventsWindowSize)
+                      -percentageThreshold $(aksDiskPercentageThreshold)
+                      -query "let clusterId = ''/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/Microsoft.ContainerService/managedClusters/$(aksClusterName)''; let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; InsightsMetrics | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where Origin == ''container.azm.ms/telegraf'' | where Namespace == ''container.azm.ms/disk'' | extend Tags = todynamic(Tags) | project TimeGenerated, ClusterId = Tags[''container.azm.ms/clusterId''], _ResourceId, Computer = tostring(Tags.hostName), Device = tostring(Tags.device), Path = tostring(Tags.path), DiskMetricName = Name, DiskMetricValue = Val  | where ClusterId =~ clusterId | where DiskMetricName == ''used_percent''| summarize AggregatedValue = max(DiskMetricValue) by bin(TimeGenerated, trendBinSize), _ResourceId| where AggregatedValue >= 90"
+                      -dataSourceId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.sharedResourceGroupName }}/providers/microsoft.operationalinsights/workspaces/$(logAnalyticsWorkspaceName)"                      
+                      -actionGroupId "/subscriptions/$(subscriptionId)/resourceGroups/${{ parameters.resourceGroupName }}/providers/Microsoft.Insights/actionGroups/$(actionGroupName)"
+                      -deployLocation "${{ parameters.deployLocation }}"
+                      -description "Alert for AKS controllers"
+                      -alertName $(aKSNodesAvailableDiskConsumptionAlertName)
+                      -severity "$(severity)"
+                      -status "${{ parameters.status }}"
+                      -acrId "$(acrId)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Registration Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(registrationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(registrationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Registration Failure"
+                         -alertName "$(registrationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: CutOff Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(applicationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(cutoffFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High CutOff Failure"
+                         -alertName "$(cutoffFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+- task: AzureResourceGroupDeployment@2
+  displayName: Operative Delta Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(applicationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(operativeDeltaFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Operative Delta Failure"
+                         -alertName "$(operativeDeltaFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Ownership Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(applicationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(ownershipFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Ownership Failure"
+                         -alertName "$(ownershipFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Official Delta Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(applicationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(officialDeltaFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Official Delta Failure"
+                         -alertName "$(officialDeltaFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Official Transfer Point Registration Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(applicationEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(officialTransferPointRegistrationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Official Transfer point Failure"
+                         -alertName "$(officialTransferPointRegistrationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Movement Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(movementReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Movement Reconciliation Failure"
+                         -alertName "$(movementReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Inventory Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(inventoryReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Inventory Reconciliation Failure"
+                         -alertName "$(inventoryReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Unbalance Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(unbalanceReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Unbalance Reconciliation Failure"
+                         -alertName "$(unbalanceReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Ownership Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(ownershipReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Ownership Reconciliation Failure"
+                         -alertName "$(ownershipReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Node Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(nodeReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Node Reconciliation Failure"
+                         -alertName "$(nodeReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Node Connection Reconciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(nodeConnectionReconciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Node Connection Reconciliation Failure"
+                         -alertName "$(nodeConnectionReconciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Offchain Sync Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(offchainSyncFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(offchainSyncFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'
+
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Sap Upload Sell Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(sapUploadSellFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(sapUploadSellFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'                         
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Sap Upload Logistic Movement Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(sapUploadLogisticMovementFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(sapUploadLogisticMovementFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'                         
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Conciliation Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(conciliationFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(conciliationFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"'  
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Sap Upload Purchase Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(sapUploadPurchaseFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(sapUploadPurchaseFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"' 
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Sap Upload Movement Or Inventory Failure Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "${{ parameters.resourceGroupName }}"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Alert/deploy.json'
+    overrideParameters: '-thresholdCount "$(blockchainEventsThresholdCount)" 
+                         -frequency "$(frequency)" 
+                         -windowSize "$(windowSize)" 
+                         -query "customEvents | where name contains_cs ''$(sapUploadMovementOrInventoryFailureEvent)''" 
+                         -dataSourceId "$(applicationInsights)"
+                         -deployLocation "${{ parameters.deployLocation }}" 
+                         -description "High Offchain Sync Failure"
+                         -alertName "$(sapUploadMovementOrInventoryFailureAlertName)"
+                         -severity "$(severity)"
+                         -actionGroupId "$(actionGroupName)"
+                         -queryType "ResultCount"
+                         -subscriptionId "$(subscriptionId)"
+                         -resourceGroupName "${{ parameters.resourceGroupName }}"
+                         -sharedResourceGroupName "${{ parameters.sharedResourceGroupName }}"
+                         -status "${{ parameters.status }}"
+                         -acrId "$(acrId)"' 
+
+- task: AzureCLI@2
+  displayName: CPU Consumption Service Bus Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(serviceBusCPUConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.ServiceBus/namespaces/$(serviceBusNamespaceNameInt)" -condition "avg namespacecpuusage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High CPU" -status "${{ parameters.status }}"'
+
+- task: AzureCLI@2
+  displayName: Memory Consumption Service Bus Alert
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    scriptType: ps
+    scriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Add-MetricAlert.ps1"
+    arguments: '-acrId "$(acrId)" -alertName "$(serviceBusMemoryConsumptionAlertName)" -actionGroupName "$(actionGroupName)" -subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -scope "Microsoft.ServiceBus/namespaces/$(serviceBusNamespaceNameInt)" -condition "avg namespacememoryusage > $(percentageThreshold)" -windowSizeMins "$(windowSizeMins)" -frequencyMins "$(frequencyMins)" -description "High Memory Consumption" -status "${{ parameters.status }}"'

@@ -1,0 +1,16 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: Post deployment Clean Up - App Connections
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-Resources.ps1'
+     ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourcesToRemove "$(depricatedLogicAppConnections)" -resourceType "Microsoft.Web/connections"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: Post deployment Clean Up - App
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-Resources.ps1'
+     ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourcesToRemove "$(depricatedLogicApp)" -resourceType "Microsoft.Logic/workflows"'
+     azurePowerShellVersion: LatestVersion

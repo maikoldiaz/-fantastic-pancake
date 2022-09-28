@@ -1,0 +1,37 @@
+﻿// _pane.scss
+
+#{$ep}-pane {
+    display: flex;
+    flex-flow: row nowrap;
+    height: pxToRem(48);
+    justify-content: space-between;
+
+    + #{$ep}-content {
+        height: calc(100% - 48px);
+        &--half{
+            height: calc(80% - 48px);
+        }
+    }
+    &--wht{
+        height: auto;
+        background-color: $white;
+        padding: pxToRem(15);
+        justify-content: space-between;
+        display: flex;
+        border: solid 1px #DCDCDC;
+        border-bottom: none;
+        & + #{$ep}-content{
+            & #{$ep}-content__body{
+                padding-top: 0;
+                & #{$ep}-tabpanels__panels{
+                    height: 100%;
+                    margin-bottom: pxToRem(20);
+                }
+            }
+        }        
+    }
+    &__actions{
+        display: inline-flex;
+        align-items: center;
+    }
+}

@@ -1,0 +1,48 @@
+steps:
+ - powershell: |
+     $guid=(New-Guid).Guid
+     Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+   displayName: Set PID Name
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: SignalR - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure SignalR/deploy.json'
+     overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -name "$(signalRServiceName)" -capacity "$(signalRCapacity)" -pricingTier "$(signalRPricingTier)" -serviceMode "$(signalRServiceMode)"'
+     deploymentOutputs: armOut
+     deploymentName: '$(deploymentsuffix)'
+
+ - task: AzurePowerShell@4
+   displayName: SignalR - Diagnostics
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Diagnostics.ps1'
+     ScriptArguments: '-subscriptionId "$(subscriptionId)" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(signalRServiceName)" -resourceType "Microsoft.SignalRService/SignalR" -logAnalyticsWorkspaceId "$(logAnalyticsResourceId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: SignalR - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(signalRServiceName)" -apiVersion "2018-10-01"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: SignalR - Set Build Variable
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzureCLI@2
+   displayName: SignalR - Set Connection String In KV
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "$(signalRConnectionStringName)" -secretValue "$(ou_SignalRConnectionString)"'

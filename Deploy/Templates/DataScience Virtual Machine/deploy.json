@@ -1,0 +1,264 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D4s_v3",
+            "metadata": {
+                "description": "Size of the virtual machine."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "East US",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account for virtual machine"
+            }
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the virtual machine"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet"
+            }
+        },
+        "virtualNetworkID": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual network id of existing vnet"
+            }
+        },
+        "networkInterfaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Network interface"
+            }
+        }
+
+    },
+    "variables": {
+        "subnetRef": "[concat (parameters('virtualNetworkID'),'/subnets/', parameters('subnetName'))]",
+        "accountid": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name,'/providers/','Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "wadlogs": "<WadCfg><DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"><DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/><WindowsEventLog scheduledTransferPeriod=\"PT1M\" ><DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /><DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\" /><DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" /></WindowsEventLog>",
+        "wadperfcounters": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Process(_Total)\\Thread Count\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Threads\" locale=\"en-us\"/></PerformanceCounterConfiguration> </PerformanceCounters>",
+        "wadcfgxstart": "[concat(variables('wadlogs'), variables('wadperfcounters'),'<Metrics resourceId=\"')]",
+        "wadmetricsresourceid": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/','Microsoft.Compute/virtualMachines/')]",
+        "wadcfgxend": "\"><MetricAggregation scheduledTransferPeriod=\"PT1H\" /><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration> </WadCfg>"
+
+    },
+    "resources": [
+        {
+          "apiVersion": "2018-02-01",
+          "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+          "type": "Microsoft.Resources/deployments",
+          "properties": {
+          "mode": "Incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "resources": []
+            }
+          }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "apiVersion": "2018-07-01",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "properties": {},
+            "tags": {
+            }
+        },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "apiVersion": "2018-11-01",
+        "name": "[toUpper(parameters('networkInterfaceName'))]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+        ],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "subnet": {
+                  "id": "[variables('subnetRef')]"
+                }
+
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2018-10-01",
+        "name": "[toUpper(parameters('vmName'))]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]",
+          "[resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+        ],
+        "tags": {
+        },
+        "properties": {
+
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "osProfile": {
+            "computerName": "[parameters('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "windowsConfiguration": {
+              "provisionVmAgent": true
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "microsoft-dsvm",
+              "offer": "dsvm-win-2019",
+              "sku": "server-2019",
+              "version": "latest"
+            },
+            "osDisk": {
+              "name": "[concat(parameters('VMName'),'-OD')]",
+              "createOption": "FromImage"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('networkInterfaceName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": "true",
+              "storageUri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/')]"
+            }
+          }
+
+        },
+        "resources": [
+          {
+            "name": "Microsoft.Insights.VMDiagnosticsSettings",
+            "type": "extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-10-01",
+            "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.Azure.Diagnostics",
+              "type": "IaaSDiagnostics",
+              "typeHandlerVersion": "1.5",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "xmlCfg": "[base64(concat(variables('wadcfgxstart'), variables('wadmetricsresourceid'), parameters('vmName'), variables('wadcfgxend')))]",
+                "storageAccount": "[parameters('storageAccountName')]"
+              },
+              "protectedSettings": {
+                "storageAccountName": "[parameters('storageAccountName')]",
+                "storageAccountKey": "[listkeys(variables('accountid'),'2015-06-15').key1]",
+                "storageAccountEndPoint": "https://core.windows.net"
+              }
+            }
+          },
+          {
+            "type": "extensions",
+            "name": "GuestConfiguration",
+            "apiVersion": "2018-10-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.GuestConfiguration",
+              "type": "ConfigurationForWindows",
+              "typeHandlerVersion": "1.0",
+              "autoUpgradeMinorVersion": true
+            }
+          },
+          {
+            "type": "extensions",
+            "name": "Qualys",
+            "apiVersion": "2018-10-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+              "publisher": "Qualys",
+              "type": "QualysAgent",
+              "typeHandlerVersion": "1.0",
+              "autoUpgradeMinorVersion": true
+            }
+          },
+          {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('vmName'), '/IaaSAntimalware')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+              "autoUpgradeMinorVersion": true,
+              "publisher": "Microsoft.Azure.Security",
+              "type": "IaaSAntimalware",
+              "typeHandlerVersion": "1.1",
+              "settings": {
+                "AntimalwareEnabled": "true",
+                "Exclusions": {
+                  "Paths": null,
+                  "Extensions": null,
+                  "Processes": null
+                },
+                "RealtimeProtectionEnabled": "true",
+                "ScheduledScanSettings": {
+                  "isEnabled": "true",
+                  "scanType": "Quick",
+                  "day": "7",
+                  "time": "120"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "outputs":{
+    }
+
+}

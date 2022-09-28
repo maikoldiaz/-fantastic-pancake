@@ -1,0 +1,23 @@
+variables:
+  - group: true-secrets-stg
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/non-prod.yml
+
+trigger: none
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Templates/package.yml
+      parameters:
+        infra: 'true'
+
+- template: ../Templates/Stage/recalculate.yml
+  parameters:
+    serviceConnection : $(serviceConnection)

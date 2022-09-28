@@ -1,0 +1,22 @@
+variables:
+    - group: true-secrets-nonprd-shared
+    - group: true-secrets-qas
+    - group: true-network-qas
+    - template: ../Templates/Variables/package.yml
+    - template: ../Templates/Variables/infra.yml
+    - template: ../Templates/Variables/non-prod.yml
+    
+pr: none
+trigger: none
+
+schedules:
+# M-F 7:30 AM (UTC + 5:30) India
+- cron: "00 02 * * *"
+  displayName: Daily Backup
+  branches:
+    include:
+    - release/sprint16
+    
+stages:
+- template: ../Templates/Stage/db.build.yml
+- template: ../Templates/Stage/db.backuponly.yml

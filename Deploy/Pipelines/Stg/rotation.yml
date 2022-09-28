@@ -1,0 +1,15 @@
+variables:
+- group: true-threshold
+- group: true-secrets-stg
+- group: true-network-stg
+- group: true-mq-stg
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/non-prod.yml
+  
+trigger: none
+pr: none
+  
+stages:
+- template: ../Templates/Stage/infra.build.yml
+- template: ../Templates/Stage/key.rotation.yml

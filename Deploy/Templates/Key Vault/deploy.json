@@ -1,0 +1,116 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accessPolicies": {
+      "type": "object"
+    },
+    "logAnalyticsResourceId": {
+      "type": "string"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of key vault"
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "SKU name e.g. Standard"
+      }
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "diagnosticSettingsName": "securityauditevents"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[toUpper(parameters('keyVaultName'))]",
+      "comments": "Creates key vault for self service",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2016-10-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "family": "A",
+          "name": "[parameters('skuName')]"
+        },
+        "accessPolicies": "[parameters('accessPolicies').list]",
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false
+      },
+      "resources": [
+        {
+          "type": "Microsoft.KeyVault/vaults/providers/diagnosticsettings",
+          "name": "[concat(parameters('keyVaultName'), '/Microsoft.Insights/service')]",
+          "apiVersion": "2016-09-01",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+          ],
+          "properties": {
+            "name": "[variables('diagnosticSettingsName')]",
+            "workspaceId": "[parameters('logAnalyticsResourceId')]",
+            "logs": [
+              {
+                "category": "AuditEvent",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

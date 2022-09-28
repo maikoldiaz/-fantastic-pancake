@@ -1,0 +1,123 @@
+﻿// _filters.scss
+
+#{$ep}-filter {
+    $ftr:&;
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    border-radius: 5px;
+
+    &s{
+        padding: 3px 5px;
+        color: $white;
+        border-radius: 5px 0 0 5px;
+    }
+
+    &__count{
+        position: relative;
+        border: solid 1px #ddd;
+        border-right: none; 
+        width: pxToRem(50);
+        color: $btn-color;
+        font-size: pxToRem(36);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px 0 0 6px;
+        border-left: solid 2px $ep-primary-color;   
+    }
+
+    &__body {
+        flex-basis: 100%;
+        min-height: pxToRem(161);
+        border: solid 1px #ddd;
+        padding: pxToRem(15) pxToRem(22) pxToRem(17) pxToRem(22);
+    }
+
+    &__action {
+        border-left: solid 1px #ddd;
+        background-color: $btn-color;
+        color: $white;
+        border: none;
+        font-size: pxToRem(16);
+        border-radius: 0 6px 6px 0;
+        width: pxToRem(34);
+        cursor: pointer;
+    }
+
+    &__type{
+        $type:&;
+        display: inline-flex;
+        align-items: center;
+        position: absolute;
+        top: pxToRem(-26);
+        border-radius: 6px;
+        left: pxToRem(15);
+        height: pxToRem(32);
+        cursor: pointer;
+
+        &-inp{
+            display: none;
+            &:checked{
+                ~ #{$type}-y{
+                    color: $white;
+                    background-color: $btn-color;
+                }
+
+                ~ #{$type}-o{
+                    color: $btn-color;
+                    background-color: $white;
+                }
+            }
+        }
+
+        &-y, &-o{
+            display: inline-flex;
+            width: pxToRem(33);
+            height: 100%;
+            color: $btn-color;
+            font-size: pxToRem(14);
+            font-family: $font-family-sb;
+            align-items: center;
+            justify-content: center;
+            border:solid 1px $btn-color;
+            background-color: $white;
+        }
+
+        &-o{
+            color: $white;
+            background-color: $btn-color;
+            border-radius: 0 pxToRem(6) pxToRem(6) 0;
+        }
+
+        &-y{
+            border-radius: pxToRem(6) 0 0 pxToRem(6);
+        }
+    }
+
+    + {
+        #{$ep}-filter{
+            margin-top: pxToRem(15);
+        }
+    }
+
+    &--br{
+        position: relative;
+        flex-direction: column;
+        border:solid 1px #C1C1C1;
+        border-radius: 0 6px 6px 0;
+        padding: pxToRem(30) pxToRem(30) pxToRem(30) pxToRem(25);
+        margin-left: pxToRem(10);
+        height: 100%;
+
+        &:before{
+            content:"";
+            border-left: solid 2px $ep-primary-color;
+            position: absolute;
+            top:0;
+            bottom: 0;
+            left: pxToRem(-10);
+        }
+    }
+}

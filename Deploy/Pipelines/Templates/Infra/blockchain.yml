@@ -1,0 +1,100 @@
+﻿steps:
+- powershell: |
+    $guid=(New-Guid).Guid
+    Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+  displayName: Set PID Name
+
+- task: AzurePowerShell@4
+  displayName: QBS - Check Status
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-DeployedStatus.ps1'
+    ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(blockchainMemberName)" -key "blockchainStatus"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzureResourceGroupDeployment@2
+  displayName: QBS - ARM
+  inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: $(resourceGroupName)
+      location: $(Location)
+      csmFile: "$(System.DefaultWorkingDirectory)/Deploy/Templates/Quorum Blockchain Service/deploy.json"
+      csmParametersFile: '$(System.DefaultWorkingDirectory)/Deploy/Templates/Quorum Blockchain Service/parameters.json'
+      overrideParameters: -location $(locationName) -consortiumName $(consortiumNameBlockchain) -isMigration false -serviceTier $(serviceTier) -contactEmail $(contactEmail) -applicationResourceName $(blockchainMemberName) -managedResourceGroupId "/subscriptions/$(Subscriptions)/resourceGroups/$(managedBlockchainResourceGroupId)"
+      deploymentOutputs: armOut
+      deploymentName: 'QBS'
+      
+- task: AzurePowerShell@4
+  displayName: QBS - Tags
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    ScriptPath: '$(System.DefaultWorkingDirectory)/Deploy/Scripts/Add-Tags.ps1'
+    ScriptArguments: '-tier $(serviceTier) -resourceGroupName $(resourceGroupName) -resourceName "$(blockchainMemberName)"'
+    azurePowerShellVersion: LatestVersion   
+
+- task: AzureCLI@2
+  displayName: QBS - Get Token
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: 'pscore'
+    scriptLocation: inlineScript
+    inlineScript: |
+        $token = az account get-access-token --resource 8c989307-2439-402b-86eb-5900c6132dee --query accessToken -otsv
+        Write-Host "##vso[task.setvariable variable=ou_qbstoken]$token"
+
+- task: AzureCLI@2
+  displayName: QBS - Get Apikey
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: 'pscore'
+    scriptLocation: inlineScript
+    inlineScript: |
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Authorization", "Bearer $(ou_qbstoken)")
+        $response = Invoke-RestMethod 'https://management.onquorum.net/subscriptions/$(Subscriptions)/resourceGroups/$(resourceGroupName)/providers/ConsenSys.Blockchain/blockchainMembers/$(blockchainMemberName)/listApiKeys' -Method 'POST' -Headers $headers
+        $response | ConvertTo-Json
+        $blockchainAdminNodeKey = $response.keys[0].value
+        Write-Host "##vso[task.setvariable variable=ou_blockchainAdminNodeKey]$blockchainAdminNodeKey"
+
+- task: AzureCLI@2
+  displayName: QBS - Set Key In KV
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: 'pscore'
+    ScriptPath: '$(System.DefaultWorkingDirectory)/Deploy/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName $(KeyVaultName) -secretName "BlockchainAdminKey" -secretValue "$(ou_blockchainAdminNodeKey)"'
+    
+- task: AzureCLI@2
+  displayName: QBS - Get RcpEndpoint
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: 'pscore'
+    scriptLocation: inlineScript
+    inlineScript: |
+        $stopWatch = New-Object -TypeName System.Diagnostics.Stopwatch
+        $timeSpan = New-TimeSpan -Minutes 5 
+        $stopWatch.Start()
+
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Authorization", "Bearer $(ou_qbstoken)")
+        do
+        {
+          Write-Host 'Checkink QBS provisioning state'
+          
+          $response = Invoke-RestMethod 'https://management.onquorum.net/subscriptions/$(Subscriptions)/resourceGroups/$(resourceGroupName)/providers/ConsenSys.Blockchain/blockchainMembers/$(blockchainMemberName)' -Method 'GET' -Headers $headers
+          $response | ConvertTo-Json
+          $rpcEndpoint = $response.properties[0].dns
+          Start-Sleep -Seconds 10
+        }
+        until ((-not [string]::IsNullOrWhiteSpace($rpcEndpoint)) -or ($stopWatch.Elapsed -ge $timeSpan)) 
+        
+        Write-Host "##vso[task.setvariable variable=ou_rpcEndpoint]$rpcEndpoint"
+
+- task: AzureCLI@2
+  displayName: QBS - Set RPC Endpoint In KV
+  inputs:
+    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+    scriptType: 'pscore'
+    ScriptPath: '$(System.DefaultWorkingDirectory)/Deploy/Scripts/Set-KeyVault-Secret.ps1'
+    arguments: '-keyVaultName $(KeyVaultName) -secretName "EthereumRpcEndpoint" -secretValue "https://$(ou_rpcEndpoint):3200/$(ou_blockchainAdminNodeKey)"'
+                

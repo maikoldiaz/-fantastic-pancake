@@ -1,0 +1,39 @@
+steps:
+ - task: AzurePowerShell@3
+   displayName: PBI - Create Workspace
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-PowerBiWorkspace.ps1'
+     ScriptArguments: '-PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId "$(tenant)" -WorkspaceName "$(workspaceName)" -AdminEmail "$(adminEmail)" -EnableAdmin "true"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzureCLI@2
+   displayName: PBI - Set Report Client Secret In KV
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "PowerBIAppSecret" -secretValue "$(powerBIAppSecret)"'
+
+ - template: ../Infra/fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '${{parameters.azureSubscriptionName}}'
+     keyVaultName: '$(keyVault)'
+     secretsFilter: '*'
+
+ - task: AzurePowerShell@3
+   displayName: PBI - Delete Datasets
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-PowerBiDatasets.ps1'
+     ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -PBIXPath "$(System.ArtifactsDirectory)\Drop\PBIXFiles\" -WorkspaceId "$(workspaceID)" -PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId $(tenant)'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(), eq(variables['cleanDatasets'], 'true'))
+
+ - task: AzurePowerShell@3
+   displayName: PBI - Upload Reports
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Upload-PBIXIntoWorkspace.ps1'
+     ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -PBIXPath "$(System.ArtifactsDirectory)\Drop\PBIXFiles\" -WorkspaceId "$(workspaceID)" -AnalysisServerDataSource "$(analysisServer)" -AnalysisServerDBNameDataSource "$(analysisServerModel)" -AnalysisServerAuditDBNameDataSource "$(analysisServerAuditModel)" -PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId $(tenant) -PowerBIObjectID $(powerBIObjectID) -SqlServerConnectionString "$(sqlconnectionstring)" -SqlPowerBiReports "$(sqlPowerBiReports)" -AuditModelPowerBiReports "$(auditModelPowerBiReports)"'
+     azurePowerShellVersion: LatestVersion

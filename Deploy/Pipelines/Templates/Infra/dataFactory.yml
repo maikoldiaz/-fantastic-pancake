@@ -1,0 +1,33 @@
+steps:
+ - task: AzureResourceGroupDeployment@2
+   displayName: ADF - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/deploy.json'
+     overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -name "$(dataFactoryName)" -logAnalyticsResourceId "$(logAnalyticsResourceId)"'
+
+ - task: AzurePowerShell@4
+   displayName: ADF - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(dataFactoryName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: ADF - Get MSI
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-DataFactoryMSIId.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(dataFactoryName)" -PipelineVariablesKeyName "$(dataFactoryMsi)"'
+     azurePowerShellVersion: LatestVersion 
+
+ - task: AzurePowerShell@4
+   displayName: ADF - Set MSI
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SecurityGroupMember.ps1'
+     ScriptArguments: '-groupObjectId "$(msiAdGroupObjectId)" -memberObjectId "$(dataFactoryMsiId)"'
+     azurePowerShellVersion: LatestVersion 

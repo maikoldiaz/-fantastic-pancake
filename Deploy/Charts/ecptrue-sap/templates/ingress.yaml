@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecptrue-sap-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+spec:
+  tls:
+    - hosts:
+      - {{.Values.HOST_NAME}}
+      secretName: aks-ingress-tls
+  rules:
+  - host: {{.Values.HOST_NAME}}
+    http:
+      paths:
+      - path: /sap(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Chart.Name }}
+            port: 
+              number: 80

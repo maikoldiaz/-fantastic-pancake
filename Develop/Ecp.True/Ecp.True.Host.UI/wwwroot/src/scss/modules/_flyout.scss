@@ -1,0 +1,72 @@
+﻿// _flyout.scss
+
+#{$ep}-flyout {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: $white;
+    width: pxToRem(375);
+    box-shadow: -2px 2px 15px $black;
+    z-index: 10000;
+    transform: translate3d(375px,0,0);
+    transition: transform $tr-med;
+    visibility: hidden;
+
+    &__content{
+        height: 100%;
+    }
+
+    &__header{
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        height: pxToRem(68);
+        background-color: map-get($gray, 'EEEEEE');
+        padding: 0 pxToRem(28);
+
+        &--unjust{
+            justify-content: left;
+        }
+    }
+
+    &__title{
+        font-size: pxToRem(16);
+        color: $black;
+    }
+
+    &__body{
+        height: calc(100% - 116px);
+        overflow: auto;
+        padding: pxToRem(16) pxToRem(26);
+
+        &--h{
+            height: calc(100% - 68px);
+        }
+    }
+
+    &__footer{
+        height: pxToRem(48);
+
+        #{$ep}-btn{
+            border-radius: 0;
+        }
+    }
+
+    &--active{
+        transform: translate3d(0,0,0);
+        visibility: visible;
+    }
+    & #{$ep}-table{
+        &--list{
+            & .rt-tbody{
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+        &__pagination-itm{
+            padding: 3px 8px;
+        }
+    } 
+}

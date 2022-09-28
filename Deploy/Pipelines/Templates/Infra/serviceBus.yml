@@ -1,0 +1,74 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: SB - ARM
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: "${{ parameters.resourceGroupName }}"
+      location: "${{ parameters.deployLocation }}"
+      csmFile: "$(System.ArtifactsDirectory)/Drop/Templates/Service Bus/deploy.json"
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -namespaceName "$(serviceBusNamespaceNameInt)" -rootAccesslevel "$(rootAccesslevel)" -skuName "$(serviceBusSkuName)"'
+      deploymentOutputs: armOut
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: SB - Create Queues
+    inputs:
+       azureSubscription: "${{ parameters.azureSubscriptionName }}"
+       ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ServiceBusQueues.ps1'
+       ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -namespaceName "$(serviceBusNamespaceNameInt)" -sessionQueues "$(sessionQueues)" -normalQueues "$(normalQueues)"'
+       azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: SB - Tags
+    inputs:
+       azureSubscription: "${{ parameters.azureSubscriptionName }}"
+       ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+       ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(serviceBusNamespaceNameInt)"'
+       azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: SB - Set Build Variable
+    name: SetServiceBusOutputVariable
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1"
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -outputKeySuffix "Int" -outputKeyName "ou_SBNamespaceConnectionString" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: SB - Set Service Bus Connection String In KV
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      scriptType: ps
+      ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1"
+      arguments: '-keyVaultName "$(keyVault)" -secretName "$(integrationServiceBusKeyName)" -secretValue "$(ou_SBNamespaceConnectionStringInt)"'
+
+  - task: AzurePowerShell@4
+    displayName: SB - MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(adsGroupPrincipalId)" -resourceName "$(serviceBusNamespaceNameInt)" -roleDefinitionName "Azure Service Bus Data Owner" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), ne(variables['env'], 'prd'))
+
+  - task: AzurePowerShell@4
+    displayName: SB - Clean Up Queues
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-Resources.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -resourcesToRemove "$(deprecatedQueues)" -resourceType "Microsoft.ServiceBus/Queues" -serviceBusNamespace "$(serviceBusNamespaceNameInt)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: SB - Clean Up Policies
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-ServiceBusSharedAccessPolicy.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -serviceBusNamespace "$(serviceBusNamespaceNameInt)"'
+      azurePowerShellVersion: LatestVersion

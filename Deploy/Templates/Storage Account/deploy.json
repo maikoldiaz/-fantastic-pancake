@@ -1,0 +1,257 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "Storage Account type"
+      }
+    },
+    "containerNames": {
+      "type": "array",
+      "defaultValue": [
+        "True"
+      ],
+      "metadata": {
+        "description": "Specifies the blob container names."
+      }
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "testContainerName": "[concat('default/',parameters('containerNames')[0],'-test')]",
+    "containerName": "[concat('default/',parameters('containerNames')[0])]",
+    "ownershipContainerName": "[concat('default/',parameters('containerNames')[1])]",
+    "validatedOwnershipContainerName": "[concat('default/',parameters('containerNames')[2])]",
+    "dbbackupsContainerName": "[concat('default/',parameters('containerNames')[3])]",
+    "OperativeMovementsHistory": "[concat('default/',parameters('containerNames')[4])]",
+    "OperativeMovementswithOwnershipHistory": "[concat('default/',parameters('containerNames')[5])]",
+    "Nodes": "[concat('default/',parameters('containerNames')[6])]",
+    "WorkFiles": "[concat('default/',parameters('containerNames')[7])]",
+    "Dataprotectionkeys": "[concat('default/',parameters('containerNames')[8])]",
+    "delta": "[concat('default/',parameters('containerNames')[9])]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[variables('location')]",
+      "apiVersion": "2018-07-01",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "kind": "StorageV2",
+      "properties": {},
+      "resources": [
+        {
+          "name": "default",
+          "type": "blobServices",
+          "apiVersion": "2018-07-01",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "cors": {
+              "corsRules": [
+                {
+                  "allowedOrigins": [
+                    "*"
+                  ],
+                  "allowedMethods": [
+                    "POST",
+                    "GET",
+                    "DELETE",
+                    "PUT"
+                  ],
+                  "maxAgeInSeconds": 200,
+                  "exposedHeaders": [
+                    "*"
+                  ],
+                  "allowedHeaders": [
+                    "*"
+                  ]
+                }
+              ]
+            },
+            "deleteRetentionPolicy": {
+              "enabled": false
+            },
+            "automaticSnapshotPolicyEnabled": true
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('containerName'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('testContainerName'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('ownershipContainerName'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('validatedOwnershipContainerName'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('dbbackupsContainerName'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('OperativeMovementsHistory'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('OperativeMovementswithOwnershipHistory'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('Nodes'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('Dataprotectionkeys'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('delta'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-02-01",
+          "name": "[toLower(variables('WorkFiles'))]",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "ou_storageAccountKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+    },
+    "ou_StorageAccountConnectionStringValue": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+    }
+  }
+}

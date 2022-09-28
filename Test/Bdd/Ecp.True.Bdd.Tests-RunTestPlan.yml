@@ -1,0 +1,120 @@
+# ADD STEPS THAT RUN TESTS, CREATE A NUGET PACKAGE, DEPLOY, AND MORE: https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+# YAML SCHEMA: https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=vsts&tabs=schema
+# PREDEFINED VARIABLES: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=vsts
+# HOSTED AGENT SOFTWARES: https://github.com/Microsoft/azure-pipelines-image-generation/blob/master/images/win/Vs2017-Server2016-Readme.md
+
+# UNCOMMENT THE BELOW LINE TO DISABLE CI BUILDS: https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=vsts&tabs=schema#trigger
+trigger: none
+
+variables:
+  appName: 'Ecp.True.Bdd.Tests'
+  appPath: '$(System.DefaultWorkingDirectory)\Test\Bdd' # NOTE: Change this to appropriate path based on your folder structure
+  solution: '$(appPath)\$(appName).sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  binFolder: '$(appPath)\bin\$(buildConfiguration)'
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=vsts&tabs=yaml
+jobs:
+
+- job: 'RunTests'
+  timeoutInMinutes: 0
+  pool:
+    vmImage: 'windows-latest' # name: 'Hosted VS2017'
+
+# queue:
+#   name: Hosted VS2017
+#   demands:
+#   - msbuild
+#   - visualstudio
+
+  steps:
+# NuGet Tools Install: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/nuget?view=vsts
+  - task: NuGetToolInstaller@1
+    displayName: INSTALL NUGET TOOLS
+
+# Authenticate to AzDO Artifacts
+  - task: NuGetCommand@2
+    displayName: 'Authenticate with Azure DevOps NuGet'
+    inputs:
+      command: custom
+      arguments: sources update -Name "Bdd.Core" -Username "vsts" -Password "$(System.AccessToken)" -StorePasswordInClearText -ConfigFile $(appPath)\Nuget.config
+
+# This is added as a workaroung untill we have private agents.
+  - script: dotnet add $(appPath)\Ecp.True.Bdd.Tests.csproj package "Selenium.WebDriver.ChromeDriver" -v $(chromeDriverVersion)
+    displayName: Set ChromeDriver Version.
+
+  - script: dotnet restore $(solution) --configfile "$(appPath)\Nuget.config" --no-cache
+    displayName: 'DOTNET RESTORE'
+    enabled: false
+
+# NuGet Restore: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/package/nuget?view=vsts
+  - task: NuGetCommand@2
+    displayName: RESTORE NUGETS
+    inputs:
+      command: 'restore'
+      solution: '$(solution)' # '$(solution)'
+      selectOrConfig: 'config' # Options: select, config
+      nugetConfigPath: '$(appPath)\Nuget.config'
+      includeNuGetOrg: true # Required when feedsToUse == Select
+      noCache: true
+      verbosityRestore: 'normal' # Options: quiet, normal, detailed
+
+  - script: 'for /r $(appPath) %%x in (*.csproj) do ("%userprofile%\.nuget\packages\SpecFlow\3.1.97\tools\specflow.exe" GenerateAll -p %%~x)'
+    displayName: SPECFLOW GENERATEALL
+    enabled: false
+
+  - script: dotnet build $(solution) --configuration $(buildConfiguration) --no-restore
+    displayName: 'DOTNET BUILD'
+    enabled: false
+
+# Visual Studio Build: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/visual-studio-build?view=vsts
+  - task: VSBuild@1
+    displayName: BUILD SLN
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      clean: true
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/vstest?view=azure-devops
+  - task: VSTest@2
+    displayName: RUN TESTS
+    continueOnError: true
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      testSelector: 'testPlan' # Options: testAssemblies, testPlan, testRun
+      testPlan: $(testPlan)
+      testSuite: $(testSuite)
+      testConfiguration: $(testConfigId)
+      uiTests: true
+      runSettingsFile: '$(binFolder)\$(appName).$(Env).runsettings'
+      testFiltercriteria: '(TestCategory=api|TestCategory=ui)&TestCategory!=manual&TestCategory!=bddcore-wrapper'
+      runOnlyImpactedTests: false
+      pathtoCustomTestAdapters: '$(binFolder)'
+      searchFolder: '$(binFolder)'
+      publishRunAttachments: true
+      overrideTestrunParameters: -appSettings.browser Chrome -database.DbUser $(DbUser) -database.DbPwd $(DbPwd) -keyVault.ClientSecret $(clientSecret) -keyVault.ClientId $(clientId)
+
+  - task: CopyFiles@2
+    displayName: Copy Output
+    inputs:
+      contents: '$(binFolder)\TestOutput\**\*.*'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+      overWrite: true
+      flattenFolders: true
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Output
+    inputs:
+      targetPath: $(Build.ArtifactStagingDirectory) # '$(Pipeline.Workspace)'
+      artifact: 'TestOutput_$(Build.BuildNumber)'
+
+- job: 'TestTeardown'
+  dependsOn: 'RunTests'
+  timeoutInMinutes: 0
+  pool:
+    vmImage: 'windows-latest' # name: 'Hosted VS2017'
+  steps:
+  - script: echo 'Sample Test-Teardown'

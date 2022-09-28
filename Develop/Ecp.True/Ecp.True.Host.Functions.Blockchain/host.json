@@ -1,0 +1,23 @@
+{
+  "version": "2.0",
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "maxConcurrentCalls": 32
+      },
+      "sessionHandlerOptions": {
+        "maxAutoRenewDuration": "00:10:00",
+        "messageWaitTimeout": "00:00:05",
+        "maxConcurrentSessions": 32
+      }
+    }
+  },
+  "logging": {
+    "logLevel": {
+      "default": "Information",
+      "Host": "Information",
+      "Function": "Information",
+      "Host.Aggregator": "Trace"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "SourceSystem": "SINOPER",
+  "EventType": "INSERT",
+  "MovementId": "279760396583110",
+  "MovementTypeId": "DESCUELGUE DE LINEA",
+  "OperationalDate": "2019-08-21T08:36:00",
+  "GrossStandardVolume": null,
+  "NetStandardVolume": "195",
+  "MeasurementUnit": "Bls",
+  "Scenario": "Operativo",
+  "Observations": null,
+  "Classification": "Movimiento",
+  "Attributes": [
+    {
+      "AttributeId": "Neto-Volumen Líquido",
+      "AttributeValue": "195",
+      "ValueAttributeUnit": "Bls",
+      "AttributeDescription": null
+    },
+    {
+      "AttributeId": "Mayorista",
+      "AttributeValue": "ECOPETROL S.A.",
+      "ValueAttributeUnit": "ADM",
+      "AttributeDescription": "Mayorista"
+    },
+    {
+      "AttributeId": "Producto Destino",
+      "AttributeValue": "GLP",
+      "ValueAttributeUnit": "ADM",
+      "AttributeDescription": "Producto Destino"
+    }
+  ],
+  "Owners": [
+    {
+      "OwnerId": "ECOPETROL S.A.",
+      "OwnershipValue": "100",
+      "OwnershipValueUnit": "% volumen"
+    },
+    {
+      "OwnerId": "ECOPETROL S.A.",
+      "OwnershipValue": "100",
+      "OwnershipValueUnit": "% volumen"
+    }
+  ],
+  "Period": {
+    "StartTime": "2019-08-21T08:36:00",
+    "EndTime": "2019-08-21T23:59:59"
+  },
+  "MovementSource": {
+    "SourceNodeId": "GALAN - SALGAR 8",
+    "SourceStorageLocationId": null,
+    "SourceProductId": "GLP",
+    "SourceProductTypeId": "REFINADO"
+  },
+  "MovementDestination": {
+    "DestinationNodeId": "SALGAR:17:ECOPETROL",
+    "DestinationStorageLocationId": null,
+    "DestinationProductId": null,
+    "DestinationProductTypeId": null
+  }
+}

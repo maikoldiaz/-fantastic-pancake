@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsResourceId": {
+      "value": "Id"
+    },
+    "appServiceName": {
+      "value": "name"
+    },
+    "sku": {
+      "value": "S1"
+    },
+    "appServicePlanName": {
+      "value": "AppService"
+    },
+    "pidDeploymentName": {
+      "value": "name"
+    }
+  }
+}

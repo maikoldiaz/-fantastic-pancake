@@ -1,0 +1,59 @@
+// _loader.scss
+
+#{$ep}-loader {
+    position: fixed;
+    background-color: $overlay-bg;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+
+    &--hidden{
+        display: none;
+    }
+
+    &__content{
+        text-align: center;
+        position: absolute;
+        width: 100%;
+        top: 40%;
+    }
+}
+
+@function delay($interval, $count, $index) {
+    @return ($index * $interval) - ($interval * $count);
+}
+
+@keyframes line-scale {
+  0% {   
+    opacity: 1;
+  }
+  50% {   
+    opacity: .6;
+  }
+  100% {   
+    opacity: .3;
+  }
+}
+
+@mixin line-scale($n:3) {
+  @for $i from 1 through $n {
+    > div:nth-child(#{$i}) {
+      animation: line-scale 1s delay(0.1s, $n, $i) infinite cubic-bezier(.2,.68,.18,1.08);
+    }
+  }
+}
+
+.line-scale {
+  @include line-scale();
+
+  > div {
+    background-color: $white;
+    @include mix-circle(pxToRem(18));
+    margin: pxToRem(6);
+    animation-fill-mode: both;
+    display: inline-block;
+  }
+}
+    

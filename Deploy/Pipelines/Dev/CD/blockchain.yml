@@ -1,0 +1,60 @@
+variables:
+- group: true-secrets-nonprd-shared
+- group: true-secrets-dev
+- group: true-network-dev
+- group: true-automation
+- template: ../../Templates/Variables/package.yml
+- template: ../../Templates/Variables/infra.yml
+- template: ../../Templates/Variables/non-prod.yml
+
+trigger: 
+      branches :
+       include: 
+        - master
+      paths:
+        include:
+         - Develop/Ecp.True/Blockchain/*
+         - Deploy/Blockchain/*
+
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        blockchain: 'true'
+        publish: 'true'
+        infra: 'true'
+
+- stage: Deploy
+  jobs:
+  - deployment: Deploy
+    pool:
+     vmImage: 'windows-latest'
+    environment: '$(env)'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - template: ../../Templates/Deploy/blockchain.deploy.yml
+            parameters:
+              serviceConnection : $(serviceConnection)
+              env: '$(env)'
+
+          - template: ../../Templates/Deploy/automation.yml 
+            parameters:
+              azureSubscriptionName : '$(serviceConnection)'
+              canExecuteAutomation: '$(dev)'
+              keyVaultName: '$(keyVault)'
+              automation: 'true'

@@ -1,0 +1,40 @@
+variables:
+  - group: true-secrets-dev
+  - group: true-secrets-nonprd-shared
+  - group: true-network-dev
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/non-prod.yml
+  - template: ../Templates/Variables/tags.yml
+
+trigger: none
+pr: none
+
+stages:
+- template: ../Templates/Stage/infra.build.yml
+      
+- stage: Deploy
+  jobs:
+  - deployment: Deploy
+    pool:
+     vmImage: 'windows-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - template: ../Templates/Deploy/vm-deploy.yml
+            parameters:
+              env: '$(env)'
+              serviceConnection : $(serviceConnection)
+              vmUsername : '$(vmUsername)'
+              vmPassword : '$(vmPassword)'
+              vmSubnetName: '$(vmSubnetName)'
+              vmVnetId: '$(virtualNetworkId)'
+              virtualMachineName: '$(virtualMachineName)'
+              vmNicName: '$(virtualMachineNicName)'

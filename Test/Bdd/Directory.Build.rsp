@@ -1,0 +1,4 @@
+﻿# https://github.com/dotnet/project-system/blob/master/docs/design-time-builds.md
+# /t:clean,restore,build
+/m
+/bl

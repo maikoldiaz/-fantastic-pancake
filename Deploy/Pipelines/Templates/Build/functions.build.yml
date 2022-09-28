@@ -1,0 +1,46 @@
+﻿steps:
+  - template: ../spellCheck.yml
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '$(functionsProjects)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: build
+      projects: '$(functionsProjects)'
+      arguments: '--configuration $(buildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: publish
+      publishWebProjects: False
+      projects: '$(functionsProjects)'
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Run Tests
+    inputs:
+      command: test
+      arguments: '--settings "$(Build.SourcesDirectory)\Develop\Sln Items\Ecp.True.CodeCoverage.NetCore.runsettings" --configuration $(buildConfiguration) --collect "Code coverage"'
+      projects: '$(unitTestProjects)'
+
+  - task: PowerShell@2
+    displayName: 'Sleep for Code Coverage Merge'
+    inputs:
+      targetType: 'inline'
+      script: 'Start-Sleep -Seconds 20'
+
+  - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@7
+    displayName: 'Check Code Coverage'
+    inputs:
+      checkCoverage: true
+      coverageFailOption: fixed
+      coverageThreshold: $(serverSideUnitTestingThreshold)
+      coverageType: 'lines'
+      buildConfiguration: $(buildConfiguration)
+      treat0of0as100: true

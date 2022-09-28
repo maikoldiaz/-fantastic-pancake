@@ -1,0 +1,45 @@
+{
+  "SourceSystem": "Source-omn",
+  "DestinationSystem": "Dest-omn",
+  "EventType": "Delete",
+  "InventoryId": 1,
+  "InventoryDate": "2019-09-04T07:19:03.1204835+05:30",
+  "NodeId": 11,
+  "Products": [
+    {
+      "ProductId": "1",
+      "ProductType": 1,
+      "ProductVolume": 1.0,
+      "MeasurementUnit": 1,
+      "Attributes": [
+        {
+          "AttributeId": 1,
+          "AttributeValue": 1.0,
+          "ValueAttributeUnit": 1,
+          "AttributeDescription": "Desc",
+          "CreatedBy": "Vinodh",
+          "CreatedDate": "2019-09-04T07:19:03.1202318+05:30"
+        }
+      ],
+      "Owners": [
+        {
+          "OwnerId": 1,
+          "OwnershipValue": 1.0,
+          "OwnershipValueUnit": "String",
+          "CreatedBy": "Vinodh",
+          "CreatedDate": "2019-09-04T07:19:03.1202318+05:30"
+        }
+      ],
+      "Inventory": {
+        "NodeId":  1
+      },
+        "CreatedBy": "Vinodh",
+        "CreatedDate": "2019-09-04T07:19:03.1202318+05:30"
+      }
+  ],
+  "Observations": "Observed",
+  "CreationDate": "2019-09-04T07:19:03.1202318+05:30",
+  "Scenario": "scn",
+  "CreatedBy": "Vinodh",
+  "CreatedDate": "2019-09-04T07:19:03.1201069+05:30"
+}

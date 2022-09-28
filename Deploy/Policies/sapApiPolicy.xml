@@ -1,0 +1,34 @@
+<policies>
+  <inbound>
+    <validate-jwt header-name="Authorization" output-token-variable-name="jwt">
+      <openid-config url="https://login.microsoftonline.com/ecopetrol.onmicrosoft.com/.well-known/openid-configuration" />
+    </validate-jwt>
+    <base />
+    <choose>
+    <when condition="@(((Jwt)context.Variables[&quot;jwt&quot;]) != null)">
+          <set-variable name="roles" value="@(((Jwt)context.Variables[&quot;jwt&quot;]).Claims.GetValueOrDefault(&quot;roles&quot;, string.Empty))" />
+              <choose>
+                <when condition="@(context.Variables[&quot;roles&quot;] == string.Empty)">
+                    <return-response>
+                      <set-status code="403" reason="Invalid access token. It must have roles." />
+                    </return-response>
+                </when>
+                <when condition="@(!((string)context.Variables[&quot;roles&quot;]).Contains(&quot;{{sapRoleName}}&quot;))">
+                    <return-response>
+                        <set-status code="403" reason="Invalid access token, it must have {{sapRoleName}} role claim." />
+                    </return-response>
+                </when>
+              </choose>
+    </when>
+    </choose>
+  </inbound>
+  <backend>
+    <base />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

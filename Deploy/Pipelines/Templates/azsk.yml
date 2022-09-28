@@ -1,0 +1,16 @@
+﻿steps:
+ - template: ./Infra/fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '$(serviceConnection)'
+     keyVaultName: '$(keyVault)'
+     secretsFilter: 'LAWSSharedKey, LAWSId'
+
+ - task: AzSKSVTs@4
+   displayName: Run AzSk Scan
+   inputs:
+     ConnectedServiceNameARM: '$(serviceConnection)'
+     GenerateMethodParameterSetSelection: 'ResourceGroupName'
+     ResourceGroupName: '$(resourceGroupName)'
+     SubscriptionId: '$(subscriptionId)'
+     EnableOMSLogging: true
+   continueOnError: true

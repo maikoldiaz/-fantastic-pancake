@@ -1,0 +1,23 @@
+    steps:
+    # Build
+    - template: ./acr.build.yml
+      parameters:
+        containerRegistry: $(containerRegistry)
+        repository: ${{ parameters.projectName }}
+        azureSubscription: $(serviceConnection)
+        dockerfile: '${{ parameters.dockerfile }}'
+        folderPath: '${{ parameters.folderPath }}'
+        targetFiles: '${{ parameters.targetFiles }}'
+        tag: $(build.buildId)
+        analytics: '${{ parameters.analytics }}'
+        path: '${{ parameters.path }}'
+
+    - template: ./helm.build.yml
+      parameters:
+        destination: '$(build.artifactStagingDirectory)'
+        azureSubscription: $(serviceConnection)
+        chartPath: $(system.defaultWorkingDirectory)/Deploy/Charts/${{ parameters.projectName }}
+        registryName: $(imageRegistryName)
+        registryLogin: $(imageRegistryName)
+        registryPassword: $(imageRegistryPassword)
+        helmPackagePath: '$(build.artifactStagingDirectory)/${{ parameters.projectName }}-$(build.buildId).tgz'

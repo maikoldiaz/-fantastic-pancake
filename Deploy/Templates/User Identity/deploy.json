@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "identityName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdBy": {
+      "type": "string"
+    },
+    "responsible": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string"
+    },
+    "companyName": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "organizationUnit": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "string"
+    },
+    "dataProfileDataSecurityLevel": {
+      "type": "string"
+    },
+    "creationDate": {
+      "type": "string"
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[toUpper(parameters('identityName'))]",
+      "tags": {
+        "description": "[parameters('description')]",
+        "createdBy": "[parameters('createdBy')]",
+        "responsible": "[parameters('responsible')]",
+        "projectName": "[parameters('projectName')]",
+        "companyName": "[parameters('companyName')]",
+        "environment": "[parameters('environment')]",
+        "organizationUnit": "[parameters('organizationUnit')]",
+        "tier": "[parameters('tier')]",
+        "dataProfile Data security level": "[parameters('dataProfileDataSecurityLevel')]",
+        "creationDate": "[parameters('creationDate')]"
+      },
+      "apiVersion": "2018-11-30",
+      "location": "[variables('location')]"
+    }
+  ],
+  "outputs": {
+    "ou_identityName": {
+      "type": "string",
+      "value": "[parameters('identityName')]"
+    },
+    "ou_identity_principalId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', toUpper(parameters('identityName'))), '2018-11-30').principalId]"
+    },
+    "ou_identity_clientId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', toUpper(parameters('identityName'))), '2018-11-30').clientId]"
+    },
+    "ou_identity_resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', toUpper(parameters('identityName')))]"
+    }
+  }
+}

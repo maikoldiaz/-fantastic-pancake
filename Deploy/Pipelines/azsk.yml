@@ -1,0 +1,26 @@
+﻿variables:
+  - group: true-threshold
+  - group: true-secrets-nonprd-shared
+  - template: ./Templates/Variables/package.yml
+  - template: ./Templates/Variables/infra.yml
+
+schedules:
+# M-F 3:00 AM (UTC + 5:30) India
+- cron: "30 21 * * Sun-Thu"
+  displayName: Daily Build
+  branches:
+    include:
+    - master
+
+# set pr trigger to none to prevent daily build running against master branch changess
+trigger: none
+pr: none
+
+stages:
+- stage: AzSkScan
+  jobs:
+  - job: AzSkScan
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+      - template: ./Templates/azsk.yml

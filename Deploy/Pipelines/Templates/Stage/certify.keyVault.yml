@@ -1,0 +1,74 @@
+steps:
+  - template: ../Infra/fetchSecrets.yml
+    parameters:
+      azureSubscriptionName : '$(serviceConnection)'
+      keyVaultName: '$(keyvaultShared)'
+      secretsFilter: '*'
+
+  - task: AzurePowerShell@4
+    displayName: Download - AKS cert
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+      ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(aksCertNameInKeyVault)" -password "$(sslCertPasswordForAks)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "certifyAksCert"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Certify - AKS cert
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      scriptType: 'bash'
+      scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bash/validatekeyvaultconfigs.sh'
+      arguments: '$(aksCertNameInKeyVault) $(System.ArtifactsDirectory)/certifyAksCert.pfx "$(sslCertPasswordForAks)"'
+      failOnStandardError: true
+
+  - task: AzurePowerShell@4
+    displayName: Download - APIM cert
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+      ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(apiCertNameInKeyvault)" -password "$(sslCertPasswordForApi)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "certifyApimCert"'
+      azurePowerShellVersion: LatestVersion
+      
+  - task: AzureCLI@2
+    displayName: Certify - APIM cert
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      scriptType: 'bash'
+      scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bash/validatekeyvaultconfigs.sh'
+      arguments: '$(apiCertNameInKeyvault) $(System.ArtifactsDirectory)/certifyApimCert.pfx $(sslCertPasswordForApi)'
+      failOnStandardError: true
+
+  - task: AzurePowerShell@4
+    displayName: Download - UI cert
+    inputs:
+      azureSubscription: "$(serviceConnection)"
+      ScriptPath: "$(System.ArtifactsDirectory)/Scripts/Rotation/downloadCerts.ps1"
+      ScriptArguments: '-keyVaultName "$(keyvaultShared)" -certName "$(uiCertNameInKeyvault)" -password "$(sslCertPasswordForUI)" -pfxFilePath "$(System.ArtifactsDirectory)/" -certRename "certifyUiCert"' 
+      azurePowerShellVersion: LatestVersion
+      
+  - task: AzureCLI@2
+    displayName: Certify - UI cert
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      scriptType: 'bash'
+      scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bash/validatecert.sh'
+      arguments: '$(uiCertNameInKeyvault) $(System.ArtifactsDirectory)/certifyUiCert.pfx $(sslCertPasswordForUI)'
+      failOnStandardError: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

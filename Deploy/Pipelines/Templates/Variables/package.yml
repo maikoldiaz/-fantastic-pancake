@@ -1,0 +1,63 @@
+﻿variables:
+  - name: filesPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Analytics/Files/'
+  - name: appSolutionPath
+    value: 'Develop/Ecp.True.All.sln'
+  - name: codeCoverage
+    value: '85'
+  - name: dbOutputPath
+    value: 'drop/SQL/bin/Release'
+  - name: dbProjectPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Sql'
+  - name: aasProjectPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Analysis'
+  - name: dbProjectFilePath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Sql/Ecp.True.DI.Sql.sqlproj'
+  - name: uiFolderPath
+    value: 'Develop/Ecp.True/Ecp.True.Host.UI'
+  - name: uiProjectPath
+    value: 'Develop/Ecp.True/Ecp.True.Host.UI/Ecp.True.Host.UI.csproj'
+  - name: configProjectPath
+    value: 'Deploy/Configuration/Ecp.True.ConfigurationManager/Ecp.True.ConfigurationManager.csproj'
+  - name: dataGeneratorProjectPath
+    value: 'Develop\Ecp.True\**\Ecp.True.Host.DataGenerator.Console.csproj'
+  - name: infraScriptPath
+    value: 'Deploy/Scripts'
+  - name: infraTemplatePath
+    value: 'Deploy/Templates'
+  - name: nugetVersion
+    value: '5.x'
+  - name: powerBIPBIXPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Report'
+  - name: blockChainPath
+    value: 'Develop/Ecp.True/Blockchain'
+  - name: blockchainProjectPath
+    value: 'Deploy/Blockchain/Ecp.True.Blockchain/Ecp.True.Blockchain.csproj'
+  - name: apimPoliciesPath
+    value: 'Deploy/Policies'
+  - name: skipNamespacesCodeCoverage
+    value: 'Ecp.True.Processors.Transform.Tests,Ecp.True.Logging,Ecp.True.Entities.Core,Ecp.True.Entities,Ecp.True.Entities.Configuration,Ecp.True.DataAccess.Sql,Ecp.True.DataAccess.NoSql,Ecp.True.Repositories'
+  - name: oldAasProjectPath
+    value: 'Develop/Ecp.True/DI/OldArtifacts/Ecp.True.DI.Analysis'
+  - name: oldPowerBIPBIXPath
+    value: 'Develop/Ecp.True/DI/OldArtifacts/Ecp.True.DI.Report'
+  - name: oldAdfPath
+    value: 'Develop/Ecp.True/DI/OldArtifacts/Data Factory'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: functionsProjects
+    value: 'Develop\Ecp.True\**\*.Functions.*.csproj'
+  - name: apiProjects
+    value: 'Develop\Ecp.True\**\*.Api.csproj'
+  - name: aasAuditProjectPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.AnalysisAudit'
+  - name: aasDependenciesPath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Dependencies'
+  - name: unitTestProjects
+    value: '**/Test/Unit/**/*.csproj'
+  - name: aasProjectFilePath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.Analysis/Ecp.True.DI.Analysis.smproj'
+  - name: aasAuditProjectFilePath
+    value: 'Develop/Ecp.True/DI/Ecp.True.DI.AnalysisAudit/Ecp.True.DI.AnalysisAudit.smproj'
+  - name: testArtifactPath
+    value: 'Test/Infra'

@@ -1,0 +1,10 @@
+EXEC [Admin].[usp_GetMovementDetails] 23796
+
+
+--Ticket		OwnerId		MovementId		SourceNodeId	DestinationNodeId		SourceProductId		DestinationProductId	NetVolume	OwnershipValue	OwnershipUnit	MovementTypeId	MessageTypeId	OperationalDate
+--23796		82275		13723			18240			18243					10000002372			10000002372				216871.82	100.00			%				82271			1				2020-06-16
+--23796		82275		13725			18241			18240					10000002318			10000002318				156871.82	100.00			%				82271			1				2020-06-16
+--23796		82275		13728			18240			18243					10000002318			10000002318				316871.82	100.00			%				82271			1				2020-06-16
+--23796		82275		13734			18242			18240					10000002372			10000002372				426871.82	100.00			%				82271			1				2020-06-16
+--23796		NULL		13740			18240			NULL					10000002372			NULL					24000.00	NULL			NULL				44			3				2020-06-16
+--23796		NULL		13741			18240			NULL					10000002318			NULL					20100.00	NULL			NULL				44			3				2020-06-16

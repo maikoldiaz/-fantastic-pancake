@@ -1,0 +1,31 @@
+{
+  "name": "true",
+  "version": "1.0.0",
+  "description": "GIT hooks package configuration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npm run lint:fix --prefix Develop/Ecp.True/Ecp.True.Host.UI"
+  },
+  "lint-staged": {
+    "Develop/Ecp.True/Ecp.True.Host.UI/wwwroot/src/js/**/*.{js,jsx}": [
+      "npm run lint"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged && sh .githooks/branch-name.sh && detect-secrets-hook . $(git diff --cached --name-only) --keyword-exclude clientSecret && sh .githooks/version-check.sh && sh .githooks/spell-check.sh"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@ssh.dev.azure.com:v3/ecopetrolad/True/True"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^4.3.0",
+    "lint-staged": "^10.2.10",
+    "npx": "^10.2.2"
+  }
+}

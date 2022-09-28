@@ -1,0 +1,27 @@
+steps:
+  - template: ../fetchSecrets.yml
+    parameters:
+      azureSubscriptionName: '${{parameters.serviceConnection}}'
+      keyVaultName: '$(keyVault)'
+      secretsFilter: '*'
+
+  - powershell: |
+      $date=$(Get-Date -Format g);
+      Write-Host "##vso[task.setvariable variable=creationDate]$date"
+    displayName: 'Set Date Tag'
+
+  - task: AzurePowerShell@4
+    displayName: Restoring the old DB
+    condition: and(succeeded(), eq(variables['db'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-DBRename.ps1'
+      ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" 
+                        -SqlServerConnectionString "$(sqlconnectionstring)" 
+                        -ServerNameFullName "$(sqlServerName)" 
+                        -DatabaseName "$(databaseName)" 
+                        -userIdRestore "$(dbUserIdRestore)" 
+                        -userPasswordRestore "$(dbUserPasswordRestore)" 
+                        -oldDB "$(databaseName)_old" 
+                        -renameDB "$(databaseName)"'
+      azurePowerShellVersion: LatestVersion

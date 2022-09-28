@@ -1,0 +1,87 @@
+stages:
+- stage: Purge
+  dependsOn: Build
+  jobs:
+  - deployment: AdminApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(envApp)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - template: ../Build/acr.purge.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              projectName: $(apiProjectName)
+              skip: 3
+              top: 50
+  
+  - deployment: SapApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(envApp)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - template: ../Build/acr.purge.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              projectName: $(sapApiProjectName)
+              skip: 3
+              top: 50
+
+  - deployment: FlowApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(envApp)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - template: ../Build/acr.purge.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              projectName: $(flowApiProjectName)
+              skip: 3
+              top: 50
+              
+  - deployment: AnalyticsApi
+    pool:
+     vmImage: 'ubuntu-latest'
+    environment: $(envApp)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+          - template: ../Build/acr.purge.yml
+            parameters:
+              azureSubscription: $(serviceConnection)
+              registryName: $(imageRegistryName)
+              projectName: $(analyticsProjectName)
+              skip: 3
+              top: 50

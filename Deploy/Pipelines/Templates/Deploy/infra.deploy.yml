@@ -1,0 +1,677 @@
+jobs:
+  - deployment: Base
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);  
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - ${{ if eq(parameters['shared'], 'true') }}:
+                - template: ../Infra/logAnalytics.yml
+                  parameters:
+                    azureSubscriptionName: '${{parameters.serviceConnection}}'
+                    resourceGroupName: '$(sharedResourceGroupName)'
+                    deployLocation: '$(deployLocation)'
+                    workspaceName: '$(logAnalyticsWorkspaceName)'
+                    logAnalyticsKeyName: '$(logAnalyticsKeyName)'
+                    logAnalyticsWorkspaceId: '$(logAnalyticsWorkspaceId)'
+                    tier: 'data'
+
+            - template: ../Infra/keyVault.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                keyVaultName: '$(keyVault)'
+                skuName: '$(keyVaultSku)'
+                groupId: '${{parameters.groupId}}'
+                deployAks: '${{parameters.deployAks}}'
+                podId: '${{parameters.podId}}'
+                tier: 'data'
+                version: '${{parameters.version}}'
+                processJobId: 'Base'
+
+            - template: ../Infra/tags.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                tier: 'data'
+
+  - deployment: Storage
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "Base$(build.buildId)"'
+
+            - template: ../Infra/storageAccount.yml
+              parameters:
+                keyVaultName: '$(keyVault)'
+                storageAccountKeyName: '$(storageAccountKeyName)'
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                storageAccountType: '$(storageAccountKind)'
+                containerNames: '$(containerNames)'
+                storageAccountName: '$(storageAccountName)'
+                tier: 'data'
+                processJobId: 'Storage'
+
+  - deployment: Blockchain
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "Storage$(build.buildId)"'
+
+            - template: ../Infra/blockchain.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                tier: 'data'
+                processJobId: 'Blockchain'
+
+  - deployment: Redis
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            # - task: AzureCLI@2
+            #   displayName: Get Last Deployment Status
+            #   inputs:
+            #     azureSubscription: '${{ parameters.serviceConnection }}'
+            #     scriptType: pscore
+            #     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+            #     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "Blockchain$(build.buildId)"'
+
+            - template: ../Infra/redis.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                processJobId: 'Redis'
+
+  - deployment: ServiceBus
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "Redis$(build.buildId)"'
+
+            - template: ../Infra/serviceBus.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                processJobId: 'ServiceBus'
+
+  - deployment: SignalR
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "ServiceBus$(build.buildId)"'
+
+            - template: ../Infra/signalR.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                processJobId: 'SignalR'
+
+  - deployment: SendGrid
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "SignalR$(build.buildId)"'
+
+            - template: ../Infra/sendGrid.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                processJobId: 'SendGrid'
+
+  - deployment: Cluster
+    dependsOn:
+      - Base
+    condition: and(succeeded('Base'), eq('${{parameters.deployAks}}', 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "AnalysisServices$(build.buildId)"'
+
+            - template: ../Infra/acr.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: $(resourceGroupName)
+                processJobId: 'Cluster'
+
+            - ${{ if eq(parameters['shared'], 'true') }}:
+                - template: ../Infra/aks.cluster.yml
+                  parameters:
+                    azureSubscriptionName: '${{parameters.serviceConnection}}'
+                    resourceGroupName: $(sharedResourceGroupName)
+                    virtualNetworkresourceGroup: $(infrastructureResourceGroupName)
+
+  - deployment: PodIdentity
+    dependsOn:
+      - AppInsights
+      - Cluster
+    condition: and(succeeded('Cluster'), eq('${{parameters.deployAks}}', 'true'),eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: '$(envInfra)'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - template: ../Infra/aks.identity.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                nodeServiceConnection: '${{parameters.serviceConnection}}'
+                resourceGroupName: $(sharedResourceGroupName)
+                nodeResourceGroup: $(aksNodeResourceGroup)
+                keyVaultName: '$(keyVault)'
+                shared: '${{parameters.shared}}'
+
+  - deployment: ClusterSecrets
+    dependsOn:
+      - PodIdentity
+    condition: and(succeeded('PodIdentity'), eq('${{parameters.deployAks}}', 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: '$(envInfra)'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - template: ../Infra/aks.secrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: $(sharedResourceGroupName)
+                shared: '${{parameters.shared}}'
+
+  - deployment: AppService
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "SendGrid$(build.buildId)"'
+
+            - template: ../Infra/appService.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                appServicePlanName: '$(appServicePlanName)'
+                appServicePlanSku: '$(appServicePlanSku)'
+                appServiceNameUI: '$(appServiceNameUI)'
+                version: '${{parameters.version}}'
+                tier: 'Front'
+                processJobId: 'AppService'
+
+  - deployment: AppInsights
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - template: ../Infra/appInsights.yml
+              parameters:
+                keyVaultName: '$(keyVault)'
+                instrumentationKeyName: '$(instrumentationKeyName)'
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(sharedResourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                applicationInsights: '$(applicationInsights)'
+                tier: 'Front'
+                shared: '${{parameters.shared}}'
+                processJobId: 'AppInsights'
+
+  - deployment: Dashboard
+    dependsOn:
+      - AppInsights
+    condition: succeeded('AppInsights')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - template: ../Infra/sharedDashboard.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(sharedResourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                applicationInsights: '$(applicationInsights)'
+                sharedDashboardName: '$(sharedDashboardName)'
+                subscriptionId: '$(subscriptionId)'
+
+  - template: ./functions.deploy.yml
+    parameters:
+      serviceConnection: '${{parameters.serviceConnection}}'
+      env: '$(env)'
+
+  - deployment: AnalysisServices
+    dependsOn:
+      - Base
+    condition: succeeded('Base')
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "AppService$(build.buildId)"'
+
+            - template: ../Infra/analysisServices.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                tier: 'data'
+                processJobId: 'AnalysisServices'
+
+  - deployment: Cleanup
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - template: ../Infra/sinoper.yml
+
+  - deployment: ADF
+    dependsOn:
+      - Base
+      - AppInsights
+      - PodIdentity
+    condition: and(succeeded(), eq(succeeded('PodIdentity'), 'true'), eq(succeeded('Base'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - template: ../Infra/dataFactory.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(sharedResourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                processJobId: 'DataFactory'

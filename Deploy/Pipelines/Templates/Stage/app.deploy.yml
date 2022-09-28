@@ -1,0 +1,580 @@
+stages:
+  - stage: Deploy
+    jobs:
+      - deployment: Database
+        timeoutInMinutes: 120
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/db.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    downloadArtifacts: 'true'
+
+      - deployment: Config
+        dependsOn:
+          - Database
+        condition: succeeded('Database')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/powerBI.yml
+                  parameters:
+                    env: '$(env)'
+                    azureSubscriptionName: '$(serviceConnection)'
+
+                - template: ../Infra/config.yml
+                  parameters:
+                    env: '$(env)'
+                    azureSubscriptionName: '$(serviceConnection)'
+
+                - ${{ if eq(parameters['automation'], 'true') }}:
+                    - template: ../Deploy/automation.yml
+                      parameters:
+                        azureSubscriptionName: '$(serviceConnection)'
+                        canExecuteAutomation: '${{ parameters.canExecuteAutomation }}'
+                        keyVaultName: '$(keyVault)'
+
+      - deployment: AAS
+        timeoutInMinutes: 120
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/aas.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    nextEnvServiceConnection: $(nextEnvServiceConnection)
+                    downloadArtifacts: 'true'
+                    analysisServerModel: $(analysisServerModel)
+                    analysisServer: $(analysisServer)
+
+      - deployment: ADF
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/adf.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    nextEnvServiceConnection: $(nextEnvServiceConnection)
+                    downloadArtifacts: 'true'
+
+      - deployment: AdminApi
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/aks.deploy.yml
+                  parameters:
+                    azureSubscription: $(serviceConnection)
+                    registryName: $(imageRegistryName)
+                    azureResourceGroup: $(sharedResourceGroupName)
+                    kubernetesCluster: $(aksClusterName)
+                    namespace: $(aksNamespace)
+                    projectName: $(apiProjectName)
+                    releaseName: $(apiProjectName)
+                    chartName: $(imageRegistryName)/$(apiProjectName)
+                    tag: '$(build.buildId)'
+                    cpuLimits: $(apiHighCpuLimits)
+                    memoryLimits: $(apiHighMemoryLimits)
+                    memoryRequests: $(apiHighMemoryRequests)
+                    cpuRequests: $(apiHighCpuRequests)
+                    replicaCount: $(apiHighReplicaCount)
+                    analytics: 'false'
+
+      - deployment: SapApi
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/aks.deploy.yml
+                  parameters:
+                    azureSubscription: $(serviceConnection)
+                    registryName: $(imageRegistryName)
+                    azureResourceGroup: $(sharedResourceGroupName)
+                    kubernetesCluster: $(aksClusterName)
+                    namespace: $(aksNamespace)
+                    projectName: $(sapApiProjectName)
+                    releaseName: $(sapApiProjectName)
+                    chartName: $(imageRegistryName)/$(sapApiProjectName)
+                    tag: '$(build.buildId)'
+                    cpuLimits: $(apiLowCpuLimits)
+                    memoryLimits: $(apiLowMemoryLimits)
+                    memoryRequests: $(apiLowMemoryRequests)
+                    cpuRequests: $(apiLowCpuRequests)
+                    replicaCount: $(apiLowReplicaCount)
+                    analytics: 'false'
+
+      - deployment: FlowApi
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/aks.deploy.yml
+                  parameters:
+                    azureSubscription: $(serviceConnection)
+                    registryName: $(imageRegistryName)
+                    azureResourceGroup: $(sharedResourceGroupName)
+                    kubernetesCluster: $(aksClusterName)
+                    namespace: $(aksNamespace)
+                    projectName: $(flowApiProjectName)
+                    releaseName: $(flowApiProjectName)
+                    chartName: $(imageRegistryName)/$(flowApiProjectName)
+                    tag: '$(build.buildId)'
+                    cpuLimits: $(apiLowCpuLimits)
+                    memoryLimits: $(apiLowMemoryLimits)
+                    memoryRequests: $(apiLowMemoryRequests)
+                    cpuRequests: $(apiLowCpuRequests)
+                    replicaCount: $(apiLowReplicaCount)
+                    analytics: 'false'
+
+      - deployment: AnalyticsApi
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/aks.deploy.yml
+                  parameters:
+                    azureSubscription: $(serviceConnection)
+                    registryName: $(imageRegistryName)
+                    azureResourceGroup: $(sharedResourceGroupName)
+                    kubernetesCluster: $(aksClusterName)
+                    namespace: $(aksNamespace)
+                    projectName: $(analyticsProjectName)
+                    releaseName: $(analyticsProjectName)
+                    chartName: $(imageRegistryName)/$(analyticsProjectName)
+                    tag: '$(build.buildId)'
+                    cpuLimits: $(apiMediumCpuLimits)
+                    memoryLimits: $(apiMediumMemoryLimits)
+                    memoryRequests: $(apiMediumMemoryRequests)
+                    cpuRequests: $(apiMediumCpuRequests)
+                    replicaCount: $(apiMediumReplicaCount)
+                    analytics: 'true'
+
+      - deployment: Functions
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/app.deploy.yml
+                  parameters:
+                    env: '$(env)'
+                    serviceConnection: $(serviceConnection)
+                    ui: 'true'
+                    version: '2'
+
+      - deployment: UI
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../Deploy/app.ui.deploy.yml
+                  parameters:
+                    env: '$(env)'
+                    serviceConnection: $(serviceConnection)
+                    ui: 'true'
+                    version: '2'
+
+      - deployment: Blockchain
+        dependsOn:
+          - Config
+        condition: succeeded('Config')
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Deploy/blockchain.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: APIM
+        dependsOn:
+          - AdminApi
+          - SapApi
+          - FlowApi
+          - AnalyticsApi
+        condition: and(succeeded(), eq(succeeded('AdminApi'), 'true'), eq(succeeded('AnalyticsApi'), 'true'), eq(succeeded('SapApi'), 'true'), eq(succeeded('FlowApi'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/apim.refresh.yml
+                  parameters:
+                    azureSubscriptionName: $(serviceConnection)
+                    resourceGroupName: $(sharedResourceGroupName)
+                    swaggerUrl: $(openAPIUrl)
+                    apiDisplayName: $(apimDisplayName)
+                    apimApiPath: $(adminPath)
+                    serviceUrl: $(adminApiUrl)
+
+                - template: ../Infra/apim.refresh.yml
+                  parameters:
+                    azureSubscriptionName: $(serviceConnection)
+                    resourceGroupName: $(sharedResourceGroupName)
+                    swaggerUrl: $(openAPIUrlAnalytics)
+                    apiDisplayName: $(apimAnalyticsDisplayName)
+                    apimApiPath: $(analyticsPath)
+                    serviceUrl: $(analyticsApiUrl)
+
+                - template: ../Infra/apim.refresh.yml
+                  parameters:
+                    azureSubscriptionName: $(serviceConnection)
+                    resourceGroupName: $(sharedResourceGroupName)
+                    swaggerUrl: $(openAPIUrlSAP)
+                    apiDisplayName: $(apimSapDisplayName)
+                    apimApiPath: $(sapPath)
+                    serviceUrl: $(sapApiUrl)
+
+                - template: ../Infra/apim.refresh.yml
+                  parameters:
+                    azureSubscriptionName: $(serviceConnection)
+                    resourceGroupName: $(sharedResourceGroupName)
+                    swaggerUrl: $(openAPIUrlFlow)
+                    apiDisplayName: $(apimFlowDisplayName)
+                    apimApiPath: $(flowPath)
+                    serviceUrl: $(flowApiUrl)      
+
+      - deployment: AvailabilitySwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/availability.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: BlockchainSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/blockchain.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: CalculatorSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/calculator.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: DeadletterSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/deadletter.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: DeltaSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/delta.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: OwnershipSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/ownership.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: ReportingSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/reporting.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: SapSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/sap.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: TransformSwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/transform.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: UISwap
+        dependsOn:
+          - Functions
+          - UI
+          - APIM
+        condition: and(succeeded(),eq(succeeded('Functions'), 'true'),eq(succeeded('UI'), 'true'),eq(succeeded('APIM'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/Swap/ui.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+
+      - deployment: RedisFlush
+        dependsOn:
+          - UI
+        condition: and(succeeded(), eq(succeeded('UI'), 'true'))
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/redis.flush.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'
+                    storageAccountName: '$(storageAccountName)'

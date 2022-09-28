@@ -1,0 +1,41 @@
+﻿// _message.scss
+
+#{$ep}-msg {
+    $msg:&;
+    display: inline-flex;
+    margin: 0;
+    
+    &__title{
+        padding: 3px 5px;
+        color: $white;
+        border-radius: 5px 0 0 5px;
+    }
+
+    &__val{
+        padding: 3px pxToRem(10);
+        margin: 0 0 0 1px;
+        color: $white;
+        border-radius: 0 5px 5px 0;
+        font-weight: 700;
+    }
+
+    &--success {
+        #{$msg}__val{
+            background-color: $success;
+        }
+
+        #{$msg}__title{
+            background-color: $success;
+        }
+    }
+
+    &--error {
+        #{$msg}__val{
+            background-color: $error;
+        }
+
+        #{$msg}__title{
+            background-color: $error;
+        }
+    }
+}

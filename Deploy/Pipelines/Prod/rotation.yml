@@ -1,0 +1,14 @@
+variables:
+- group: true-secrets-prd
+- group: true-network-prd
+- group: true-threshold
+- template: ../Templates/Variables/package.yml
+- template: ../Templates/Variables/infra.yml
+- template: ../Templates/Variables/prod.yml
+  
+trigger: none
+pr: none
+  
+stages:
+- template: ../Templates/Stage/infra.build.yml
+- template: ../Templates/Stage/key.rotation.yml

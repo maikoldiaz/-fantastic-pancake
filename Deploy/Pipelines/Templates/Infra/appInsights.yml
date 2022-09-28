@@ -1,0 +1,41 @@
+steps:
+ - powershell: |
+     $appinsights=(New-Guid).Guid
+     Write-Host "##vso[task.setvariable variable=appinsightsguid]$appinsights"
+   displayName: Set PID Name
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: AI - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Application Insights/deploy.json'
+     overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -appInsightsName "${{ parameters.applicationInsights }}"'
+     deploymentOutputs: armOut
+     deploymentName: '$(appinsightsguid)'
+
+ - task: AzurePowerShell@4
+   displayName: AI - Set Build Variable
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(appinsightsguid)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: AI - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{ parameters.applicationInsights }}"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzureCLI@2
+   displayName: AI - KV Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "${{ parameters.instrumentationKeyName }}" -secretValue "$(ou_instrumentationKey)"'
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))

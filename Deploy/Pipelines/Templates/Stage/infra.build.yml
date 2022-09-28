@@ -1,0 +1,64 @@
+stages:
+  - stage: Build
+    jobs:
+      - job: Config
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../Build/build.yml
+            parameters:
+              config: 'true'
+              publish: 'true'
+              db: 'true'
+              tests: 'true'
+
+          - task: DownloadBuildArtifacts@0
+            displayName: Download Build Artifacts
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - task: AzurePowerShell@5
+            displayName: Run - Unit Tests
+            inputs:
+              ConnectedServiceNameARM: "$(serviceConnection)"
+              azureSubscription: "$(serviceConnection)"
+              ScriptPath: '$(System.ArtifactsDirectory)/Drop/Tests/testOrchestrator.ps1'
+              ScriptArguments: '-basePath "$(System.ArtifactsDirectory)\Drop\Tests\Unit" -templateRootPath "$(System.ArtifactsDirectory)\Drop\Templates" -scriptRootPath "$(System.ArtifactsDirectory)\Drop\Scripts"'
+              azurePowerShellVersion: LatestVersion
+
+          - task: PublishTestResults@2
+            displayName: Publish Test Results
+            inputs:
+              testResultsFormat: 'NUnit'
+              testResultsFiles: '$(System.ArtifactsDirectory)\Drop\Tests\Unit\testResult.xml'
+              failTaskOnFailedTests: true
+
+      - job: ScanningTemplates
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - task: AzSKARMTemplateChecker@4
+            displayName: AzSk Template Checker
+            inputs:
+              ExcludeFiles: 'parameters.json, factory.json'
+              ARMTemplateFilePath: $(infraTemplatePath)
+            continueOnError: true
+            condition: and(succeeded(), eq('${{parameters.azsk}}', 'true'))
+
+          - template: ../Infra/armValidator.yml
+
+      - job: Package
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../package.yml
+            parameters:
+              infra: 'true'
+              db: 'true'
+
+      - job: Rotation
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - template: ../Build/rotation.build.yml

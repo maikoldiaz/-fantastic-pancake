@@ -1,0 +1,63 @@
+﻿steps:
+  - template: ../spellCheck.yml
+
+  - task: Npm@1
+    displayName: 'NPM Install'
+    inputs:
+      workingDir: '$(uiFolderPath)'
+      verbose: false
+      publishRegistry: useFeed
+
+  - script: |
+     npm install -g eslint
+    displayName: 'ESLint Install'
+
+  - script: |
+      npm run lint
+    workingDirectory: '$(uiFolderPath)'
+    displayName: 'Run Lint'
+
+  - script: |
+      npm install webpack webpack-cli --save-dev
+    workingDirectory: '$(uiFolderPath)'
+    displayName: 'Install webpack'
+
+  - script: |
+      npx webpack --config webpack.config.prod.js
+    workingDirectory: '$(uiFolderPath)'
+    displayName: 'Run webpack'
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '$(uiProjectPath)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: build
+      projects: '$(uiProjectPath)'
+      arguments: '--configuration $(buildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: publish
+      publishWebProjects: False
+      projects: '$(uiProjectPath)'
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+ 
+  - script: |
+     npm run test -- --coverage --coverageDirectory $(Build.ArtifactStagingDirectory)
+    workingDirectory: '$(uiFolderPath)'
+    displayName: 'Run NPM Unit Tests'
+    continueOnError: 'false'
+
+  - task: PowerShell@2
+    displayName: UT Coverage Check
+    inputs:
+      filePath: '$(infraScriptPath)/Calculate-UTCoverage.ps1'
+      arguments: '-coveragePath "$(Build.ArtifactStagingDirectory)\clover.xml" -threshold "$(clientSideUnitTestingThreshold)" -server "false"'
+    condition: succeeded()
+    enabled: 'true'

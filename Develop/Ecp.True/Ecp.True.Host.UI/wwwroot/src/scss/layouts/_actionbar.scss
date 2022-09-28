@@ -1,0 +1,58 @@
+﻿// _actionbar.scss
+
+#{$ep}-actionbar {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    #{$ep}-btn{
+        #{$ep}-btn{
+            margin-left: pxToRem(10);
+        }
+    }
+    &__card{
+        position: relative;
+        height: pxToRem(44);
+        background-color: $white;
+        border:1px solid map-get($gray, 'C1C1C1');
+        border-radius: pxToRem(4);
+        padding: pxToRem(10) pxToRem(15);
+        margin-left: pxToRem(10);
+        text-align: center;
+        color: $ep-secondary-color;
+        overflow: hidden;
+        &--cir{
+            @include mix-circle(pxToRem(44));
+            background-color: map-get($gray, 'F8F8F8');
+            padding: pxToRem(10);
+        }
+
+        &--dvdr{
+            overflow: inherit;
+            margin-left: pxToRem(20);
+            &:after{
+                content: "";
+                border-left: solid 1px map-get($gray, 'C1C1C1');
+                height: pxToRem(35);
+                width: pxToRem(1);
+                position: absolute;
+                left: pxToRem(-15);
+                display: inline-block;
+                top: pxToRem(4);
+            }
+        }
+
+        &-btn{
+            background:  map-get($gray, 'EFEFEF');
+            border: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: pxToRem(42);
+            padding: 0 pxToRem(15);
+            border-left: 1px solid #C1C1C1;
+        }
+    }
+    
+}

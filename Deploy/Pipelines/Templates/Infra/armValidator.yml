@@ -1,0 +1,174 @@
+steps:
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate APIM ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/API Management/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/API Management/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure Kubernetes Services ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure Kubernetes Services/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure Kubernetes Services/parameters.json'
+       overrideParameters: '-aksManagedClustersName "$(aksManagedClustersName)-1" 
+                          -aksDnsPrefix "$(aksDnsPrefix)"
+                          -aksLinuxProfileKeyData "$(aksLinuxProfileKeyData)"
+                          -aksServicePrincipalProfileClientId "$(aksServicePrincipalProfileClientId)"
+                          -aksServicePrincipalProfileSecret "$(aksServicePrincipalProfileSecret)"
+                          -aksNodeResourceGroup "$(aksNodeResourceGroup)-1"
+                          -aksAadProfileClientAppID "$(aksAadProfileClientAppID)"
+                          -aksAadProfileServerAppID "$(aksAadProfileServerAppID)"
+                          -aksAadProfileServerAppSecret "$(aksAadProfileServerAppSecret)"
+                          -aksVnetSubnetID "$(virtualNetworkId)/subnets/$(aksSubnetName)"'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate App Service ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/App Service/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/App Service/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Application Insights ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Application Insights/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Application Insights/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure Analysis Services ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure Analysis Services/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure Analysis Services/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure Cache for Redis ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure Cache for Redis/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure Cache for Redis/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure Container Registry ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure Container Registry/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure Container Registry/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure Shared Dashboard ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure Shared Dashboard/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure Shared Dashboard/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Azure SignalR ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Azure SignalR/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Azure SignalR/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Data Factory ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Data Factory/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Data Factory/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Function App ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Function App/deploy-scale.json'
+       csmParametersFile: '$(infraTemplatePath)/Function App/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Key Vault ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Key Vault/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Key Vault/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Log Analytics ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Log Analytics/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Log Analytics/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Send Grid ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Send Grid/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Send Grid/parameters.json'
+       overrideParameters: '-accountPassword "$(sendGridPassword)" '
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Service Bus ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Service Bus/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Service Bus/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Storage Account ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Storage Account/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Storage Account/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate User Identity ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/User Identity/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/User Identity/parameters.json'
+       deploymentMode: 'Validation'
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Validate Virtual Machine ARM Template
+    inputs:
+       azureSubscription: "$(serviceConnection)"
+       resourceGroupName: "$(resourceGroupName)"
+       csmFile: '$(infraTemplatePath)/Virtual Machine/deploy.json'
+       csmParametersFile: '$(infraTemplatePath)/Virtual Machine/parameters.json'
+       overrideParameters: '-adminPassword "$(vmPassword)" '
+       deploymentMode: 'Validation'

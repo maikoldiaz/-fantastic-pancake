@@ -1,0 +1,112 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of App Insights instance"
+      }
+    },
+    "capacity": {
+      "type": "int",
+      "allowedValues": [
+        1,
+        2,
+        5,
+        10,
+        20,
+        50,
+        100
+      ],
+      "metadata": {
+        "description": "The number of SignalR Unit."
+      }
+    },
+    "pricingTier": {
+      "type": "string",
+      "allowedValues": [
+        "Free_F1",
+        "Standard_S1"
+      ],
+      "metadata": {
+        "description": "The pricing tier of the SignalR resource."
+      }
+    },
+    "serviceMode": {
+      "type": "string",
+      "allowedValues": [
+        "Default",
+        "Serverless",
+        "Classic"
+      ],
+      "metadata": {
+        "description": "Visit https://github.com/Azure/azure-signalr/blob/dev/docs/faq.md#service-mode to understand SignalR Service Mode."
+      }
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "diagnosticSettingsName": "securityauditevents"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-10-01",
+      "location": "[variables('location')]",
+      "name": "[toUpper(parameters('name'))]",
+      "properties": {
+        "hostNamePrefix": "[parameters('name')]",
+        "features": [
+          {
+            "flag": "ServiceMode",
+            "value": "[parameters('serviceMode')]"
+          }
+        ]
+      },
+      "sku": {
+        "capacity": "[parameters('capacity')]",
+        "name": "[parameters('pricingTier')]"
+      },
+      "type": "Microsoft.SignalRService/SignalR",
+      "resources": [
+      ]
+    }
+  ],
+  "outputs": {
+    "ou_SignalRConnectionString": {
+      "type": "string",
+      "value": "[concat('Endpoint=https://', parameters('name'),'.service.signalr.net;AccessKey=',listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('name')),'2018-10-01').primaryKey, ';Version=1.0;')]"
+    }
+  }
+}

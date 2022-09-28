@@ -1,0 +1,57 @@
+// _error.scss
+
+#{$ep}-error {
+    position: relative;
+    max-width:pxToRem(376);
+    margin: auto;
+    &__img{               
+        position: absolute;   
+        left: pxToRem(-150);
+        top: pxToRem(-15);  
+        @include mix-circle(pxToRem(200));
+        z-index: 1;        
+    }
+
+    &__mascot{
+        position: relative;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    &__msg{            
+        position: relative;        
+        z-index: 10000;
+    }
+    
+    &__title{
+        line-height: 100%;
+        font-size: pxToRem(24);
+        font-family: $font-family-sb;
+        margin-top: pxToRem(8);
+    }
+
+    &__code{
+        font-family: $font-family-ep;
+        font-size: pxToRem(130);
+        font-weight: normal;
+        line-height: 90%;
+    }
+
+    &__desc{
+        font-size: pxToRem(16);
+    }
+
+    &-wrapper{
+        @include mix-square(100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: $white; 
+        position: absolute;
+        top: 0;
+        left: 1px;
+        right: 0;
+        bottom: 0;       
+    }
+}

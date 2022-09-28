@@ -1,0 +1,15 @@
+# dependencies
+node_modules
+
+# testing
+coverage
+
+# truffle
+build
+
+# environment variables
+.env
+
+# package-lock
+package-lock.json
+*-lock.json

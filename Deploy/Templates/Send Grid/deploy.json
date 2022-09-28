@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "accountName": {
+      "type": "string"
+    },
+    "accountPassword": {
+      "type": "securestring"
+    },
+    "accountEmail": {
+      "type": "string",
+      "defaultValue": "carlos.pena@ecopetrol.com.co"
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Sendgrid.Email/accounts",
+      "apiVersion": "2015-01-01",
+      "name": "[toUpper(parameters('accountName'))]",
+      "location": "[variables('location')]",
+      "plan": {
+        "name": "free",
+        "promotionCode": "",
+        "product": "sendgrid_azure",
+        "publisher": "Sendgrid"
+      },
+      "properties": {
+        "email": "[parameters('accountEmail')]",
+        "password": "[parameters('accountPassword')]",
+        "acceptMarketingEmails": false
+      }
+    }
+  ]
+}

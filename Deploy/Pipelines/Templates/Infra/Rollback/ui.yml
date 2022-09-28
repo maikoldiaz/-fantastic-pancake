@@ -1,0 +1,9 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: UI Web App
+    condition: and(succeeded(), eq(variables['ui'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanNameUI)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(appServiceNameUI)"'
+      azurePowerShellVersion: LatestVersion

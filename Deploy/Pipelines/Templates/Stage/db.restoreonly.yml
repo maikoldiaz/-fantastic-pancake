@@ -1,0 +1,89 @@
+stages:
+  - stage: DBRestore
+    jobs:
+      - deployment: Restore
+        pool:
+          vmImage: "windows-latest"
+        environment: $(envInfra)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: "Download Build Artifacts"
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: "$(System.ArtifactsDirectory)"
+
+                - powershell: |
+                    $date=$(Get-Date -Format g);
+                    Write-Host "##vso[task.setvariable variable=creationDate]$date"
+                  displayName: "Set Date Tag"
+
+                - task: AzurePowerShell@4
+                  displayName: Get Storage Connections
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Set-StorageAccountConnections.ps1"
+                    ScriptArguments: '-vaultName "$(keyVault)" -storageAccountName "$(storageAccountName)" -resourceGroupName "$(resourceGroupName)" -storageAccountKeyName "$(storageAccountKeyName)" -storageAccessKeyName "$(storageAccessKeyName)" -dataEncryptionStorageSecret "Settings--StorageConnectionString" -webAppsForAppSettingsUpdate "$(webAppsForAppSettingsUpdate)"'
+                    azurePowerShellVersion: LatestVersion
+
+                - template: ../Infra/fetchSecrets.yml
+                  parameters:
+                    azureSubscriptionName: "$(serviceConnection)"
+                    keyVaultName: "$(keyVault)"
+                    secretsFilter: "*"
+
+                - task: AzurePowerShell@4
+                  displayName: DB Backup Offshore
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/BackUp-Database.ps1"
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -offshoreChanges "$(offshoreChanges)" -SqlServerConnectionString "$(sqlconnectionstring)" -DatabaseName "$(databaseName)" -StorageAccountConnectionString "$(storageconnectionstring)" -BlobContainerName "$(dbBackupsBlobContainer)" -SqlPackageExePath "$(sqlPackageExePath)" -customerDbBackUp "false"'
+                    azurePowerShellVersion: LatestVersion
+
+                - task: AzureCLI@2
+                  displayName: Set Environment Variable For Automation Script Permission in Key-Vault
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    scriptType: ps
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+                    arguments: '-keyVaultName "$(keyVault)" -secretName "CanExecuteAutomation" -secretValue "false"'
+
+                - task: AzurePowerShell@4
+                  displayName: Restore Customer Database
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: "$(System.ArtifactsDirectory)/Drop/Scripts/Restore-Database.ps1"
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -customerRestore "true" -ResourceGroupName "$(sharedResourceGroupName)" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerNameFullName "$(sqlServerName)" -DatabaseName "$(databaseName)" -StorageAccountConnectionString "$(storageconnectionstring)" -BlobContainerName "$(dbBackupsBlobContainer)" -packageExecutable "$(sqlPackageExePath)" -blobDownloadLocation "C:\" -userIdRestore "$(dbUserIdRestore)" -userPasswordRestore "$(dbUserPasswordRestore)" -dbusers "$(dbusers)"'
+                    azurePowerShellVersion: LatestVersion
+
+                - task: SqlAzureDacpacDeployment@1
+                  displayName: Deploy Dacpac on Restored Customer database
+                  inputs:
+                    Database: "appdb"
+                    azureSubscription: "$(serviceConnection)"
+                    AuthenticationType: "connectionString"
+                    ConnectionString: "$(sqlconnectionstring)"
+                    deployType: "DacpacTask"
+                    DeploymentAction: "Publish"
+                    DacpacFile: "$(System.ArtifactsDirectory)/Drop/SQL/bin/Debug/Ecp.True.DI.Sql.dacpac"
+                    AdditionalArguments: "/p:BlockOnPossibleDataLoss=False /p:GenerateSmartDefaults=True /v:serverName=null /v:baseUrl=https://$(dnsNameForUI)"
+                    IpDetectionMethod: "AutoDetect"
+                  condition: succeeded()
+
+                - task: AzurePowerShell@3
+                  displayName: Refresh Tabular Model
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Refresh-AnalysisServiceModel.ps1'
+                    ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -modelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)"'
+                    azurePowerShellVersion: LatestVersion
+
+                - task: AzurePowerShell@3
+                  displayName: Refresh Audit Tabular Model
+                  inputs:
+                    azureSubscription: "$(serviceConnection)"
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Refresh-AnalysisServiceModel.ps1'
+                    ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -modelName "$(analysisServerAuditModel)" -rolloutenvironment "$(rolloutenvironment)"'
+                    azurePowerShellVersion: LatestVersion

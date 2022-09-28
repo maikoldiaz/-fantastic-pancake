@@ -1,0 +1,40 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Redis - ARM
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: "$(resourceGroupName)"
+      location: "$(deployLocation)"
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Cache for Redis/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -redisCacheName "$(redisCacheName)" -redisCacheCapacity "$(redisCacheCapacity)" -logAnalyticsWorkspaceName "$(logAnalyticsResourceId)" -redisCacheSKU "$(redisCacheSKU)"'
+      deploymentOutputs: armOut
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: Redis - Set Build Variable
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Redis - Set Redis Connection String In KV
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "$(keyVault)" -secretName "Settings--RedisConnectionString" -secretValue "$(ou_RedisConnectionStringValue)"'
+
+  - task: AzureCLI@2
+    displayName: Redis - Set Redis Connection String Config In KV
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "$(keyVault)" -secretName "RedisCacheConnectionString" -secretValue "$(ou_RedisConnectionStringValue)"'

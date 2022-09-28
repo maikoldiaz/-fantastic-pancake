@@ -1,0 +1,43 @@
+{
+    "homologationId" : 120,
+	"sourceSystemId": 1,
+	"destinationSystemId": 3,
+	"homologationGroups": [
+    {
+      "homologationGroupId": 12,
+      "groupTypeId": 13,
+      "homologationId": 120,
+      "homologationObjects": [
+        {
+          "homologationObjectTypeId": 4,
+          "isRequiredMapping": true
+        }
+      ],
+      "homologationDataMapping": [
+        {
+          "homologationDataMappingId": 12,
+          "sourceValue": "Node 1",
+          "destinationValue": 1
+        }
+      ]
+    },
+    {
+      "homologationGroupId": 13,
+      "groupTypeId": 14,
+      "homologationId": 120,
+      "homologationObjects": [
+        {
+          "homologationObjectTypeId": 5,
+          "isRequiredMapping": true
+        }
+      ],
+      "homologationDataMapping": [
+        {
+          "homologationDataMappingId": 16,
+          "sourceValue": "Node 1",
+          "destinationValue": 2
+        }
+      ]
+    }
+	]	
+}

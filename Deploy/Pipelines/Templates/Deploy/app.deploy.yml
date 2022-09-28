@@ -1,0 +1,194 @@
+﻿steps:
+- script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+  displayName: Set Environment
+
+- task: DownloadBuildArtifacts@0
+  displayName: Download Build Artifacts
+  inputs:
+    artifactName: Drop
+    downloadPath: '$(System.ArtifactsDirectory)'
+
+- template: ../Infra/fetchSecrets.yml
+  parameters:
+    azureSubscriptionName : '${{parameters.serviceConnection}}'
+    keyVaultName: '$(keyVault)'
+    secretsFilter: '*'
+
+- script: echo '##vso[task.setvariable variable=Settings.VaultName]$(keyVaultAddress)
+  displayName: Set Key Vault Address
+
+- script: echo '##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$(instrumentationkey)
+  displayName: Set Instrumentation Key
+
+- script: echo '##vso[task.setvariable variable=AzureAd.ClientId]$(uiAppClientId)
+  displayName: Set Web Portal ClientId
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Transform
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(transformFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Transform.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Transform
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(transformFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Calculation
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(calFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Balance.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Calculation
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(calFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Blockchain
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(bcFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Blockchain.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Blockchain
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(bcFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Ownership
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(ownershipFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Ownership.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Ownership
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(ownershipFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Deadletter
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(dlFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Deadletter.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Deadletter
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(dlFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureCLI@2
+  displayName: Remove Sinoper Deadletter Functions Settings
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-SinoperFunctions.ps1'
+    arguments: '-functionAppName "$(dlFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Delta
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(deltaFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Delta.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Delta
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(deltaFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Sap
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(sapFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Sap.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Sap
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(sapFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Reporting
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(reportingFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Reporting.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Reporting
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(reportingFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Function App - Availability
+  inputs:
+    azureSubscription: '${{parameters.serviceConnection}}'
+    WebAppName: '$(availabilityFunctionAppName)'
+    deployToSlotOrASE: true
+    ResourceGroupName: '$(resourceGroupName)'
+    SlotName: 'STAGING'
+    packageForLinux: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Host.Functions.Availability.zip'
+
+- task: AzureCLI@2
+  displayName: Always On - Availability
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: ps
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AlwaysOn.ps1'
+    arguments: '-functionAppName "$(availabilityFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'

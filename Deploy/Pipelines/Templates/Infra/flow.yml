@@ -1,0 +1,33 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: Flow - Update Params
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Flow/Update-FlowParams.ps1'
+     ScriptArguments: '-zipFilePath "$(System.ArtifactsDirectory)\Drop\Templates\PowerAutomate\" 
+                       -env "$(env)"
+                       -dnsNameForApi "$(dnsNameForApi)"
+                       -nodeApprovalsFlowUniqueGuid "$(nodeApprovalsFlowUniqueGuid)"
+                       -nodeDeltaApprovalsFlowUniqueGuid "$(nodeDeltaApprovalsFlowUniqueGuid)"
+                       -apiScope "$(apiAppClientId)"
+                       -tenantId "$(tenantId)"
+                       -appClientId "$(flowAppClientId)" 
+                       -appClientSecret "$(flowAppSecret)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['flow'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Flow - Deploy
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Flow/Add-Flow.ps1'
+     ScriptArguments: '-tenantId "$(tenantId)" 
+                  -clientId "$(flowAppClientId)" 
+                  -clientSecret "$(flowAppSecret)" 
+                  -zipFilePath "$(System.ArtifactsDirectory)\Drop\Templates\PowerAutomate\" 
+                  -env "$(env)"
+                  -vaultName "$(keyVault)"
+                  -solSecretName "$(solSignatureSecretName)"
+                  -flowResourceUrl "$(powerAutomateResourceUrl)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['flow'], 'true'))

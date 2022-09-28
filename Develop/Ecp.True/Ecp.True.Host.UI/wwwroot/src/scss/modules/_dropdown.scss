@@ -1,0 +1,72 @@
+﻿// _dropdown.scss
+
+#{$ep}-dropdown {
+    $dd: &;   
+    position: relative;
+    color:$btn-color;
+    background-color: $white;
+    border: solid 1px map-get($gray, 'C1C1C1');
+    font-family: $font-family-sb;
+    border-radius: 5px;
+    height: pxToRem(48);
+    outline: none;
+    cursor: pointer;
+
+    &__lbl{
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    &__txt{
+        padding: 0 pxToRem(15);
+    }
+
+    &__action{
+        display: inline-block;
+        width: pxToRem(42);
+        border-left: solid 1px map-get($gray, 'C1C1C1');
+        height: 100%;
+        text-align: center;
+        line-height: pxToRem(48);
+    }
+
+    &__lst{
+        position: absolute;
+        right: 0;
+        top: pxToRem(48);
+        min-width: pxToRem(200);
+        background-color: $white;
+        border: solid 1px map-get($gray, 'C1C1C1');
+        border-radius: 5px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        overflow: hidden;
+        &-lnk{
+            display: block;
+            padding: pxToRem(10) pxToRem(15);
+            &:hover{
+                background-color: map-get($light,'a');
+            }
+
+            &--disable{
+                background-color: $disabled-bg;
+                cursor: not-allowed;
+                color: $font-disabled;
+
+                &:hover{
+                    background-color: $disabled-bg;
+                    color: $font-disabled;
+                }
+            }
+        }
+    }
+
+    &:hover{
+        #{$dd}__lst{
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}

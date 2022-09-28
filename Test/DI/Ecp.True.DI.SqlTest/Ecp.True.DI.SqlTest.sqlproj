@@ -1,0 +1,505 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Ecp.True.DI.SqlTest</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{2a855561-2628-4ef2-9606-4b6c1df03345}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Ecp.True.DI.SqlTest</RootNamespace>
+    <AssemblyName>Ecp.True.DI.SqlTest</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Admin" />
+    <Folder Include="Admin\SaveNode" />
+    <Folder Include="Admin\SaveHomologation" />
+    <Folder Include="Admin\CalculateUnbalance" />
+    <Folder Include="Admin\UpdateUploadId" />
+    <Folder Include="Admin\NodeTag" />
+    <Folder Include="Admin\SaveTicket" />
+    <Folder Include="Admin\ValidateOwnershipInputs" />
+    <Folder Include="Admin\OperationalDataAndConfigurationTestScripts" />
+    <Folder Include="Admin\GetErrorDetails" />
+    <Folder Include="Admin\SaveOperativeNodeRelationship" />
+    <Folder Include="Admin\BalanceSummaryWithOwnership" />
+    <Folder Include="Admin\BalanceSummaryAggregate" />
+    <Folder Include="Admin\InventoryDetailsBeforeCutoff" />
+    <Folder Include="Admin\InventoryQualityDetailsBeforeCutoff" />
+    <Folder Include="Admin\IntialNodes" />
+    <Folder Include="Admin\FinalNodes" />
+    <Folder Include="Admin\SaveOperationalDataWithoutCutOffForSegment" />
+    <Folder Include="Admin\GetLogisticDetails" />
+    <Folder Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff" />
+    <Folder Include="Admin\SaveOperationalDataWithoutCutOffForSystem" />
+    <Folder Include="Admin\Contract_Events" />
+    <Folder Include="Admin\ReportTemplateDetails" />
+    <Folder Include="Admin\BalanceControlReport" />
+    <Folder Include="Admin\GetGraphicalNode" />
+    <Folder Include="Admin\GetGraphicalNodeConnection" />
+    <Folder Include="Analytics" />
+    <Folder Include="Analytics\OperativeMovements" />
+    <Folder Include="Analytics\OperativeMovementsWithOwnership" />
+    <Folder Include="Admin\SPBulkUpdateRules" />
+    <Folder Include="Admin\GetAllNodes" />
+    <Folder Include="Admin\GetGraphicalSourceNodesDetails" />
+    <Folder Include="Admin\GetGraphicalDestinationNodesDetails" />
+    <Folder Include="Admin\GetGraphicalSourceNodeConnectionsDetails" />
+    <Folder Include="Admin\GetGraphicalDestinationNodeConnectionsDetails" />
+    <Folder Include="Admin\TicketNodeStatus" />
+    <Folder Include="Admin\OwnershipCleanup" />
+    <Folder Include="Analytics\SaveOperativeMovementsWithOwnershipPercentage" />
+    <Folder Include="Admin\ValidateInitialInventoriesForOwnership" />
+    <Folder Include="Admin\GetOriginalOrUpdatedMovements" />
+    <Folder Include="Admin\BackupMovementDetailsWithoutOwner" />
+    <Folder Include="Admin\BackupMovementDetailsWithOwner" />
+    <Folder Include="Admin\SaveOperationalMovementOwner" />
+    <Folder Include="Admin\GetDeltaErrorDetailsForMovAndInventories" />
+    <Folder Include="Admin\InventoryOwnerDetailsBeforeCutoff" />
+    <Folder Include="Admin\GetOriginalOrUpdatedInventories" />
+    <Folder Include="Admin\ValidateTransferPoint" />
+    <Folder Include="Admin\GetTransferPoints" />
+    <Folder Include="Admin\GetMovementDetails" />
+    <Folder Include="Admin\GetInventoriesForConsolidation" />
+    <Folder Include="Admin\GetMovementsForConsolidation" />
+    <Folder Include="Admin\SapMapping" />
+    <Folder Include="Admin\GetOfficialDeltaPeriod" />
+    <Folder Include="Admin\GetOfficialDeltaErrorDetailsForNode" />
+    <Folder Include="Admin\ApproveOfficialNodeDelta" />
+    <Folder Include="Admin\GetLogisticNodeValidation" />
+    <Folder Include="Admin\GetOfficialDeltaInventories" />
+    <Folder Include="Admin\GetOfficialDeltaMovements" />
+    <Folder Include="Admin\OfficialMonthlyDataWithoutCutOff" />
+    <Folder Include="Admin\MonthlyOfficialDataWithoutCutOff" />
+    <Folder Include="Admin\DeleteMovements" />
+    <Folder Include="Admin\ConsolidationDataCleanup" />
+    <Folder Include="Admin\ConsolidatedMonthlyDeltaDetails" />
+    <Folder Include="Admin\UpdateNodeAndGetDeltaMovements" />
+    <Folder Include="Admin\GetDependentsOfOfficialNodeDelta" />
+    <Folder Include="Admin\GetDeltaOfficialMovements" />
+    <Folder Include="Admin\GetDeltaOfficialInventory" />
+    <Folder Include="Admin\SaveOperationalData_NonSonsSegments" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SeedData.sql" />
+    <None Include="Admin\SaveNode\101_Pos_Insert_1SL_1Product.sql" />
+    <None Include="Admin\SaveNode\102_Pos_Insert_2SL_3Product.sql" />
+    <None Include="Admin\SaveNode\103_Pos_Update_Disable1Product.sql" />
+    <None Include="Admin\SaveNode\104_Pos_Update_ReEnable1Product.sql" />
+    <None Include="Admin\SaveNode\105_Pos_Update_Add1Product_Disable1Product.sql" />
+    <None Include="Admin\SaveNode\115_Neg_Update_WhenSLHasDuplicateNameInDB.sql" />
+    <None Include="Admin\SaveNode\107_Pos_Update_Disable1SL.sql" />
+    <None Include="Admin\SaveNode\108_Pos_Update_ReEnable1SL.sql" />
+    <None Include="Admin\SaveNode\109_Pos_Update_Disable1Node.sql" />
+    <None Include="Admin\SaveNode\110_Pos_Update_ReEnable1Node.sql" />
+    <None Include="Admin\SaveNode\111_Neg_Update_WhenSLNotLinkedToNode.sql" />
+    <None Include="Admin\SaveNode\112_Neg_Update_WhenProductNotLinkedToSL.sql" />
+    <None Include="Admin\SaveNode\113_Neg_Update_WithNoSL.sql" />
+    <None Include="Admin\SaveNode\114_Neg_Insert_WhenSLHasDuplicateName.sql" />
+    <None Include="Admin\SaveNode\119_Pos_Update_Add1SL_Add1Product_UpdateSL.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetNodeConfigurationDetailsSP.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetMovementDetailsSP.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetInventoryDetailsSP.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetInputMovementPropertyDetailsSP.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetInitialInventoryPropertyDetailsSP.sql" />
+    <None Include="Admin\OperationalDataAndConfigurationTestScripts\UnitTestcases_GetConnectionConfigurationDetailsSP.sql" />
+    <None Include="Admin\SaveTicket\110_Pos_SaveTicketWhenTicketTypeIdIs3.sql" />
+    <None Include="Admin\GetErrorDetails\UnitTest_GetErrorDetailsSP.sql" />
+    <None Include="Admin\InventoryDetailsBeforeCutoff\UnitTest_InventoryDetailsBeforeCutoff.sql" />
+    <None Include="Admin\BalanceSummaryAggregate\UnitTest_BalanceSummaryAggregate.sql" />
+    <None Include="Admin\BalanceSummaryWithOwnership\UnitTest_BalanceSummaryWithOwnership.sql" />
+    <None Include="Admin\GetLogisticDetails\UnitTest_GetLogisticDetails.sql" />
+    <None Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff\UnitTest_MovementDetailsAndQualityDetails.sql" />
+    <None Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff\UnitTest_usp_SaveOperationalMovementWithoutCutOffForSegment.sql" />
+    <None Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff\UnitTest_usp_SaveOperationalMovementQualityWithoutCutOffForSegment.sql" />
+    <None Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff\UnitTest_usp_SaveOperationalMovementWithoutCutOffForSystem.sql" />
+    <None Include="Admin\MovementDetailsAndQualityDetailsBeforeCutoff\UnitTest_usp_SaveOperationalMovementQualityWithoutCutOffForSystem.sql" />
+    <None Include="Admin\ReportTemplateDetails\UnitTest_ReportTemplateDetails.sql" />
+    <None Include="Admin\BalanceControlReport\UnitTest_View_BalanceControl.sql" />
+    <None Include="Admin\GetAllNodes\UnitTest_GetAllNodesSP.sql" />
+    <None Include="Admin\GetGraphicalSourceNodesDetails\UnitTest_usp_GetGraphicalSourceNodesDetails.sql" />
+    <None Include="Admin\GetGraphicalDestinationNodesDetails\UnitTest_usp_GetGraphicalDestinationNodesDetails.sql" />
+    <None Include="Admin\GetGraphicalSourceNodeConnectionsDetails\UnitTest_usp_GetGraphicalSourceNodeConnectionsDetails.sql" />
+    <None Include="Admin\GetGraphicalDestinationNodeConnectionsDetails\UnitTest_usp_GetGraphicalDestinationNodeConnectionsDetails.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\116_Neg_Update_WhenSLHasDuplicateName.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\117_Neg_Update_WhenSLHasDuplicateID.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\118_Neg_Update_WhenProductHasDuplicateID.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\120_Pos_Update_Add1SL_Disable1SL.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\CalculateUnbalance\UnitTestcases_UnBalanceCalculationSP.sql" />
+    <None Include="Admin\SaveHomologation\UniTestCases_HomologationSP.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\101_Pos_Update_AllValues.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\102_Neg_Update_NoHomologationMovementBlobPath.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\103_Neg_Update_NoHomologationInventoryBlobPath.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\104_Neg_Update_UploadIDNotExists.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\105_Neg_Update_SpecialcharactersInthePath.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\106_Pos_Update_NumericsInPath.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\107_Pos_Update_NullForBothPaths.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateUploadId\108_Neg_Update_LargeTextForErrorMessages.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\121_Neg_Insert_NoNodeType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\122_Neg_Insert_NoOperatorType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveNode\123_Neg_Insert_NoSegmentType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\NodeTag\UnitTestCases_NodeTag.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\101_Pos_Update_AllValues.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\102_Pos_UpdateAllDependentTablesWithValues.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\103_Neg_UpdateWithInfinityEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\104_Neg_UpdateWithInfinityStartandEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\105_Neg_Update_ErrorId_UnExists.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\106_Pos_Update_Category_Element_UnExists.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\107_Pos_Update_UnBalanceDecimalNumbersBigger.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\108_Pos_Update_UnBalanceLenthyAndSpecialCharatersInComment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\109_Pos_Update_DecimalFieldsTesting.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\101_Pos_InfinityEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\102_Neg_StartDateGreaterThanEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\103_Neg_ReturnsErrors.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\104_Neg_ReturnsErrorsForMovements.sql" />
+    <None Include="Admin\ValidateOwnershipInputs\105_Pos_PassForAllScenarios.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperativeNodeRelationship\101_Pos_Update_TicketTable_With_1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperativeNodeRelationship\102_Neg_Update_TicketTable_With_0.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperativeNodeRelationship\103_Neg_WithoutInputParameter.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\106_Pos_chainWithAnaliticalOperationalInfo.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\107_Neg_ReturnMsg_chainWithAnaliticalOperationalInfo.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\108_Neg_Error_chainWithAnaliticalOperationalInfo.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\106_Neg_ReturnsErrorsForMovements.sql" />
+    <None Include="Admin\InventoryQualityDetailsBeforeCutoff\UnitTest_InventoryQualityDetailsBeforeCutoff.sql" />
+    <None Include="Admin\IntialNodes\101_Pos_IntialNodes.sql" />
+    <None Include="Admin\FinalNodes\101_Pos_FinalNodes.sql" />
+    <None Include="Admin\IntialNodes\102_Neg_IntialNodes.sql" />
+    <None Include="Admin\FinalNodes\102_Neg_FinalNodes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperationalDataWithoutCutOffForSegment\102_Insert_Operational_WithOneNode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperationalDataWithoutCutOffForSegment\101_Insert_Operational_WithAllNode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperationalDataWithoutCutOffForSegment\103_OperationalDataForSegment.sql" />
+    <None Include="Admin\SaveOperationalDataWithoutCutOffForSystem\101_UnitTestForSystemOneNode.sql" />
+    <None Include="Admin\SaveOperationalDataWithoutCutOffForSystem\102_UnitTestForSystemAllNodes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\Contract_Events\01UnitTest_ContactInformation.sql" />
+    <None Include="Admin\Contract_Events\02UnitTest_EventInformation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetGraphicalNode\101_DataToGetGraphicalNode.sql" />
+    <None Include="Admin\GetGraphicalNodeConnection\101_DataToGetGraphicalNodeConnectoins.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\111_Pos_SaveTicketWhenTicketTypeIsOwnerShip.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Analytics\OperativeMovements\101_Insert_OperativeMovements.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Analytics\OperativeMovementsWithOwnership\101_Insert_OperativeMovementsWithOwnership.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SPBulkUpdateRules\UniTestcases_BulkNodeUpdates_Unittests.sql" />
+    <None Include="Admin\SPBulkUpdateRules\UnitTestcases_BulkNodeUpdates_DataCreation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\109_Pos_GetDataForAllValidations.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\110_Neg_FailNodesWithStrategy.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\111_Neg_FailRules_3_5_6.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateOwnershipInputs\113_Neg_FailRule7_InActiveRuleInNodeConnectionProductRule.sql" />
+    <None Include="Admin\ValidateOwnershipInputs\114_Neg_FailRule7_InActiveRuleInNodeProductRule.sql" />
+    <None Include="Admin\ValidateOwnershipInputs\112_Neg_FailRule7_InActiveRuleInNodeOwnerShipRule.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\TicketNodeStatus\UnitTestCases_TicketNodeStatus.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\OwnershipCleanup\UnitTest_OwnershipCleanupSP.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Analytics\SaveOperativeMovementsWithOwnershipPercentage\102_Neg_Upsert_OperativeMovementsWithOwnershipPercentage.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Analytics\SaveOperativeMovementsWithOwnershipPercentage\101_Pos_Upsert_OperativeMovementsWithOwnershipPercentage.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\101_Pos_InfinityEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\102_Neg_StartDateGreaterThanEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\103_Pos_EndDateInAcceptableRange.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\104_Pos_InventoryBeforeAndMovementNextDay.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\105_Pos_InventoryBeforeAndMovementNextDay.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\106_Pos_Type1_Scenario_SameStartAndEndDate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\107_Neg_FourNodes_Type2Testing.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateInitialInventoriesForOwnership\108_Neg_SameSegment_FourNodes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Analytics\SaveOperativeMovementsWithOwnershipPercentage\101_New_Pos_Upsert_OperativeMovementsWithOwnershipPercentage.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOriginalOrUpdatedMovements\100_pos_usp_GetOriginalOrUpdatedMovements.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\BackupMovementDetailsWithoutOwner\101_Pos_BackupMovementDetailsWithoutOwner.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\BackupMovementDetailsWithOwner\101_Pos_BackupMovementDetailsWithOwner.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperationalMovementOwner\Insert_Operational_Owner_Segment.sql" />
+    <None Include="Admin\SaveOperationalMovementOwner\Insert_Operational_Owner_System.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetDeltaErrorDetailsForMovAndInventories\01 PosDeltaErrorsForMovInv.sql" />
+    <None Include="Admin\GetDeltaErrorDetailsForMovAndInventories\02 PosDeltaErrorsForMovInv.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\InventoryOwnerDetailsBeforeCutoff\UnitTest_InventoryOwnerDetailsBeforeCutoff.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOriginalOrUpdatedInventories\100_pos_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalOrUpdatedInventories\101_pos_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalOrUpdatedInventories\102_pos_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalOrUpdatedInventories\103_pos_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\101_pos_usp_GetOriginalOrUpdatedMovements.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\102_pos_usp_GetOriginalOrUpdatedMovements.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\103_pos_usp_GetOriginalOrUpdatedMovements.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\104_pos_usp_GetOriginalOrUpdatedMovements.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ValidateTransferPoint\100_neg_usp_ValidateTransferPoint.sql" />
+    <None Include="Admin\ValidateTransferPoint\100_pos_usp_ValidateTransferPoint.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOriginalOrUpdatedInventories\100_neg_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalOrUpdatedInventories\101_neg_usp_GetOriginalOrUpdatedInventories.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\100_neg_usp_GetOriginalOrUpdatedMovements.sql" />
+    <None Include="Admin\GetOriginalORUpdatedMovements\101_neg_usp_GetOriginalOrUpdatedMovements.sql" />
+    <None Include="Admin\GetTransferPoints\100_neg_usp_GetTransferPoints.sql" />
+    <None Include="Admin\GetTransferPoints\100_pos_usp_GetTransferPoints.sql" />
+    <None Include="Admin\GetTransferPoints\101_pos_usp_GetTransferPoints.sql" />
+    <None Include="Admin\GetTransferPoints\102_pos_usp_GetTransferPoints.sql" />
+    <None Include="Admin\GetMovementDetails\100_neg_usp_GetMovementDetails.sql" />
+    <None Include="Admin\GetMovementDetails\100_pos_usp_GetMovementDetails.sql" />
+    <None Include="Admin\GetMovementDetails\101_pos_usp_GetMovementDetails.sql" />
+    <None Include="Admin\GetMovementDetails\102_pos_usp_GetMovementDetails.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetInventoriesForConsolidation\UnitTest_GetInventoriesForConsolidation.sql" />
+    <None Include="Admin\GetMovementsForConsolidation\UnitTest_GetMovementsForConsolidation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SapMapping\UnitTest_usp_GetSapMappingDetail.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOfficialDeltaPeriod\UnitTest_GetOfficialDeltaPeriod.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\112_Neg_SaveTicketTicketType5WhenZeroForElementID.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\113_Pos_SaveTicketTicketType5WhenSpecificElementID.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOfficialDeltaErrorDetailsForNode\UnitTest_GetOfficialDeltaErrorDetailsForNode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ApproveOfficialNodeDelta\UnitTest_usp_ApproveOfficialNodeDelta.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetLogisticNodeValidation\UnitTest_GetLogisticNodeValidation.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveTicket\UnitTest_SaveTicket_TicketTypeId5.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetOfficialDeltaInventories\UnitTest_GetOfficialDeltaInventories.sql" />
+    <None Include="Admin\GetOfficialDeltaMovements\UnitTest_GetOfficialDeltaMovements.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\OfficialMonthlyDataWithoutCutOff\test.sql" />
+    <None Include="Admin\OfficialMonthlyDataWithoutCutOff\test2.sql" />
+    <None Include="Admin\OfficialMonthlyDataWithoutCutOff\UnitTest_MovementDetailsAndQualityDetails.sql" />
+    <None Include="Admin\MonthlyOfficialDataWithoutCutOff\usp_SaveMonthlyOfficialInventoryQualityDetailsWithoutCutOff.sql" />
+    <None Include="Admin\MonthlyOfficialDataWithoutCutOff\usp_SaveMonthlyOfficialMovementQualityDetailsWithoutCutOff.sql" />
+    <None Include="Admin\MonthlyOfficialDataWithoutCutOff\usp_SaveMonthlyOfficialDataWithoutCutoff.sql" />
+    <None Include="Admin\MonthlyOfficialDataWithoutCutOff\usp_SaveMonthlyOfficialInventoryDetailsWithoutCutOff.sql" />
+    <None Include="Admin\MonthlyOfficialDataWithoutCutOff\usp_SaveMonthlyOfficialMovementDetailsWithoutCutOff.sql" />
+    <None Include="Admin\ValidateOwnershipInputs\UnitTest_ValidateOwnershipInputs.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetLogisticNodeValidation\UnitTest_GetLogisticNodeValidation_UATFix.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\DeleteMovements\UnitTest_DeleteMovements.sql" />
+    <None Include="Admin\ConsolidationDataCleanup\UnitTest_ConsolidationDataCleanup.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\usp_SaveMonthlyConsolidatedDeltaInventoryDetailsWithoutCutOff.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\usp_SaveMonthlyConsolidatedDeltaMovementDetailsWithoutCutOff.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\usp_SaveMonthlyConsolidatedDeltaData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateNodeAndGetDeltaMovements\UnitTest_UpdateNodeAndGetDeltaMovements.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\usp_SaveMonthlyConsolidatedDeltaDataWithoutCutOffReport.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\101_MonthlyConsolidatedDeltaData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetDependentsOfOfficialNodeDelta\UnitTest_GetDependentsOfOfficialNodeDelta.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\GetDeltaOfficialMovements\UnitTest_GetDeltaOfficialMovements.sql" />
+    <None Include="Admin\GetDeltaOfficialInventory\UnitTest_GetDeltaOfficialInventory.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\ConsolidatedMonthlyDeltaDetails\102_MonthlyConsolidatedDeltaData_28634.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\SaveOperationalData_NonSonsSegments\unitTest_NonSonSegment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Admin\UpdateNodeAndGetDeltaMovements\UnitTest_UpdateNodeAndGetDeltaMovements_3489.sql" />
+  </ItemGroup>
+</Project>

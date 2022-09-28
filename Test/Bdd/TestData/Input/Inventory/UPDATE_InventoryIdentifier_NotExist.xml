@@ -1,0 +1,132 @@
+﻿<INVENTORIES>
+  <DATE>2019-08-22T07:00:38</DATE>
+  <SYSTEM>SINOPER</SYSTEM>
+  <INVENTORY ACTION="INSERT">
+    <LOCATIONID>CAÑO LIMON - COVEÑAS</LOCATIONID>
+    <LOCATIONTYPE>SISTEMA DE TRANSPORTE</LOCATIONTYPE>
+    <CASE>Operativo</CASE>
+    <DATE>2019-08-21T23:59:59</DATE>
+    <COMMODITIES>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDO CASTILLA NORTE</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0820820190805</BATCHID>
+        <ORDEN>4</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>221919</VALUE>
+            <UOM>Bls</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100</VALUE>
+              <UOM>volumen</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDO ACORDIONERO</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0820920190810</BATCHID>
+        <ORDEN>3</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>95884</VALUE>
+            <UOM>Bls</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100</VALUE>
+              <UOM>volumen</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDO CAÑO LIMON</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>101 0000120061101</BATCHID>
+        <ORDEN>1</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>584195</VALUE>
+            <UOM>Bls</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100</VALUE>
+              <UOM>volumen</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDO CASTILLA NORTE</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0821020190815</BATCHID>
+        <ORDEN>2</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>177506</VALUE>
+            <UOM>Bls</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100</VALUE>
+              <UOM>volumen</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+      <COMMODITY>
+        <COMMODITYNAME>CRUDO ACORDIONERO</COMMODITYNAME>
+        <COMMODITYTYPE>CRUDO</COMMODITYTYPE>
+        <BATCHID>241 0820720190801</BATCHID>
+        <ORDEN>5</ORDEN>
+        <CRITERIA>
+          <CRITERION>
+            <VALUE>14028</VALUE>
+            <UOM>Bls</UOM>
+            <PROPERTY>Neto-Volumen Líquido</PROPERTY>
+          </CRITERION>
+        </CRITERIA>
+        <OWNERS>
+          <OWNER>
+            <OWNERID>ECOPETROL</OWNERID>
+            <OWNERTYPE>PROPIETARIO</OWNERTYPE>
+            <QUANTITY>
+              <VALUE>100</VALUE>
+              <UOM>volumen</UOM>
+              <PROPERTY>Participación (volumen)</PROPERTY>
+            </QUANTITY>
+          </OWNER>
+        </OWNERS>
+      </COMMODITY>
+    </COMMODITIES>
+  </INVENTORY>
+</INVENTORIES>

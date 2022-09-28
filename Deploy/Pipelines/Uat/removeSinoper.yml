@@ -1,0 +1,47 @@
+variables:
+  - group: true-secrets-uat
+  - group: true-secrets-nonprd-shared
+  - group: true-network-uat
+  
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/non-prod.yml
+  - template: ../Templates/Variables/tags.yml
+
+trigger: none
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: Package
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+     - template: ../Templates/package.yml
+       parameters:
+         infra: 'true'
+
+- stage: Deploy
+  jobs:
+  - deployment: Deploy
+    pool:
+     vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Build Artifacts'
+            inputs:
+              artifactName: Drop
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - task: AzurePowerShell@4
+            displayName: Remove Sinoper Deadletter Functions
+            inputs:
+              azureSubscription: '$(serviceConnection)'
+              ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Remove-SinoperFunctions.ps1'
+              ScriptArguments: '-functionAppName "$(dlFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+              azurePowerShellVersion: latestVersion

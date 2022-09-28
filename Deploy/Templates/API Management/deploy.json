@@ -1,0 +1,277 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsResourceId": {
+      "type": "string"
+    },
+    "apiManagementServiceName": {
+      "type": "string"
+    },
+    "publisherEmail": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "The email address of the owner of the service"
+      }
+    },
+    "publisherName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "The name of the owner of the service"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Developer",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "The pricing tier of this API Management service"
+      }
+    },
+    "skuCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The instance size of this API Management service."
+      }
+    },
+    "tenant": {
+      "type": "string"
+    },
+    "tenantId": {
+      "type": "string"
+    },
+    "apimAppClientId": {
+      "type": "string"
+    },
+    "apimDevPortalAppClientId": {
+      "type": "string"
+    },
+    "apimDevPortalAppSecret": {
+      "type": "string"
+    },
+    "apimAppSecret": {
+      "type": "string"
+    },
+    "apimOAuthDefaultScope": {
+      "type": "string"
+    },
+    "apimClientCredsDefaultScope": {
+      "type": "string"
+    },
+    "authCodeAuthServerName": {
+      "type": "string"
+    },
+    "clientCredsAuthServerName": {
+      "type": "string"
+    },
+    "virtualNetworkExternalid": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "apimSubnetId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "pidDeploymentName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "description": "True Admin API Product",
+    "authCodeAuthServerFullName": "[concat(parameters('apiManagementServiceName'), '/', parameters('authCodeAuthServerName'))]",
+    "clientCredsServerFullName": "[concat(parameters('apiManagementServiceName'), '/', parameters('clientCredsAuthServerName'))]",
+    "clientCredsAuthorizationEndpoint": "[concat('https://login.microsoftonline.com/', parameters('tenantId'), '/oauth2/v2.0/authorize')]",
+    "clientCredsTokenEndpoint": "[concat('https://login.microsoftonline.com/', parameters('tenantId'), '/oauth2/v2.0/token')]",
+    "diagnosticSettingsName": "securityauditevents",
+    "propertiesWithVnet": {
+      "virtualNetworkConfiguration": {
+        "subnetResourceId": "[concat(parameters('virtualNetworkExternalid'), '/subnets/', parameters('apimSubnetId'))]"
+      },
+      "virtualNetworkType": "External",
+      "publisherEmail": "[parameters('publisherEmail')]",
+      "publisherName": "[parameters('publisherName')]"
+    },
+    "properties": {
+      "publisherEmail": "[parameters('publisherEmail')]",
+      "publisherName": "[parameters('publisherName')]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('pidDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "apiVersion": "2020-06-01",
+              "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+              "type": "Microsoft.Resources/deployments",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-03-01",
+      "name": "[toUpper(parameters('apiManagementServiceName'))]",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "capacity": "[parameters('skuCount')]"
+      },
+      "properties": "[if(empty(parameters('virtualNetworkExternalid')), variables('properties'), variables('propertiesWithVnet'))]",
+      "resources": [
+        {
+          "type": "Microsoft.ApiManagement/service/providers/diagnosticsettings",
+          "name": "[concat(parameters('apiManagementServiceName'), '/Microsoft.Insights/service')]",
+          "apiVersion": "2016-09-01",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName'))]"
+          ],
+          "properties": {
+            "name": "[variables('diagnosticSettingsName')]",
+            "workspaceId": "[parameters('logAnalyticsResourceId')]",
+            "logs": [
+              {
+                "category": "GatewayLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": 0,
+                  "enabled": false
+                }
+              }
+            ],
+            "metrics": [
+              {
+                "category": "Gateway Requests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              },
+              {
+                "category": "Capacity",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              },
+              {
+                "category": "EventHub Events",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "Microsoft.ApiManagement/service/identityProviders",
+          "apiVersion": "2017-03-01",
+          "name": "[concat(parameters('apiManagementServiceName'), '/Aad')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName'))]"
+          ],
+          "properties": {
+            "clientId": "[parameters('apimDevPortalAppClientId')]",
+            "clientSecret": "[parameters('apimDevPortalAppSecret')]",
+            "type": "aad",
+            "authority": "login.microsoftonline.com",
+            "allowedTenants": [
+              "[parameters('tenant')]"
+            ]
+          }
+        },
+        {
+          "type": "Microsoft.ApiManagement/service/authorizationServers",
+          "apiVersion": "2019-01-01",
+          "name": "[variables('authCodeAuthServerFullName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName'))]"
+          ],
+          "properties": {
+            "displayName": "[parameters('authCodeAuthServerName')]",
+            "clientRegistrationEndpoint": "http://localhost",
+            "authorizationEndpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
+            "authorizationMethods": [
+              "GET"
+            ],
+            "clientAuthenticationMethod": [
+              "Body"
+            ],
+            "tokenBodyParameters": [],
+            "tokenEndpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+            "supportState": false,
+            "defaultScope": "[parameters('apimOAuthDefaultScope')]",
+            "grantTypes": [
+              "authorizationCode"
+            ],
+            "bearerTokenSendingMethods": [
+              "authorizationHeader"
+            ],
+            "clientId": "[parameters('apimAppClientId')]",
+            "clientSecret": "[parameters('apimAppSecret')]"
+          }
+        },
+        {
+          "type": "Microsoft.ApiManagement/service/authorizationServers",
+          "apiVersion": "2019-01-01",
+          "name": "[variables('clientCredsServerFullName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName'))]"
+          ],
+          "properties": {
+            "displayName": "[parameters('clientCredsAuthServerName')]",
+            "clientRegistrationEndpoint": "http://localhost",
+            "authorizationEndpoint": "[variables('clientCredsAuthorizationEndpoint')]",
+            "authorizationMethods": [
+              "GET"
+            ],
+            "clientAuthenticationMethod": [
+              "Body"
+            ],
+            "tokenBodyParameters": [],
+            "tokenEndpoint": "[variables('clientCredsTokenEndpoint')]",
+            "supportState": false,
+            "defaultScope": "[parameters('apimClientCredsDefaultScope')]",
+            "grantTypes": [
+              "clientCredentials"
+            ],
+            "bearerTokenSendingMethods": [
+              "authorizationHeader"
+            ],
+            "clientId": "[parameters('apimAppClientId')]",
+            "clientSecret": "[parameters('apimAppSecret')]"
+          }
+        }
+      ]
+    }
+  ]
+}

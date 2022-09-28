@@ -1,0 +1,177 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: Refresh Connection String
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rotation/connection.ps1'
+     ScriptArguments: '-keyType "${{parameters.keyType}}"-signalRName "$(signalRServiceName)" -redisName "$(redisCacheName)" -redis "$(redis)" -signalR "$(signalR)" -sql "$(sql)" -storage "$(storage)" -serviceBus "$(serviceBus)" -odbcsqlconnectionstring "$(odbcsqlconnectionstring)" -sqlconnectionstring "$(sqlconnectionstring)" -serviceBusNamespace "$(serviceBusNamespaceNameInt)"-storageName "$(storageAccountName)" -resourceGroupName "$(resourceGroupName)" -vaultName "$(keyVault)"'
+     azurePowerShellVersion: LatestVersion
+
+ - template: ../fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : "$(serviceConnection)"
+     keyVaultName: '$(keyVault)'
+     secretsFilter: '*'
+
+ - task: AzurePowerShell@3
+   displayName: Create Power BI Workspace
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-PowerBiWorkspace.ps1'
+     ScriptArguments: '-PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId "$(tenant)" -WorkspaceName "$(workspaceName)" -AdminEmail "$(adminEmail)" -EnableAdmin "true"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(), eq(variables['sql'], 'true'))
+
+ - task: AzurePowerShell@3
+   displayName: Upload Reports
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Upload-PBIXIntoWorkspace.ps1'
+     ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -PBIXPath "$(System.ArtifactsDirectory)\Drop\PBIXFiles\" -WorkspaceId "$(workspaceID)" -AnalysisServerDataSource "$(analysisServer)" -AnalysisServerDBNameDataSource "$(analysisServerModel)" -AnalysisServerAuditDBNameDataSource "$(analysisServerAuditModel)" -PowerBIAppId "$(powerBIAppID)" -PowerBIAppSecret "$(powerBIAppSecret)" -TenantId $(tenant) -PowerBIObjectID $(powerBIObjectID) -SqlServerConnectionString "$(sqlconnectionstring)" -SqlPowerBiReports "$(sqlPowerBiReports)" -AuditModelPowerBiReports "$(auditModelPowerBiReports)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(), eq(variables['sql'], 'true'))
+
+ - script: |
+    echo $(reportconfig)
+   displayName: Validating the Configuration json
+   condition: and(succeeded(), eq(variables['sql'], 'true'))
+
+ - task: AzurePowerShell@3
+   displayName: Publish Tabular Model
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Publish-TabularModel.ps1'
+     ScriptArguments: '-dependenciesPath "$(System.ArtifactsDirectory)\Drop\AnalysisServiceDependencies" -modelPath "$(System.ArtifactsDirectory)\Drop\$(modelPath)" -sqlConnString "$(sqlconnectionstring)" -aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -analysisServerModelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)" -environment "$(env)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(), eq(variables['sql'], 'true'))
+
+ - task: AzurePowerShell@3
+   displayName: Publish Audit Tabular Model
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Publish-TabularModel.ps1'
+     ScriptArguments: '-dependenciesPath "$(System.ArtifactsDirectory)\Drop\AnalysisServiceDependencies" -modelPath "$(System.ArtifactsDirectory)\Drop\$(auditModelPath)" -sqlConnString "$(sqlconnectionstring)" -aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -analysisServerModelName "$(analysisServerAuditModel)" -rolloutenvironment "$(rolloutenvironment)" -environment "$(env)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(), eq(variables['sql'], 'true'))
+
+ - ${{ if eq(parameters['keyType'], 'secondary') }}:
+   - task: ExtractFiles@1
+     displayName: Extract Config Files
+     inputs:
+       archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.ConfigurationManager.zip'
+       destinationFolder: '$(System.ArtifactsDirectory)\Config'
+       cleanDestinationFolder: false
+     condition:  and(succeeded(), eq(variables['sql'], 'true'))
+
+ - script: dotnet.exe $(System.ArtifactsDirectory)\Config\Ecp.True.ConfigurationManager.dll $(storageconnectionstring) "" "" $(reportconfig)
+   displayName: Add Azure Table Configuration
+   condition:  and(succeeded(), eq(variables['sql'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Data Factory Pre-deployment
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/DataFactory/Cleanup-DataFactory.ps1'
+     ScriptArguments: '-armTemplate "$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json" -DataFactoryName "$(dataFactoryName)" -ResourceGroupName "$(sharedResourceGroupName)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['storage'], 'true'))
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: Data Factory Deployment
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     resourceGroupName: "$(sharedResourceGroupName)"
+     location: "$(deployLocation)"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json'
+     overrideParameters: '-factoryName "$(dataFactoryName)" -AzureBlobStorage_connectionString "$(storageconnectionstring)" -LS_AzureSqlDB_connectionString "$(msisqlconnectionstring)"'
+   condition:  and(succeeded(), eq(variables['storage'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Data Factory Post-deployment
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/DataFactory/Cleanup-DataFactory.ps1'
+     ScriptArguments: '-armTemplate "$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json" -DataFactoryName "$(dataFactoryName)" -ResourceGroupName "$(sharedResourceGroupName)" -predeployment $false -objectsToBeDeleted "$(adfObjectsToDelete)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['storage'], 'true'))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Availability
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(availabilityFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";"AvailabilityInterval"="$(availabilityInterval)";"AvailabilityChaos"="$(availabilityChaos)";"CommandTimeoutInSecs"="$(commandTimeoutInSecs)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(availabilityFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Blockchain
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT"="1";"WEBSITE_CONTENTSHARE"="$(bcFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)"; "BlockchainMovement"="$(blockchainMovementQueueName)";"BlockchainInventoryProduct"="$(blockchainInventoryProductQueueName)";"BlockchainNode"="$(blockchainNodeQueueName)";"BlockchainNodeConnection"="$(blockchainNodeConnectionQueueName)";"BlockchainOwnership"="$(blockchainOwnershipQueueName)";"BlockchainNodeProductCalculation"="$(blockchainNodeProductCalculationQueueName)";"BlockchainOwner"="$(blockchainOwnerQueueName)";"BlockchainOfficial"="$(blockchainOfficialQueueName)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(bcFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Calculator
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(calFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"OperationalCutOffPurgeInterval"="$(operationalCutOffPurgeInterval)";"OperationalCutoff"="$(operationalCutoffQueueName)";"RecalculateOperationalCutoffBalanceQueue"="$(RecalculateOperationalCutoffBalanceQueueName)";"DataQueue"="$(dataQueueName)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(calFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - DeadLetter
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(dlFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)"; "ReconcilerInterval"="$(reconcilerInterval)";"DeadLetter"="$(deadletterQueueName)";"RetryJsonQueue"="$(retryMessageQueueName)";"MovementQueue"="$(movQueueName)";"LossesQueue"="$(loQueueName)";"SpecialMovementQueue"="$(splMovQueueName)";"InventoryQueue"="$(invQueueName)";"ExcelQueue"="$(excelQueueName)";"ExcelEventQueue"="$(excelEventQueue)";"ExcelContractQueue"="$(excelContractQueueName)";"OwnershipRulesQueue"="$(ownershipRulesQueue)";"CalculateOwnershipQueue"="$(ownCalQueueName)";"LogisticsQueue"="$(logisticsQueue)";"OperationalCutoffQueue"="$(operationalCutoffQueueName)";"RecalculateOperationalCutoffBalanceQueue"="$(RecalculateOperationalCutoffBalanceQueueName)";"OwnershipQueue"="$(ownershipQueueName)";"OfficialDeltaQueue"="$(officialdeltaQueueName)";"OffchainQueue"="$(offchainQueueName)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(dlFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Delta
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(deltaFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";"Delta"="$(deltaQueueName)";"Officialdelta"="$(officialdeltaQueueName)";"DeltaConsolidation"="$(consolidationQueueName)";"DeltaPurgeInterval"="$(deltaPurgeInterval)";"OfficialDeltaPurgeInterval"="$(officialDeltaPurgeInterval)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(deltaFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Ownership
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(ownershipFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";"OwnershipPurgeInterval"="$(ownershipPurgeInterval)";"Ownership"="$(ownershipQueueName)";"CalculateOwnershipQueue"="$(ownCalQueueName)";"LogisticsQueue"="$(logisticsQueue)";"OwnershipRulesQueue"="$(ownershipRulesQueue)";"AnalyticsClientPath"="https://$(dnsNameForApi)/analytics";"ApprovalQueue"="$(approvalsQueueName)";"OfficialLogistics"="$(officialLogisticsQueueName)";"Conciliationqueue"="$(ConciliationQueueName)";"RecalculateOwnershipBalanceQueue"="$(RecalculateOwnershipBalanceQueueName)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(ownershipFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Reporting
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(reportingFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";"BeforeCutoffReportQueue"="$(beforeCutoffReportQueueName)";"OfficialInitialBalanceReportQueue"="$(officialInitialBalanceReportQueueName)";"OperativeBalanceReportQueue"="$(operativeBalanceReportQueueName)";"SapBalanceReportQueue"="$(sapBalanceReportQueueName)";"userRolesAndPermissionsReportQueue"="$(userRolesAndPermissionsReportQueueName)";"CommandTimeoutInSecs"="$(commandTimeoutInSecs)";"ReportPurgeInterval"="$(reportPurgeInterval)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(reportingFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Sap
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(sapFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"IntegrationStorageConnectionString"="$(storageconnectionstring)";"Sap"="$(sapQueueName)";"SapLogistic"="$(sapLogisticQueueName)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(sapFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))
+
+ - task: AzurePowerShell@4
+   displayName: Set App Settings - Transform
+   inputs:
+     azureSubscription: '$(serviceConnection)'
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+     ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="$(storageconnectionstring)";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="$(storageconnectionstring)";"WEBSITE_CONTENTSHARE"="$(transformFunctionAppName)";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="$(instrumentationKey)";"IntegrationServiceBusConnectionString"="$(intservicebusconnectionstring)";"MovementQueue"="$(movQueueName)";"LossesQueue"="$(loQueueName)";"InventoryQueue"="$(invQueueName)";"SpecialMovementQueue"="$(splMovQueueName)";"ExcelQueue"="$(excelQueueName)"; "HomologatedMovements"="$(tfmMovQueueName)"; "HomologationRefreshIntervalInSecs"="$(homologationRefreshIntervalInSecs)"; "ShouldHomologate"="true"; "IntegrationStorageConnectionString"="$(storageconnectionstring)";"TransformPurgeInterval"="$(transformPurgeInterval)";"ExcelEventQueue"="$(excelEventQueue)"; "ExcelContractQueue"="$(excelContractQueueName)";"RetryMessageQueue"="$(retryMessageQueueName)";"HomologatedInventory"="$(tfmInvQueueName)";"HomologatedEvents"="$(homologatedEventQueue)";"HomologatedContracts"="$(homologatedContractsQueueName)";} -resourceGroupName "$(resourceGroupName)" -webAppName "$(transformFunctionAppName)"'
+     azurePowerShellVersion: LatestVersion
+   condition: and(succeeded(),or( eq(variables['storage'], 'true'),eq(variables['sql'], 'true'),eq(variables['serviceBus'], 'true')))

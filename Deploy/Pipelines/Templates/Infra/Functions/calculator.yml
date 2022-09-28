@@ -1,0 +1,103 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Worker Count
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Reset-WebWorkerCount.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Calculator Function App - ARM
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      resourceGroupName: '${{ parameters.resourceGroupName }}'
+      location: '${{ parameters.deployLocation }}'
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Function App/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -sku "$(functionAppSKU)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -functionAppName "${{parameters.calFunctionAppName}}" -apphostingPlanName "$(appServicePlanName)"'
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Tags
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Diagnostics
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-DetailedErrorAndTraceLogging.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Set Build Variable
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -outputKeySuffix "Cal" -outputKeyName "ou_FunctionAppPrincipalId" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - KV MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+      ScriptArguments: '-vaultName "$(keyVault)" -targetObjectId "$(ou_FunctionAppPrincipalIdCal)" -resourceGroupName "${{ parameters.resourceGroupName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - SQL MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SecurityGroupMember.ps1'
+      ScriptArguments: '-groupObjectId "$(msiAdGroupObjectId)" -memberObjectId "$(ou_FunctionAppPrincipalIdCal)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - SB MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(ou_FunctionAppPrincipalIdCal)" -resourceName "$(serviceBusNamespaceNameInt)" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Storage MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(ou_FunctionAppPrincipalIdCal)" -resourceName "$(storageAccountName)" -roleDefinitionName "Storage Blob Data Contributor" -resourceType "Microsoft.Storage/storageAccounts"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Staging Slot
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "CREATE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "${{ parameters.resourceGroupName }}" -appServiceName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - App Settings
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+      ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="${{ parameters.storageConnectionString }}";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="${{ parameters.storageConnectionString }}";"WEBSITE_CONTENTSHARE"="${{parameters.calFunctionAppName}}";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="${{ parameters.instrumentationKey }}";"IntegrationServiceBusConnectionString"="${{ parameters.serviceBusConnectionString }}";"OperationalCutOffPurgeInterval"="$(operationalCutOffPurgeInterval)";"OperationalCutoff"="$(operationalCutoffQueueName)";"RecalculateOperationalCutoffBalanceQueue"="$(RecalculateOperationalCutoffBalanceQueueName)";"DataQueue"="$(dataQueueName)";"IntegrationStorageConnectionString"="${{ parameters.storageConnectionString }}";} -resourceGroupName "${{ parameters.resourceGroupName }}" -webAppName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Function App - Stop Staging Slot
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "STOP" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "${{ parameters.resourceGroupName }}" -appServiceName "${{parameters.calFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion

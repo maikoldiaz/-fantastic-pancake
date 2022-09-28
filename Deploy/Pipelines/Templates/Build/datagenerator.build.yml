@@ -1,0 +1,29 @@
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Data Generator Restore
+  inputs:
+    command: restore
+    projects: '$(dataGeneratorProjectPath)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Data Generator Build'
+  inputs:
+    projects: '$(dataGeneratorProjectPath)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: CredScan@2
+  displayName: Cred Scan
+  inputs:
+    toolMajorVersion: 'V2'
+    outputFormat: 'csv'
+    scanFolder: '$(Build.SourcesDirectory)/Develop'
+ 
+- task: PostAnalysis@1
+  displayName: Cred Scan Analysis
+  inputs:
+    AllTools: false
+    BinSkim: false
+    CredScan: true
+    RoslynAnalyzers: false
+    TSLint: false
+    ToolLogsNotFoundAction: 'Standard'

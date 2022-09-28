@@ -1,0 +1,15 @@
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Build/build.yml
+      parameters:
+        db: 'true'
+    
+    - template: ../package.yml
+      parameters:
+        db: 'true'
+        infra: 'true'

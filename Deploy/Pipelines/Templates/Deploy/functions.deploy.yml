@@ -1,0 +1,571 @@
+jobs:
+  - deployment: TransformFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "Cluster$(build.buildId)"'
+
+            - template: ../Infra/Functions/transform.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                transformAppName: '$(transformFunctionAppName)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'TransformFn'
+
+  - deployment: OwnershipFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "TransformFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/ownership.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                ownershipFunctionAppName: '$(ownershipFunctionAppName)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                analyticsClientPath: 'https://$(dnsNameForApi)/analytics'
+                processJobId: 'OwnershipFn'
+
+  - deployment: DeltaFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "OwnershipFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/delta.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'DeltaFn'
+
+  - deployment: DeadletterFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "DeltaFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/deadletter.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                dltFunctionAppName: '$(dltFunctionAppName)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'DeadletterFn'
+
+  - deployment: CalculatorFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "DeadletterFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/calculator.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                calFunctionAppName: '$(calFunctionAppName)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'CalculatorFn'
+
+  - deployment: BlockchainFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+      - Blockchain
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'), eq(succeeded('Blockchain'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "CalculatorFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/blockchain.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                bcFunctionAppName: '$(bcFunctionAppName)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'BlockchainFn'
+
+  - deployment: SapFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "BlockchainFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/sap.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                appServicePlanName: '$(appServicePlanName)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'SapFn'
+
+  - deployment: ReportingFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "SapFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/reporting.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                appServicePlanName: '$(appServicePlanNameReporting)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'ReportingFn'
+
+  - deployment: AvailabilityFn
+    dependsOn:
+      - Storage
+      - ServiceBus
+      - AppInsights
+    condition: and(succeeded(), eq(succeeded('Storage'), 'true'), eq(succeeded('ServiceBus'), 'true'), eq(succeeded('AppInsights'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - task: AzureCLI@2
+              displayName: Get Last Deployment Status
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                scriptType: pscore
+                ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-LastDeploymentStatus.ps1'
+                ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -deploymentName "ReportingFn$(build.buildId)"'
+
+            - template: ../Infra/Functions/availability.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+                appServicePlanName: '$(appServicePlanNameReporting)'
+                storageConnectionString: '$(storageconnectionstring)'
+                serviceBusConnectionString: '$(intservicebusconnectionstring)'
+                instrumentationKey: '$(instrumentationkey)'
+                Tier: 'Front'
+                processJobId: 'AvailabilityFn'
+
+  - deployment: DeprecatedFns
+    dependsOn:
+      - TransformFn
+      - OwnershipFn
+      - DeadletterFn
+      - CalculatorFn
+      - BlockchainFn
+      - DeltaFn
+      - SapFn
+      - ReportingFn
+      - AvailabilityFn
+    condition: and(succeeded(),eq(succeeded('AvailabilityFn'), 'true'),eq(succeeded('ReportingFn'), 'true'), eq(succeeded('DeltaFn'), 'true'), eq(succeeded('SapFn'), 'true'), eq(succeeded('TransformFn'), 'true'), eq(succeeded('OwnershipFn'), 'true'), eq(succeeded('DeadletterFn'), 'true'), eq(succeeded('CalculatorFn'), 'true'), eq(succeeded('BlockchainFn'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+              displayName: Set Environment
+
+            - powershell: |
+                $date=$(Get-Date -Format g);
+                Write-Host "##vso[task.setvariable variable=creationDate]$date"
+              displayName: Set Date
+
+            - template: ../Infra/fetchSecrets.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                keyVaultName: '$(keyVault)'
+                secretsFilter: '*'
+
+            - template: ../Infra/Functions/deprecated.yml
+              parameters:
+                azureSubscriptionName: '${{parameters.serviceConnection}}'
+                resourceGroupName: '$(resourceGroupName)'
+                deployLocation: '$(deployLocation)'
+
+  - deployment: ScaleAppServicePlan
+    dependsOn:
+      - DeprecatedFns
+    condition: and(succeeded(),eq(succeeded('DeprecatedFns'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - template: ../Infra/Functions/scale.yml
+              parameters:
+                appServicePlan: 'true'
+
+  - deployment: ScaleAppService
+    dependsOn:
+      - ScaleAppServicePlan
+    condition: and(succeeded(),eq(succeeded('ScaleAppServicePlan'), 'true'))
+    pool:
+      vmImage: 'windows-latest'
+    environment: $(envInfra)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: DownloadBuildArtifacts@0
+              displayName: Download Build Artifacts
+              inputs:
+                artifactName: Drop
+                downloadPath: '$(System.ArtifactsDirectory)'
+
+            - template: ../Infra/Functions/scale.yml
+              parameters:
+                appService: 'true'

@@ -1,0 +1,119 @@
+﻿// _section.scss
+
+#{$ep}-section {    
+    $sec: &;
+    height: 100%;
+    &__title{
+        display: inline-block;
+        font-size: pxToRem(14);
+    }
+    &__header{
+        position: relative;
+        padding: pxToRem(15);      
+        &:after{
+            content: "";
+            display: block;
+            @extend .clearfix;
+        }  
+
+        &-lbl{
+            display: flex;
+            align-items: center;
+            &s{
+                width: pxToRem(300);
+                margin: auto;
+            }
+        }
+
+        &-dd{
+            position: absolute;
+            top: pxToRem(15);
+            right: pxToRem(15);
+        }
+
+        &--h98{
+            height: pxToRem(98);
+        }
+    }
+
+    &__body{
+        height: 100%;
+        padding: pxToRem(15);
+        &--h{
+            height:calc(100% - 78px) ;
+        }
+        &--f{
+            height:calc(100% - 98px) ;
+            overflow: auto;
+        }
+        &--hf{
+            height:calc(100% - 156px) ;
+        }
+
+        &--auto{
+            overflow: auto;
+        }
+        &--w660{
+            width: pxToRem(660);
+        }
+    }
+
+    &__footer{
+        padding: pxToRem(15);
+        &:after{
+            content: "";
+            display: block;
+            @extend .clearfix;
+        }
+    }
+
+    &__content-w300{
+        width: pxToRem(300);
+        margin: auto;
+    }
+
+    &__content-w500{
+        width: pxToRem(500);
+        margin: auto;
+    }
+
+    &--panel{
+        background-color: $white;
+        border:solid 1px map-get($gray ,'C1C1C1');
+        border-radius: pxToRem(6);
+        overflow: auto;
+        #{$sec}__header{
+            border-bottom: solid 1px map-get($gray ,'C1C1C1');
+        }
+        &-noscroll{
+            overflow: hidden;
+        }
+    }
+
+    &--fluid{
+        height: auto;
+        overflow: unset;
+    }
+    
+    &__subtitle{
+        font-family: $font-family-sb;
+        font-size: pxToRem(18);
+    }
+
+    &__subtitle--bg{
+        background-color: map-get($gray ,'EEEEEE');
+    }
+    &__iframe{
+        height: 100%;
+        & iframe{
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__banner{
+        height: 100%;
+        width: 100%;
+        padding: pxToRem(30);
+    }
+}

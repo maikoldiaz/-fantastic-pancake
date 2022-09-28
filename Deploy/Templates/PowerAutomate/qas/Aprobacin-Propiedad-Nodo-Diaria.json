@@ -1,0 +1,856 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_approvals": {
+        "runtimeSource": "embedded",
+        "connection": {
+        },
+        "api": {
+          "name": "shared_approvals"
+        }
+      },
+      "shared_sendgrid": {
+        "runtimeSource": "embedded",
+        "connection": {
+        },
+        "api": {
+          "name": "shared_sendgrid"
+        }
+      },
+      "shared_servicebus": {
+        "runtimeSource": "embedded",
+        "connection": {
+        },
+        "api": {
+          "name": "shared_servicebus"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When_a_message_is_received_in_a_queue_(auto-complete)": {
+          "recurrence": {
+            "frequency": "Minute",
+            "interval": 1
+          },
+          "metadata": { "flowSystemMetadata": { "swaggerOperationId": "GetMessageFromQueue" } },
+          "type": "ApiConnection",
+          "inputs": {
+            "host": {
+              "connection": { "name": "@parameters('$connections')['shared_servicebus']['connectionId']" },
+              "api": { "runtimeUrl": "https://flow-apim-msmanaged-na-westus2-01.azure-apim.net/apim/servicebus" }
+            },
+            "method": "get",
+            "path": "/@{encodeURIComponent(encodeURIComponent('flowapprovals'))}/messages/head",
+            "queries": { "queueType": "Main" },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Balance_Summary": {
+          "runAfter": { "Initialize_variable": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "BalanceSummary",
+                "type": "String"
+              }
+            ]
+          }
+        },
+        "Define_Approver_Mail_Variable": {
+          "runAfter": { "Comments": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ApproverMail",
+                "type": "String"
+              }
+            ]
+          }
+        },
+        "Read_service_bus_message": {
+          "runAfter": { "Define_Approver_Mail_Variable": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ownsershipNodeId",
+                "type": "String",
+                "value": "@{decodeBase64(triggerBody()?['ContentData'])}"
+              }
+            ]
+          }
+        },
+        "Aprroval_Outcome": {
+          "runAfter": { "Balance_Summary": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ApprovalOutcome",
+                "type": "String"
+              }
+            ]
+          }
+        },
+        "Comments": {
+          "runAfter": { "Aprroval_Outcome": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Comments",
+                "type": "String"
+              }
+            ]
+          }
+        },
+        "Approver_Alias": {
+          "runAfter": {},
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ApproverAlias",
+                "type": "String",
+                "value": "trueadmin@ecopetrol.com.co"
+              }
+            ]
+          }
+        },
+        "Mail_Subject": {
+          "runAfter": { "Read_service_bus_message": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "MailSubject",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Mail_Body": {
+          "runAfter": { "Mail_Subject": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "MailBody",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Initialize_variable": {
+          "runAfter": { "Approver_Alias": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "SendEmailTo",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "TRY": {
+          "actions": {
+            "Compose_JSON_Input": {
+              "runAfter": {},
+              "type": "Compose",
+              "inputs": {
+                "grant_type": "client_credentials",
+                "scope": "api://5afa1090-e8b8-42b7-9ea5-8d8c1cc4f6a6/.default",
+                "clientId": "d445deae-dff1-4295-928e-8079a5be0a62",
+                "clientSecret": "",
+                "tenantId": "a4305987-cf78-4f93-9d64-bf18af65397b",
+                "apiUrl": "https://dev-api.ecopetrol.com.co"
+              },
+              "runtimeConfiguration": { "secureData": { "properties": [ "inputs" ] } }
+            },
+            "Parse_JSON_Input": {
+              "runAfter": { "Compose_JSON_Input": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@outputs('Compose_JSON_Input')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "grant_type": { "type": "string" },
+                    "scope": { "type": "string" },
+                    "clientId": { "type": "string" },
+                    "clientSecret": { "type": "string" },
+                    "tenantId": { "type": "string" },
+                    "apiUrl": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "HTTP_-_POST_Auth_Token": {
+              "runAfter": { "Parse_JSON_Input": [ "Succeeded" ] },
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                "headers": {
+                  "content-type": "application/x-www-form-urlencoded",
+                  "Host": "login.microsoftonline.com"
+                },
+                "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+              },
+              "runtimeConfiguration": { "secureData": { "properties": [ "inputs" ] } }
+            },
+            "PARSE_HTTP_POST_-_Auth_Token": {
+              "runAfter": { "HTTP_-_POST_Auth_Token": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-_POST_Auth_Token')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token_type": { "type": "string" },
+                    "expires_in": { "type": "integer" },
+                    "ext_expires_in": { "type": "integer" },
+                    "access_token": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "HTTP_-_Get_Node_ownership": {
+              "runAfter": { "PARSE_HTTP_POST_-_Auth_Token": [ "Succeeded" ] },
+              "type": "Http",
+              "inputs": {
+                "method": "GET",
+                "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/@{variables('ownsershipNodeId')}/ownership",
+                "headers": { "Authorization": "Bearer @{body('PARSE_HTTP_POST_-_Auth_Token')?['access_token']}" }
+              }
+            },
+            "PARSE_HTTP_GET-_Node_Ownership": {
+              "runAfter": { "HTTP_-_Get_Node_ownership": [ "Succeeded" ] },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-_Get_Node_ownership')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "productId": { "type": "string" },
+                          "product": { "type": "string" },
+                          "owner": { "type": "string" },
+                          "initialInventory": { "type": "number" },
+                          "inputs": { "type": "number" },
+                          "outputs": { "type": "number" },
+                          "identifiedLosses": { "type": "number" },
+                          "interface": { "type": "number" },
+                          "tolerance": { "type": "number" },
+                          "unidentifiedLosses": { "type": "number" },
+                          "finalInventory": { "type": "number" },
+                          "volume": { "type": "number" },
+                          "measurementUnit": { "type": "string" },
+                          "control": { "type": "number" },
+                          "createdBy": {},
+                          "createdDate": {}
+                        }
+                      }
+                    },
+                    "balanceProfessionalUserName": { "type": [ "string", "null" ] },
+                    "balanceProfessionalEmail": { "type": "string" },
+                    "nodeName": { "type": "string" },
+                    "segment": { "type": "string" },
+                    "startDate": { "type": "string" },
+                    "ticketId": { "type": "integer" },
+                    "reportPath": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "Apply_to_each": {
+              "foreach": "@body('PARSE_HTTP_GET-_Node_Ownership')?['summary']",
+              "actions": {
+                "Append_to_Node_Balance": {
+                  "runAfter": {},
+                  "type": "AppendToStringVariable",
+                  "inputs": {
+                    "name": "BalanceSummary",
+                    "value": "| @{items('Apply_to_each')?['product']} | @{items('Apply_to_each')?['initialInventory']} | @{items('Apply_to_each')?['inputs']} | @{items('Apply_to_each')?['outputs']} | @{items('Apply_to_each')?['finalInventory']} | @{items('Apply_to_each')?['identifiedLosses']} | @{items('Apply_to_each')?['interface']} | @{items('Apply_to_each')?['tolerance']} | @{items('Apply_to_each')?['unidentifiedLosses']} | @{items('Apply_to_each')?['volume']} |\n"
+                  }
+                }
+              },
+              "runAfter": { "PARSE_HTTP_GET-_Node_Ownership": [ "Succeeded" ] },
+              "type": "Foreach"
+            },
+            "Check_for_Segments": {
+              "runAfter": { "Apply_to_each": [ "Succeeded" ] },
+              "cases": {
+                "Transporte": {
+                  "case": "Transporte",
+                  "actions": {
+                    "Set_Approver_Mail_-_Transporte": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverMail",
+                        "value": "trueadmin@ecopetrol.com.co"
+                      }
+                    }
+                  }
+                },
+                "Producción": {
+                  "case": "Producción",
+                  "actions": {
+                    "Set_Approver_Mail_-_Producción": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverMail",
+                        "value": "trueadmin@ecopetrol.com.co"
+                      }
+                    }
+                  }
+                },
+                "Refinación": {
+                  "case": "Refinación",
+                  "actions": {
+                    "Set_Approver_Mail_-_Refinación": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverMail",
+                        "value": "trueadmin@ecopetrol.com.co"
+                      }
+                    }
+                  }
+                },
+                "Comercial": {
+                  "case": "Comercial",
+                  "actions": {
+                    "Set_Approver_Mail_-_Comercial": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverMail",
+                        "value": "trueadmin@ecopetrol.com.co"
+                      }
+                    }
+                  }
+                }
+              },
+              "default": {
+                "actions": {
+                  "Set_Approver_Mail_-_Default": {
+                    "runAfter": {},
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "ApproverMail",
+                      "value": "trueadmin@ecopetrol.com.co;"
+                    }
+                  }
+                }
+              },
+              "expression": "@body('PARSE_HTTP_GET-_Node_Ownership')?['segment']",
+              "type": "Switch"
+            },
+            "Do_until": {
+              "actions": {
+                "Condition": {
+                  "actions": {
+                    "Start_and_wait_for_an_approval_Initial": {
+                      "runAfter": {},
+                      "metadata": { "flowSystemMetadata": { "swaggerOperationId": "StartAndWaitForAnApproval" } },
+                      "type": "ApiConnectionWebhook",
+                      "inputs": {
+                        "host": {
+                          "connection": { "name": "@parameters('$connections')['shared_approvals']['connectionId']" },
+                          "api": { "runtimeUrl": "https://flow-apim-msmanaged-na-northcentralus-01.azure-apim.net/apim/approvals" }
+                        },
+                        "body": {
+                          "notificationUrl": "@{listCallbackUrl()}",
+                          "title": "Aprobación del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}",
+                          "assignedTo": "@variables('ApproverMail')",
+                          "details": "El usuario @{body('PARSE_HTTP_GET-_Node_Ownership')?['balanceProfessionalEmail']} ha solicitado a usted aprobación del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}\n\n| Producto | Inventario Inicial | Entradas | Salidas | Inventario Final | Pérdidas Identificadas | Interfases | Tolerancia| PNI | Desbalance |\n|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|\n@{variables('BalanceSummary')}",
+                          "itemLink": "@body('PARSE_HTTP_GET-_Node_Ownership')?['reportPath']",
+                          "itemLinkDescription": "Reporte Balance con propiedad",
+                          "enableNotifications": true,
+                          "enableReassignment": true
+                        },
+                        "path": "/types/@{encodeURIComponent('Basic')}/subscriptions",
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Set_Outcome": {
+                      "runAfter": { "Start_and_wait_for_an_approval_Initial": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApprovalOutcome",
+                        "value": "@body('Start_and_wait_for_an_approval_Initial')?['outcome']"
+                      }
+                    },
+                    "Set_Comments": {
+                      "runAfter": { "Set_Outcome": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "Comments",
+                        "value": "@{body('Start_and_wait_for_an_approval_Initial')?['responses'][0]?['comments']}"
+                      }
+                    },
+                    "Set_variable": {
+                      "runAfter": { "Set_Comments": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "ApproverAlias",
+                        "value": "@{body('Start_and_wait_for_an_approval_Initial')?['responses'][0]?['responder']?['email']}"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {
+                      "Start_and_wait_for_an_approval_No_Comments": {
+                        "runAfter": {},
+                        "metadata": { "flowSystemMetadata": { "swaggerOperationId": "StartAndWaitForAnApproval" } },
+                        "type": "ApiConnectionWebhook",
+                        "inputs": {
+                          "host": {
+                            "connection": { "name": "@parameters('$connections')['shared_approvals']['connectionId']" },
+                            "api": { "runtimeUrl": "https://flow-apim-msmanaged-na-northcentralus-01.azure-apim.net/apim/approvals" }
+                          },
+                          "body": {
+                            "notificationUrl": "@{listCallbackUrl()}",
+                            "title": "Aprobación del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}",
+                            "assignedTo": "@variables('ApproverMail')",
+                            "details": "### Se requieren comentarios\n\nEl usuario @{body('PARSE_HTTP_GET-_Node_Ownership')?['balanceProfessionalEmail']} ha solicitado a usted aprobación del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}\n\n| Producto | Inventario Inicial | Entradas | Salidas | Inventario Final | Pérdidas Identificadas | Interfases | Tolerancia| PNI | Desbalance |\n|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|\n@{variables('BalanceSummary')}",
+                            "itemLink": "@body('PARSE_HTTP_GET-_Node_Ownership')?['reportPath']",
+                            "itemLinkDescription": "Reporte Balance con propiedad",
+                            "enableNotifications": true,
+                            "enableReassignment": true
+                          },
+                          "path": "/types/@{encodeURIComponent('Basic')}/subscriptions",
+                          "authentication": "@parameters('$authentication')"
+                        }
+                      },
+                      "Set_Outcome_No_Comments": {
+                        "runAfter": { "Start_and_wait_for_an_approval_No_Comments": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "ApprovalOutcome",
+                          "value": "@body('Start_and_wait_for_an_approval_No_Comments')?['outcome']"
+                        }
+                      },
+                      "Set_Comments_R": {
+                        "runAfter": { "Set_Outcome_No_Comments": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "Comments",
+                          "value": "@{body('Start_and_wait_for_an_approval_No_Comments')?['responses'][0]?['comments']}"
+                        }
+                      },
+                      "Set_variable_2": {
+                        "runAfter": { "Set_Comments_R": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "ApproverAlias",
+                          "value": "@{body('Start_and_wait_for_an_approval_No_Comments')?['responses'][0]?['responder']?['email']}"
+                        }
+                      }
+                    }
+                  },
+                  "expression": { "equals": [ "@or(equals(variables('ApprovalOutcome'), 'Approve'),equals(variables('ApprovalOutcome'), ''))", true ] },
+                  "type": "If"
+                }
+              },
+              "runAfter": { "Check_for_Segments": [ "Succeeded" ] },
+              "expression": "@equals(or(and(equals(variables('ApprovalOutcome'), 'Reject'), not(equals(variables('Comments'), ''))), equals(variables('ApprovalOutcome'), 'Approve')), true)",
+              "limit": {
+                "count": 60,
+                "timeout": "PT1H"
+              },
+              "type": "Until"
+            },
+            "Condition_-_Check_Approval_Outcome": {
+              "actions": {
+                "Condition_-_Check_Node_Approve_Response": {
+                  "actions": {
+                    "Set_Mail_Subject_Approve_Success": {
+                      "runAfter": {},
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "MailSubject",
+                        "value": "Aprobación del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}"
+                      }
+                    },
+                    "Set_Mail_Body_Approve_Success": {
+                      "runAfter": { "Set_Mail_Subject_Approve_Success": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "MailBody",
+                        "value": "El nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} ha sido aprobado para el día @{variables('StartDateFormatted')}."
+                      }
+                    },
+                    "Set_variable_3": {
+                      "runAfter": { "Set_Mail_Body_Approve_Success": [ "Succeeded" ] },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "SendEmailTo",
+                        "value": "@body('PARSE_HTTP_GET-_Node_Ownership')?['balanceProfessionalEmail']"
+                      }
+                    }
+                  },
+                  "runAfter": { "HTTP_-_Update_Node_Status_(Approve)": [ "Succeeded" ] },
+                  "else": {
+                    "actions": {
+                      "Parse_Node_Approve_Error_Response": {
+                        "runAfter": {},
+                        "type": "ParseJson",
+                        "inputs": {
+                          "content": "@body('HTTP_-_Update_Node_Status_(Approve)')",
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "errorCodes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "code": { "type": "string" },
+                                    "message": { "type": "string" }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "Set_Mail_Subject_Approve_Error": {
+                        "runAfter": { "Parse_Node_Approve_Error_Response": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailSubject",
+                          "value": "Error en el llamado del API de aprobación de nodos"
+                        }
+                      },
+                      "Set_Mail_Body_Approve_Error": {
+                        "runAfter": { "Set_Mail_Subject_Approve_Error": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailBody",
+                          "value": "Ha ocurrido un error actualizando el estado del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} Causa: @{body('Parse_Node_Approve_Error_Response')?['errorCodes'][0]['message']}, Por favor verifique la causa y relance el flujo."
+                        }
+                      },
+                      "Set_variable_4": {
+                        "runAfter": { "Set_Mail_Body_Approve_Error": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "SendEmailTo",
+                          "value": "@{variables('ApproverMail')};"
+                        }
+                      }
+                    }
+                  },
+                  "expression": { "equals": [ "@outputs('HTTP_-_Update_Node_Status_(Approve)')['statusCode']", 200 ] },
+                  "type": "If"
+                },
+                "HTTP": {
+                  "runAfter": {},
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                    "headers": {
+                      "content-type": "application/x-www-form-urlencoded",
+                      "Host": "login.microsoftonline.com"
+                    },
+                    "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+                  }
+                },
+                "HTTP_-_Update_Node_Status_(Approve)": {
+                  "runAfter": { "Análisis_del_archivo_JSON": [ "Succeeded" ] },
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/ownership",
+                    "headers": { "Authorization": "Bearer @{body('Análisis_del_archivo_JSON')?['access_token']}" },
+                    "body": {
+                      "ownershipNodeId": "@variables('ownsershipNodeId')",
+                      "approverAlias": "@variables('ApproverAlias')",
+                      "status": "APPROVED",
+                      "comment": "@variables('Comments')"
+                    }
+                  }
+                },
+                "Análisis_del_archivo_JSON": {
+                  "runAfter": { "HTTP": [ "Succeeded" ] },
+                  "type": "ParseJson",
+                  "inputs": {
+                    "content": "@body('HTTP')",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "token_type": { "type": "string" },
+                        "expires_in": { "type": "integer" },
+                        "ext_expires_in": { "type": "integer" },
+                        "access_token": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              },
+              "runAfter": { "Do_until": [ "Succeeded" ] },
+              "else": {
+                "actions": {
+                  "Condition_-_Check_Node_Reject_Response": {
+                    "actions": {
+                      "Set_Mail_Subject_Reject_Success": {
+                        "runAfter": {},
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailSubject",
+                          "value": "Rechazo del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} para el día @{variables('StartDateFormatted')}"
+                        }
+                      },
+                      "Set_Mail_Body_Reject_Success": {
+                        "runAfter": { "Set_Mail_Subject_Reject_Success": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "MailBody",
+                          "value": "El nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} ha sido rechazado para el día @{variables('StartDateFormatted')} con la siguiente observación @{variables('Comments')}"
+                        }
+                      },
+                      "Set_variable_5": {
+                        "runAfter": { "Set_Mail_Body_Reject_Success": [ "Succeeded" ] },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "SendEmailTo",
+                          "value": "@body('PARSE_HTTP_GET-_Node_Ownership')?['balanceProfessionalEmail']"
+                        }
+                      }
+                    },
+                    "runAfter": { "HTTP_-_Update_Node_Status_(Reject)": [ "Succeeded" ] },
+                    "else": {
+                      "actions": {
+                        "Parse_Node_Reject_Response": {
+                          "runAfter": {},
+                          "type": "ParseJson",
+                          "inputs": {
+                            "content": "@body('HTTP_-_Update_Node_Status_(Reject)')",
+                            "schema": {
+                              "type": "object",
+                              "properties": {
+                                "errorCodes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "code": { "type": "string" },
+                                      "message": { "type": "string" }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "Set_Mail_Subject_Reject__Error": {
+                          "runAfter": { "Parse_Node_Reject_Response": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "MailSubject",
+                            "value": "Error en el llamado del API de aprobación de nodos"
+                          }
+                        },
+                        "Set_Mail_Body_Reject_Error": {
+                          "runAfter": { "Set_Mail_Subject_Reject__Error": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "MailBody",
+                            "value": "Ha ocurrido un error actualizando el estado del nodo @{body('PARSE_HTTP_GET-_Node_Ownership')?['nodeName']} Causa: @{body('Parse_Node_Reject_Response')?['errorCodes'][0]['message']}, Por favor verifique la causa y relance el flujo."
+                          }
+                        },
+                        "Set_variable_6": {
+                          "runAfter": { "Set_Mail_Body_Reject_Error": [ "Succeeded" ] },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "SendEmailTo",
+                            "value": "@variables('ApproverMail')"
+                          }
+                        }
+                      }
+                    },
+                    "expression": { "equals": [ "@outputs('HTTP_-_Update_Node_Status_(Reject)')['statusCode']", 200 ] },
+                    "type": "If"
+                  },
+                  "HTTP_2": {
+                    "runAfter": {},
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "https://login.microsoftonline.com/@{body('Parse_JSON_Input')?['tenantId']}/oauth2/v2.0/token",
+                      "headers": {
+                        "content-type": "application/x-www-form-urlencoded",
+                        "Host": "login.microsoftonline.com"
+                      },
+                      "body": "grant_type=@{body('Parse_JSON_Input')?['grant_type']}&client_id=@{body('Parse_JSON_Input')?['clientId']}&client_secret=@{body('Parse_JSON_Input')?['clientSecret']}&scope=@{body('Parse_JSON_Input')?['scope']}"
+                    }
+                  },
+                  "HTTP_-_Update_Node_Status_(Reject)": {
+                    "runAfter": { "Análisis_del_archivo_JSON_2": [ "Succeeded" ] },
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "@{body('Parse_JSON_Input')?['apiUrl']}/flow/api/v1/nodes/ownership",
+                      "headers": { "Authorization": "Bearer @{body('Análisis_del_archivo_JSON_2')?['access_token']}" },
+                      "body": {
+                        "ownershipNodeId": "@variables('ownsershipNodeId')",
+                        "approverAlias": "@variables('ApproverAlias')",
+                        "status": "REJECTED",
+                        "comment": "@variables('Comments')"
+                      }
+                    }
+                  },
+                  "Análisis_del_archivo_JSON_2": {
+                    "runAfter": { "HTTP_2": [ "Succeeded" ] },
+                    "type": "ParseJson",
+                    "inputs": {
+                      "content": "@body('HTTP_2')",
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "token_type": { "type": "string" },
+                          "expires_in": { "type": "integer" },
+                          "ext_expires_in": { "type": "integer" },
+                          "access_token": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "expression": { "equals": [ "@variables('ApprovalOutcome')", "Approve" ] },
+              "type": "If"
+            }
+          },
+          "runAfter": { "Flow_Status": [ "Succeeded" ] },
+          "type": "Scope"
+        },
+        "Format_Start_Date": {
+          "runAfter": { "Mail_Body": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "StartDateFormatted",
+                "type": "String",
+                "value": "@{formatDateTime(convertFromUtc(utcNow(), 'SA Pacific Standard Time'), 'dd-MMM-yyyy')}"
+              }
+            ]
+          }
+        },
+        "CATCH": {
+          "actions": {
+            "Set_Mail_Body_General_Error": {
+              "runAfter": { "Set_Mail_Subject_General_Error": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "MailBody",
+                "value": "El flujo  de aprobación ha fallado, por favor use este enlace para verificar la causa de falla y relance el flujo:\n\n@{concat('https://flow.microsoft.com/manage/environments/', workflow()?['tags']['environmentName'], '/flows/', workflow()?['name'], '/runs/', workflow()?['run']['name'])}\n"
+              }
+            },
+            "Set_Mail_To_General_Error": {
+              "runAfter": {},
+              "type": "SetVariable",
+              "inputs": {
+                "name": "SendEmailTo",
+                "value": "@{variables('ApproverMail')};"
+              }
+            },
+            "Set_Mail_Subject_General_Error": {
+              "runAfter": { "Set_Mail_To_General_Error": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "MailSubject",
+                "value": "Error ejecutando el flujo de aprobación de nodos"
+              }
+            },
+            "Set_Flow_Failed_Status": {
+              "runAfter": { "Set_Mail_Body_General_Error": [ "Succeeded" ] },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "FlowStatus",
+                "value": "Failed"
+              }
+            }
+          },
+          "runAfter": { "TRY": [ "Failed", "Skipped", "TimedOut" ] },
+          "type": "Scope"
+        },
+        "FINALLY": {
+          "actions": {
+            "Send_email_(V4)": {
+              "runAfter": {},
+              "metadata": { "flowSystemMetadata": { "swaggerOperationId": "SendEmailV4" } },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": { "name": "@parameters('$connections')['shared_sendgrid']['connectionId']" },
+                  "api": { "runtimeUrl": "https://flow-apim-msmanaged-na-northcentralus-01.azure-apim.net/apim/sendgrid" }
+                },
+                "method": "post",
+                "body": {
+                  "from": "trueadmin@ecopetrol.com.co",
+                  "to": "@{variables('SendEmailTo')}",
+                  "subject": "@variables('MailSubject')",
+                  "text": "<p>@{variables('MailBody')}</p>",
+                  "ishtml": true
+                },
+                "path": "/v4/mail/send",
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "End_Flow_with_Status": {
+              "runAfter": { "Send_email_(V4)": [ "Succeeded" ] },
+              "type": "Terminate",
+              "inputs": { "runStatus": "@variables('FlowStatus')" }
+            }
+          },
+          "runAfter": { "CATCH": [ "Succeeded", "Failed", "Skipped", "TimedOut" ] },
+          "type": "Scope"
+        },
+        "Flow_Status": {
+          "runAfter": { "Format_Start_Date": [ "Succeeded" ] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "FlowStatus",
+                "type": "String",
+                "value": "Succeeded"
+              }
+            ]
+          }
+        }
+      },
+      "description": "p"
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

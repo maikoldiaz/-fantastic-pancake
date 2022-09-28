@@ -1,0 +1,428 @@
+// _diagram.scss
+
+#{$ep}-diagram {
+    $dg: &;
+    position: relative;   
+    border: solid 1px map-get($gray, "C1C1C1" );
+    background-color: $white;
+    border-radius: pxToRem(6);
+    height: 100%;
+    overflow: hidden;
+
+    &__overlay{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &-txt{
+            color: $white;
+            font-size: pxToRem(20);
+            font-weight: 700;
+            line-height: pxToRem(27);
+            padding: pxToRem(40);
+            margin: 0;
+            width: pxToRem(550);
+            text-align: center;
+        }
+    }
+
+    &__actionbar{
+        height: pxToRem(40);
+        background-color: map-get($gray, '_2F353E');
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 pxToRem(10);
+    }
+
+    &__action{
+        color: $white;
+        margin-right: pxToRem(10);
+        cursor: pointer;
+        &s{
+            display: inline-flex;
+            align-items: center;
+        }
+        & .fa-undo{
+            font-size: 80%;
+            & + .fa-undo--addon{
+                display: block;
+                background: $white;
+                border-radius: pxToRem(1);
+                width: pxToRem(2.5);
+                height: pxToRem(5);
+                transform: rotate(-45deg);
+                position: relative;
+                right: pxToRem(-10);
+                top: pxToRem(-5);
+            }
+        }
+        &--dvdr{
+            height: pxToRem(25);
+            border-left: 1px solid $white;
+            padding-top: pxToRem(3);
+            padding-left: pxToRem(15);
+        }
+    }
+
+    &__pane{
+        height: pxToRem(40);
+        background-color: map-get($gray, 'C9C9C9' );
+        padding: pxToRem(5) pxToRem(10);
+    }
+
+    &__canvas{
+        height: 100%;
+    }
+
+    &__body{
+        height: calc(100% - 80px);
+        
+        &--bg{
+            background: url(../../../dist/images/gridBg.png) repeat;
+        }
+    }
+
+    &__node{
+        position: relative;
+        height: pxToRem(146);
+        width: pxToRem(265);
+        border-radius: pxToRem(4);        
+        border: 1px solid map-get($gray, 'C1C1C1');
+        border-top: solid pxToRem(4) $ep-corp-color;
+        background-color: $white;
+        z-index: 1;
+        &:hover{
+            box-shadow: $bx-sd;
+        }
+        &-title{
+            font-size: pxToRem(12);
+            margin-bottom: pxToRem(5);
+        }
+
+        &-body{
+            background-color: $white;
+            position: relative;
+            height: calc(100% - 35px);
+            z-index: 1000;
+        }
+
+        &-footer{
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: pxToRem(35);
+            border-top: solid 1px map-get($gray, 'C1C1C1');
+            z-index: 1000;
+        }
+
+        &-edit{
+            width: calc(100% - 140px);
+            background-color: $ep-corp-color;
+            height: pxToRem(35);
+            color: $white;
+            border: solid 1px map-get($gray, 'C1C1C1');
+            border-top: none;
+            border-bottom: none;
+            font-size: pxToRem(12);
+            font-weight: bold;
+            cursor: pointer;
+            &--lt{
+                color: $font-color;
+                & .far{
+                    color: $font-color;
+                }
+            }
+        }
+        
+        &-port{
+            position: relative;
+            width: pxToRem(70);
+            font-size: pxToRem(10);
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: pxToRem(5) pxToRem(10);
+            color: map-get($gray, 'B3B3B3');
+            background: $white;
+            cursor: pointer;
+
+            &-in{
+                background: $black;
+                @include mix-circle(pxToRem(20));
+                display: inline-block;
+                position: absolute;
+                bottom: pxToRem(6);
+                left:  pxToRem(-13);
+                color: $white;
+                font-size: pxToRem(10);
+                line-height: pxToRem(20);
+                padding: 0 pxToRem(2);
+                text-align: left;
+                cursor: pointer;
+            }
+
+            &-out{
+                background: $black;
+                @include mix-circle(pxToRem(20));
+                display: inline-block;
+                position: absolute;
+                bottom: pxToRem(6);
+                right: pxToRem(-13);
+                color: $white;
+                font-size: pxToRem(10);
+                line-height: pxToRem(20);
+                padding: 0 pxToRem(2);
+                text-align: right;
+                cursor: pointer;
+            }
+            &-icn{
+                font-size: pxToRem(14);
+            }
+            &-txt{
+                color: $label;
+                font-size: pxToRem(8);
+            }
+            &-val{
+                font-size: pxToRem(12);
+                color: $font-color;
+                font-weight: bold;
+            }
+        }
+
+        &-icn{
+            display: inline-block;
+            @include mix-circle(pxToRem(65));           
+            background: $ep-corp-color;
+            position: absolute;
+            top: pxToRem(20);
+            left: pxToRem(-32);
+            overflow: hidden;
+            &::before{
+                content: " ";
+                display: block;
+                @include mix-square(pxToRem(65));
+                border-radius: 50%;
+                background-color: $white;
+                position: absolute;
+                left:0;
+                top:0;
+                opacity: 0.8;
+            }
+            svg{
+                transform: scale(0.4);
+                position: relative;
+                left: pxToRem(-88);
+                top: pxToRem(-45);
+            }
+        }
+        &-icndrg{
+            position: absolute;
+            top:pxToRem(2);
+            right:pxToRem(5);
+            font-size: pxToRem(12);
+            color:map-get($gray, 'C1C1C1');
+        }
+        &-info{
+            margin-left: pxToRem(38);
+            padding: pxToRem(10);
+            & #{$dg}__node-title,
+            & .ep-data {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        &--inactive{
+            background-color: #DFDFDF;
+            * {
+                color: #9B9B9B;
+            }
+
+            #{$dg}__node-icn{
+                background-color: map-get($gray, '_2F353E');
+                text-align: center;
+                &::before{
+                    display: none;
+                }
+                &lock{
+                    color: $white;
+                    position: relative;
+                    font-size: pxToRem(26);
+                    top: pxToRem(12);
+                    & .fas{
+                        color: $white;
+                    }
+                }
+            }
+            & #{$dg}__node-port {
+                &--in{
+                    background-color: #DFDFDF;
+                }
+    
+                &--out{
+                    background-color: #DFDFDF;
+                }
+            }
+            & #{$dg}__node-edit{
+                color: $white;
+                & .far{
+                    color: $white;
+                }
+            }
+        }
+        &-unsaved{
+            &::before{
+                content: " ";
+                display: block;
+                width: 100%;
+                height: 100%;
+                background-image: $bg-stripes-45deg;
+                position: absolute;
+                top:0;
+                left: 0;
+                background-color: transparent;
+                background-size: 10px 10px;
+                animation: lines 1s linear infinite;
+                opacity: 0.5;
+                z-index: 1000;
+            }
+        }
+        &--selected{
+            &:after{
+                content: "";
+                border:solid 2px #B4DBF5;
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border-radius: 6px;
+            }
+            &:before{
+                content: "";
+                border:solid 2px #C1E3F9;
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                right: -4px;
+                bottom: -4px;
+                border-radius: 7px;
+            }
+        }
+        &--unsaved{
+            #{$dg}__node{
+                &-port{
+                    pointer-events: none;
+                    cursor: not-allowed;
+                    &-in,&-out{
+                        pointer-events: none;
+                        cursor: not-allowed;
+                    }
+                }
+
+                &-edit{
+                    pointer-events: none;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    &__btn{
+        cursor: pointer;
+        &-settings{
+            cursor: pointer;
+        }
+    }
+
+    &__path{
+        &-settings{
+            pointer-events: all;
+        }
+
+        &--inactive{
+            g .ep-diagram__spath{
+                stroke: #ccc;
+            }
+
+            .arrow{
+                g path{
+                    fill: #707070;
+                    stroke: #707070;
+                }
+            }
+
+            &:hover{
+                g .ep-diagram__spath{
+                    stroke: #1592E6;
+                }
+
+                .arrow{
+                    g path{
+                        fill: #1592E6;
+                        stroke: #1592e6;
+                    }
+                }
+            }
+        }
+
+        &--path-unsaved{
+            stroke: #ccc;
+            stroke-dasharray: 6,6;
+        }
+          
+        &--invalid{
+            g path{
+                stroke: #ccc;
+            }
+        }
+
+        &--active{
+            &:hover{
+                g .ep-diagram__spath{
+                    stroke: #1592E6;
+                }
+
+                #{$dg}__path-arrow{
+                    g path{
+                        fill: #1592E6;
+                    }
+                }
+            }
+        }
+
+        &--transfer{
+            g:nth-child(2) {
+                .ep-diagram__spath:first-child{
+                    transform: translate(0 , 4px);
+                }
+            }
+
+            &:hover{
+                g .ep-diagram__spath{
+                    stroke: #1592E6;
+                }
+                
+                g:nth-child(2) {
+                    .ep-diagram__spath:first-child{
+                        transform: translate(0 , 4px);
+                    }
+                }
+            }
+        }
+
+        
+    }
+
+    &__spath{
+        pointer-events: all;
+    }
+}

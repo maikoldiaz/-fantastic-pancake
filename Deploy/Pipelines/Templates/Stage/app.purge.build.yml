@@ -1,0 +1,21 @@
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CopyFiles@2
+      displayName: COPY ARM templates
+      inputs:
+       SourceFolder: $(infraTemplatePath)
+       TargetFolder: '$(Build.ArtifactStagingDirectory)/Templates'
+    - task: CopyFiles@2
+      displayName: COPY Scripts
+      inputs:
+       SourceFolder:  $(infraScriptPath)
+       TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Artifacts
+      inputs:
+       ArtifactName: Drop

@@ -1,0 +1,27 @@
+{
+  "version": "2.0",
+  "extensions": {
+    "durableTask": {
+      "hubName": "transform"
+    },
+    "serviceBus": {
+      "prefetchCount": 0,
+      "messageHandlerOptions": {
+        "maxConcurrentCalls": 32
+      },
+      "sessionHandlerOptions": {
+        "messageWaitTimeout": "00:00:20",
+        "maxConcurrentSessions": 32,
+        "maxAutoRenewDuration": "00:30:00"
+      }
+    }
+  },
+  "logging": {
+    "logLevel": {
+      "default": "Information",
+      "Host": "Information",
+      "Function": "Information",
+      "Host.Aggregator": "Trace"
+    }
+  }
+}

@@ -1,0 +1,281 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+          "thresholdCount": {
+            "type": "string",
+            "defaultValue": "75"
+          },
+          "frequency": {
+            "type": "int",
+            "defaultValue": 15
+          },
+          "windowSize": {
+            "type": "int",
+            "defaultValue": 30
+          },
+          "query": {
+            "type": "string",
+            "defaultValue": ""
+          },
+          "dataSourceId": {
+            "type": "string",
+            "defaultValue": ""
+          },
+          "deployLocation": {
+            "type": "string",
+            "defaultValue": ""
+          },
+          "subscriptionId": {
+              "type": "string",
+              "defaultValue": ""
+          },
+          "resourceGroupName": {
+              "type": "string",
+              "defaultValue": ""
+          },
+          "sharedResourceGroupName": {
+              "type": "string",
+              "defaultValue": ""
+          },
+          "description": {
+            "type": "string",
+            "defaultValue": ""
+          },
+          "alertName": {
+            "type": "string",
+            "defaultValue": "alertName"
+          },
+          "severity": {
+            "type": "string",
+            "defaultValue": "3"
+          },
+          "status":{
+              "type": "string",
+              "defaultValue": "disabled"
+          },
+          "queryType":{
+              "type": "string",
+              "defaultValue": ""
+          },
+          "actionGroupId":{
+              "type": "string",
+              "defaultValue": "actionGroupId"
+          },
+          "deployHealthAlert":{
+              "type": "string",
+              "defaultValue": "false"
+          },
+          "nameList":{
+                  "type": "string",
+                  "metadata": {
+                    "description": "List of names of receivers."
+                  },
+                  "defaultValue": ""
+                },
+          "emailList":{
+                        "type": "string",
+                        "metadata": {
+                          "description": "List of emails of receivers."
+                        },
+                        "defaultValue": ""
+          },
+          "deployActionGroup":{
+              "type": "string",
+              "defaultValue": "false"
+          },
+          "deployScheduledAlert":{
+              "type": "string",
+              "defaultValue": "true"
+          },
+          "actionGroupShortName": {
+            "type": "string",
+            "metadata": {
+              "description": "Short name (maximum 12 characters) for the Action group."
+            },
+            "defaultValue": "shortName"
+          },
+          "actionGroupName": {
+            "type": "string",
+            "metadata": {
+              "description": "Unique name (within the Resource Group) for the Action group."
+            },
+            "defaultValue": "actionGroupName"
+          },
+          "acrId": {
+              "type": "string"
+          }
+    },
+    "variables": {
+        "alertSource":{
+            "Query":"[parameters('query')]",
+            "SourceId": "[parameters('dataSourceId')]",
+            "Type":"[parameters('queryType')]"
+        },
+        "alertSchedule":{
+            "Frequency": "[parameters('frequency')]",
+            "Time": "[parameters('windowSize')]"
+        },
+        "alertActions":{
+            "SeverityLevel": "[parameters('severity')]"
+        },
+        "alertTrigger":{
+            "Operator":"GreaterThan",
+            "Threshold":"[parameters('thresholdCount')]"
+        },
+        "actionGrp":{
+            "ActionGroup": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroupName'), '/providers/Microsoft.Insights/actionGroups/', parameters('actionGroupId'))]"
+        },
+        "EmailName": "[array(split(parameters('nameList'),','))]",
+        "EmailAddress": "[array(split(parameters('emailList'),','))]"
+    },
+    "resources":[
+        {
+          "apiVersion": "2016-06-01",
+          "name": "[parameters('acrId')]",
+          "type": "Microsoft.Resources/deployments",
+          "properties": {
+            "mode": "Incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "resources": []
+            }
+          }
+        },
+        {
+            "condition": "[equals(parameters('deployActionGroup'),'true')]",
+            "type": "Microsoft.Insights/actionGroups",
+            "apiVersion": "2018-03-01",
+            "name": "[toUpper(parameters('actionGroupName'))]",
+            "location": "Global",
+            "properties": {
+              "groupShortName": "[parameters('actionGroupShortName')]",
+              "enabled": true,
+              "copy": [
+                {
+                  "name": "emailReceivers",
+                  "count": "[length(variables('EmailName'))]",
+                  "input": {
+                      "name": "[trim(variables('EmailName')[copyIndex('emailReceivers')])]",
+                      "emailAddress": "[trim(variables('EmailAddress')[copyIndex('emailReceivers')])]"
+                  }
+                }
+            ]
+            }
+          },
+        {
+            "condition": "[equals(parameters('deployHealthAlert'),'true')]",
+            "type": "Microsoft.Insights/activityLogAlerts",
+            "apiVersion": "2017-04-01",
+            "name": "[toUpper(parameters('alertName'))]",
+            "location": "Global",
+            "properties": {
+                "enabled": "[equals(parameters('status'), 'false')]",
+                "scopes": "[array(concat('/subscriptions/', subscription().subscriptionId))]",
+                "condition": {
+                    "allOf": [
+                        {
+                            "field": "category",
+                            "equals": "ResourceHealth",
+                            "containsAny": null
+                        },
+                        {
+                            "field": "resourceGroup",
+                            "equals": "[parameters('resourceGroupName')]"
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.currentHealthStatus",
+                                    "equals": "Unavailable",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.currentHealthStatus",
+                                    "equals": "Degraded",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Available",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Unavailable",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Degraded",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.cause",
+                                    "equals": "PlatformInitiated",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "status",
+                                    "equals": "Active",
+                                    "containsAny": null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "actions": {
+                    "actionGroups": [
+                        {
+                            "actionGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName'), '/providers/Microsoft.Insights/actionGroups/', parameters('actionGroupId'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+        "condition": "[equals(parameters('deployScheduledAlert'),'true')]",
+        "name":"[toUpper(parameters('alertName'))]",
+        "type":"Microsoft.Insights/scheduledQueryRules",
+        "apiVersion": "2018-04-16",
+        "location": "[parameters('deployLocation')]",
+        "properties":{
+            "description": "[parameters('description')]",
+            "enabled": "[if(equals(parameters('status'), 'true'), 'false', 'true')]",
+            "source": {
+                "query": "[variables('alertSource').Query]",
+                "dataSourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('sharedResourceGroupName'), '/providers/microsoft.insights/components/', parameters('dataSourceId'))]",
+                "queryType":"[variables('alertSource').Type]"
+            },
+            "schedule":{
+                "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
+                "timeWindowInMinutes": "[variables('alertSchedule').Time]"
+            },
+            "action":{
+                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                "severity":"[variables('alertActions').SeverityLevel]",
+                "aznsAction":{
+                    "actionGroup":"[array(variables('actionGrp').ActionGroup)]"
+                },
+                "trigger":{
+                    "thresholdOperator":"[variables('alertTrigger').Operator]",
+                    "threshold":"[variables('alertTrigger').Threshold]"
+                }
+            }
+            }
+        }
+    ]
+}

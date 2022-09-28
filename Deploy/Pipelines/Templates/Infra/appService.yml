@@ -1,0 +1,80 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: App Service - ARM
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      resourceGroupName: '${{ parameters.resourceGroupName }}'
+      location: '${{ parameters.deployLocation }}'
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/App Service/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -appServiceName "${{parameters.appServiceNameUI}}"  -appServicePlanName "$(appServicePlanNameUI)"'
+      deploymentOutputs: armOut
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: App Service - Tags
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.appServiceNameUI}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - Diagnostics
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-DetailedErrorAndTraceLogging.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.appServiceNameUI}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service Plan - Tags
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(appServicePlanNameUI)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - Set Build Variable
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - KV MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+      ScriptArguments: '-vaultName "${{ parameters.keyVaultName }}" -targetObjectId "$(ou_AppPrincipalId)" -resourceGroupName "${{ parameters.resourceGroupName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - SQL MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SecurityGroupMember.ps1'
+      ScriptArguments: '-groupObjectId "$(msiAdGroupObjectId)" -memberObjectId "$(ou_AppPrincipalId)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - Storage MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(ou_AppPrincipalId)" -resourceName "$(storageAccountName)" -roleDefinitionName "Storage Blob Data Contributor" -resourceType "Microsoft.Storage/storageAccounts"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: App Service - Staging Slot
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "CREATE" -slotName "STAGING" -appServicePlanName "$(appServicePlanNameUI)" -resourceGroupName "${{ parameters.resourceGroupName }}" -appServiceName "${{parameters.appServiceNameUI}}"'
+      azurePowerShellVersion: LatestVersion

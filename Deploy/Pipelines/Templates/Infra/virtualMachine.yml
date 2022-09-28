@@ -1,0 +1,26 @@
+steps:
+  - task: AzureResourceGroupDeployment@2
+    displayName: Virtual Machine - ARM
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: "${{ parameters.resourceGroupName }}"
+      location: "${{ parameters.deployLocation }}"
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Virtual Machine/deploy.json'
+      overrideParameters: '-adminUsername "${{parameters.vmUsername}}" 
+                           -adminPassword "${{parameters.vmPassword}}" 
+                           -storageAccountName "$(vmStorageAccountName)" 
+                           -vmName "${{parameters.virtualMachineName}}" 
+                           -subnetName "${{parameters.subnetName}}" 
+                           -virtualNetworkID "${{parameters.vmVnetId}}" 
+                           -networkInterfaceName "${{parameters.networkInterfaceName}}"'
+      deploymentOutputs: armOut
+      
+  - task: AzurePowerShell@4
+    displayName: Virtual Machine - Tags
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" 
+                        -resourceGroupName "${{ parameters.resourceGroupName }}" 
+                        -resourceName "${{ parameters.virtualMachineName }}"'
+      azurePowerShellVersion: LatestVersion

@@ -1,0 +1,35 @@
+variables:
+  - group: true-secrets-uat
+  - group: true-release-threshold
+  - group: true-secrets-nonprd-shared
+  - group: true-network-uat
+  - group: true-mq-uat
+  - group: true-scale-up
+
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/infra.yml
+  - template: ../Templates/Variables/non-prod.yml
+  - template: ../Templates/Variables/tags.yml
+
+# set pr trigger to none to prevent daily build running against master branch changess
+pr: none
+
+trigger: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    timeoutInMinutes: 180
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Templates/Build/build.yml
+      parameters:
+        db: 'true'
+        certs: 'false'
+        config: 'true'
+
+- template: ../Templates/Stage/scale.deploy.yml
+  parameters:
+      scaleup: 'true'

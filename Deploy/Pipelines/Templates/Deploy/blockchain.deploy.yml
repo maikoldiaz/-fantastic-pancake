@@ -1,0 +1,53 @@
+steps:
+ - task: ExtractFiles@1
+   displayName: Extract Blockchain Console Files
+   inputs:
+    archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.Blockchain.zip'
+    destinationFolder: '$(System.ArtifactsDirectory)\BlockChain'
+    cleanDestinationFolder: false
+
+ - task: PowerShell@2
+   displayName: Get Agent Ip
+   inputs:
+     filePath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-Ip.ps1'
+
+ - task: AzureCLI@2
+   displayName: ABS IPs Whitelisting
+   inputs:
+     azureSubscription: '${{parameters.serviceConnection}}'
+     scriptType: ps
+     scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-IpRulesForBlockchain.ps1'
+     arguments: '-skipLoadBalancer "$(skipLoadBalancer)" -openAll "$(openAllFlagBlockchain)" -blockchainMemberName "$(blockchainMemberName)" -aksNodeResourceGroup "$(aksNodeResourceGroup)" -aksLoadBalancerName "$(aksLoadBalancerName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(bcFunctionAppName)" -customIp "$(agentIp)" -customName "DeployAgentIP"'
+
+ - script: dotnet.exe $(System.ArtifactsDirectory)\BlockChain\Ecp.True.Blockchain.dll -o -i $(analyticsAppClientId) -q $(analyticsAppSecret) -u $(keyVaultUrl) -a $(ethAccountAddressKey) -p $(ethAccountSecretKey)
+   displayName: Create Ethereum Account
+ 
+ - template: ../Infra/fetchSecrets.yml
+   parameters:
+    azureSubscriptionName : '${{parameters.serviceConnection}}'
+    keyVaultName: '$(keyVault)'
+    secretsFilter: '*'
+
+ - script: dotnet.exe $(System.ArtifactsDirectory)\BlockChain\Ecp.True.Blockchain.dll -c $(System.ArtifactsDirectory)\Drop\Develop\Ecp.True\Blockchain\Build\contracts -a $(EthereumAccountAddress) -p $(EthereumAccountKey) -r $(EthereumRpcEndpoint) -l $(System.ArtifactsDirectory) -s $(storageconnectionstring) -i $(analyticsAppClientId) -q $(analyticsAppSecret) -u $(keyVaultUrl) -t $(tenantId) -n $(blockchainMemberResourceId)
+   displayName: Deploy Smart Contracts
+
+ - task: PowerShell@2
+   displayName: Get Contract Addresses
+   inputs:
+    targetType: 'inline'
+    script: |
+      $content = Get-Content -Path "$(System.ArtifactsDirectory)/Contracts.txt"
+      $i=0
+      do{
+         $contractName = $content[$i++]+"contractaddress"
+         $contractAddress = $content[$i++]
+         Write-Host "##vso[task.setvariable variable=$contractName]$contractAddress"
+      }while($i -le $content.Count-1)
+
+ - task: AzureCLI@2
+   displayName: Set Contract Factory Address - KV
+   inputs:
+     azureSubscription: "${{ parameters.serviceConnection }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "ContractFactoryContractAddress" -secretValue "$(contractfactorycontractaddress)"'

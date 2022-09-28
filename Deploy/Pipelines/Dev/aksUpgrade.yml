@@ -1,0 +1,28 @@
+variables:
+- group: true-secrets-nonprd-shared
+- template: ../../Templates/Variables/infra.yml
+
+trigger: none
+
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - deployment: FlowApi
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: $(env)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                  $version = az aks get-upgrades --resource-group $(sharedResourceGroupName) --name $(aksClusterName) --query "controlPlaneProfile.upgrades[0].kubernetesVersion" -o json
+                  az resource update --ids "/subscriptions/$(subscriptionId)/resourcegroups/$(sharedResourceGroupName)/providers/Microsoft.ContainerService/managedClusters/$(aksClusterName)" --set "properties.kubernetesVersion=$version" --set "properties.agentPoolProfiles[0].orchestratorVersion=$version"
+

@@ -1,0 +1,201 @@
+steps:
+ - template: ../Infra/fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '$(serviceConnection)'
+     keyVaultName: '$(keyVaultShared)'
+     secretsFilter: '*'
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: APIM - ARM
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'true'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/API Management/deploy.json'
+     overrideParameters: '-logAnalyticsResourceId "$(logAnalyticsResourceId)" 
+                          -tenant "$(tenant)" 
+                          -tenantId "$(tenantId)" 
+                          -apimDevPortalAppClientId "$(apimDevPortalAppClientId)" 
+                          -apimDevPortalAppSecret "$(apimDevPortalAppSecret)" 
+                          -apimAppClientId "$(apimAppClientId)" 
+                          -apimAppSecret "$(apimAppSecret)" 
+                          -apimOAuthDefaultScope "api://$(apiAppClientId)/user_impersonation" 
+                          -apimClientCredsDefaultScope "api://$(apiAppClientId)/.default" 
+                          -authCodeAuthServerName "$(authCodeAuthServerName)" 
+                          -clientCredsAuthServerName "$(clientCredsAuthServerName)" 
+                          -apiManagementServiceName "$(apiManagementServiceName)" 
+                          -publisherEmail "$(publisherEmail)" 
+                          -publisherName "$(publisherName)" 
+                          -sku "$(apimSku)" 
+                          -skuCount "$(apimSkuCount)" 
+                          -virtualNetworkExternalid "$(virtualNetworkId)" 
+                          -apimSubnetId "$(apimSubnetName)"'
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Tags
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'true'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Audience Name Value Pair
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimNamedValue.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)" -propertyId "audience" -propertyName "audience" -propertyValue "api://$(apiAppClientId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - SAP Name Value Pair
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimNamedValue.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)" -propertyId "sapRoleName" -propertyName "sapRoleName" -propertyValue "true-sap"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Flow Name Value Pair
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimNamedValue.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)" -propertyId "flowRoleName" -propertyName "flowRoleName" -propertyValue "true-flow"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Analytics Name Value Pair
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimNamedValue.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)" -propertyId "analyticsRoleName" -propertyName "analyticsRoleName" -propertyValue "true-analytics"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Add Product' 
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimProduct.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apimServiceName "$(apiManagementServiceName)" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Auth Server
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimOAuthServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apimOauthServerName "$(authCodeAuthServerName)" -apimName "$(apiManagementServiceName)" -tenantId "organizations" -clientId "$(apimAppClientId)" -clientSecret "$(apimAppSecret)" -grantType "authorizationCode" -defaultScope "api://$(apiAppClientId)/user_impersonation"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Auth Server Creds
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApimOAuthServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apimOauthServerName "$(clientCredsAuthServerName)" -apimName "$(apiManagementServiceName)" -tenantId "$(tenantId)" -clientId "$(apimAppClientId)" -clientSecret "$(apimAppSecret)" -grantType "clientCredentials" -defaultScope "api://$(apiAppClientId)/.default"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Admin API
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-TrueApi.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apimServiceName "$(apiManagementServiceName)" -swaggerUrl "$(openAPIUrl)" -apiPath "$(adminPath)" -policyFilePath "$(System.ArtifactsDirectory)/Drop/Policies/adminApiPolicy.xml" -apiName "$(apimDisplayName)" -apiServiceUrl "$(adminApiUrl)" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Analytics API
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-AnalyticsApis.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apimServiceName "$(apiManagementServiceName)" -swaggerUrl "$(openAPIUrlAnalytics)" -apiPath "$(analyticsPath)" -policyFilePath "$(System.ArtifactsDirectory)/Drop/Policies/analyticsApiPolicy.xml" -apiName "$(apimAnalyticsDisplayName)" -apiServiceUrl "$(analyticsApiUrl)" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - SAP API
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-TrueApi.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apimServiceName "$(apiManagementServiceName)" -swaggerUrl "$(openAPIUrlSAP)" -apiPath "$(sapPath)" -policyFilePath "$(System.ArtifactsDirectory)/Drop/Policies/sapApiPolicy.xml" -apiName "$(apimSapDisplayName)" -apiServiceUrl "$(sapApiUrl)" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Flow API
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-TrueApi.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apimServiceName "$(apiManagementServiceName)" -swaggerUrl "$(openAPIUrlFlow)" -apiPath "$(flowPath)" -policyFilePath "$(System.ArtifactsDirectory)/Drop/Policies/flowApiPolicy.xml" -apiName "$(apimFlowDisplayName)" -apiServiceUrl "$(flowApiUrl)" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Policies
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ProductPolicy.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(apiManagementServiceName)" -policyPath "$(System.ArtifactsDirectory)/Drop/Policies/productPolicy.xml" -productId "$(apimProductName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Admin Api Auth Server 
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApiAuthorizationServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apiName "$(apimDisplayName)" -apimName "$(apiManagementServiceName)" -path "$(apimProductName)" -authorizationServerName "$(authCodeAuthServerName)" -serviceUrl "$(adminApiUrl)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Analytics Api Auth Server 
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApiAuthorizationServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apiName "$(apimAnalyticsDisplayName)" -apimName "$(apiManagementServiceName)" -path "$(analyticsPath)" -authorizationServerName "$(clientCredsAuthServerName)" -serviceUrl "$(analyticsApiUrl)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - SAP Api Auth Server
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApiAuthorizationServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apiName "$(apimSapDisplayName)" -apimName "$(apiManagementServiceName)" -path "$(sapPath)" -authorizationServerName "$(clientCredsAuthServerName)" -serviceUrl "$(sapApiUrl)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Flow Api Auth Server
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-ApiAuthorizationServer.ps1'
+     ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -apiName "$(apimFlowDisplayName)" -apimName "$(apiManagementServiceName)" -path "$(flowPath)" -authorizationServerName "$(clientCredsAuthServerName)" -serviceUrl "$(flowApiUrl)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - SSL Binding
+   condition: and(succeeded(), eq('${{parameters.shared}}', 'true'))
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bind-SSL-APIM.ps1'
+     ScriptArguments: '-apimServiceName "$(apiManagementServiceName)" -resourceGroupName "${{parameters.resourceGroupName}}" -dnsName "$(dnsNameForApi)" -certificateFilePath "$(System.ArtifactsDirectory)/Drop/$(dnsNameForApi).pfx" -certificatePassword "$(sslCertPasswordForApi)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: APIM - Clean up
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Delete-DefaultApimResources.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -apiManagementServiceName "$(apiManagementServiceName)"'
+     azurePowerShellVersion: LatestVersion

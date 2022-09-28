@@ -1,0 +1,104 @@
+﻿// _notification.scss
+
+#{$ep}-notification {
+    $notify:&;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    background-color: $alert-info;
+    border-radius: pxToRem(6);
+    padding: pxToRem(11) pxToRem(20);
+    top: pxToRem(20);
+    left: pxToRem(40);
+    right: pxToRem(40);
+    z-index: 10000;
+
+    &__content{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: calc(100% - 80px);
+    }
+
+    &__title{
+        font-size: pxToRem(14);
+    }
+
+    &__msg {
+        font-size: pxToRem(14);
+    }
+
+    &__icn {
+        font-size: pxToRem(20);    
+        margin-right: pxToRem(20);    
+    }
+    &__info{
+        max-width: 100%;
+        &--sm{
+            width: calc(100% - 240px);
+        }
+    }
+    &__action{
+        width: pxToRem(240);
+        text-align: right;
+    }
+
+    &__close{
+        position: absolute;
+        font-size: pxToRem(20);    
+        right: pxToRem(20);
+    }
+
+    &--success{
+        background-color: $alert-success;
+
+        #{$notify}__icn,  #{$notify}__close{
+            color: $alert-success-dk;
+        }
+    }
+
+    &--error{
+        background-color: $alert-error;
+
+        #{$notify}__icn,  #{$notify}__close{
+            color: $alert-error-dk;
+        }
+    }
+
+    &--warning{
+        background-color: $alert-warning;
+
+        #{$notify}__icn,  #{$notify}__close{
+            color: $alert-warning-dk;
+        }
+    }
+
+    &--info{
+        background-color: $alert-info;
+
+        #{$notify}__icn,  #{$notify}__close{
+            color: $alert-info-dk;
+        }
+    }
+
+    &--modal{
+        top: pxToRem(50);
+        left: pxToRem(30);
+        right: pxToRem(30);
+        & + #{$ep}-form {
+            position: relative;
+            top:pxToRem(40);
+        }
+    }
+
+    &--sync{
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: pxToRem(20);
+        
+        #{$notify}__content{
+            width: calc(100% - 40px);
+        }
+    }
+}

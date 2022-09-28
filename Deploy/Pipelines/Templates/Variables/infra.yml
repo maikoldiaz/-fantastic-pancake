@@ -1,0 +1,759 @@
+﻿variables:
+- name: deployLocation
+  value: $(region)
+- name: locationShortName
+  value: $(regionShortName)
+- name: csvContainerNames
+  value: 'operativemovementshistory,operativemovementswithownershiphistory,nodes,workfiles'
+- name: adsGroupName
+  value: 'AG-EAU-ECP-DEV'
+- name: azureSqlKeyName
+  value: 'sqlconnectionstring'
+- name: integrationServiceBusKeyName
+  value: 'IntServiceBusConnectionString'
+- name: companyName
+  value: 'ecp'
+- name: dockerFilePath
+  value: 'Develop/Dockerfile'
+- name: homologationRefreshIntervalInSecs
+  value: '60'
+- name: commandTimeoutInSecs
+  value: '120'
+- name: instrumentationKeyName
+  value: 'InstrumentationKey'
+- name: blockchainAdminNodeKeyName
+  value: 'BlockchainAdminKey'
+- name: applicationConfigurationVersionKey
+  value: 'ConfigurationVersion'
+- name: applicationConfigurationVersion
+  value: 'v1'
+- name: resourceGroup
+  value: 'RG-'
+- name: rgType
+  value: 'RG'
+- name: authclientsecretKey
+  value: 'authclientsecret'  
+- name: serviceBusConnectionStringHmgKey
+  value: 'HomologationServiceBusConnectionString'
+- name: serviceBusConnectionStringIntKey
+  value: 'IntegrationServiceBusConnectionString'
+- name: sqlCollation
+  value: 'SQL_Latin1_General_CP1_CI_AS'
+- name: storageAccountConnectionStringKey
+  value: 'storageAccountConnectionString'
+- name: storageAccountEndpointKey
+  value: 'storageAccountKey'
+- name: storageAccountKeyName
+  value: 'StorageConnectionString'
+- name: logAnalyticsKeyName
+  value: 'LAWSSharedKey'
+- name: logAnalyticsWorkspaceId
+  value: 'LAWSId'
+- name: storageAccessKeyName
+  value: 'StorageAccessKey'
+- name: trueSolutionPath
+  value: 'Develop/Ecp.True.All.sln'
+- name: suffix
+  value: '${{ variables.locationShortName }}${{ variables.companyName }}$(env)'
+- name: suffixHyphenated
+  value: '${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)'
+- name: sqlTableToInsert
+  value: '[Admin].[FileRegistration]'
+- name: acr
+  value: 'ac${{ variables.suffix }}'
+- name: aksName
+  value: 'k8-${{ variables.suffixHyphenated }}'
+- name: aksLoadBalancerName
+  value: 'kubernetes'
+- name: azureSubscription
+  value: 'RG-${{ variables.suffixHyphenated }}'
+- name: environmentType
+  value: '$(env)'
+- name: saAccountName
+  value: 'sa${{ variables.locationShortName }}${{ variables.companyName }}$(env)'
+- name: serviceBusNamespace
+  value: 'sb-${{ variables.suffixHyphenated }}'
+- name: serviceBusQueueNames
+  value: '["Movement","Inventory","Losses","SpecialMovements"]'
+- name: serviceBusNamespaceNames
+  value: '["sb-${{ variables.suffixHyphenated }}-Int","sb-${{ variables.suffixHyphenated }}-Hmg"]'
+- name: rootAccesslevel
+  value: '["Listen","Send","Manage"]'
+- name: containerNames
+  value: '["True","Ownership","ValidatedOwnership","dbbackups","OperativeMovementsHistory","OperativeMovementswithOwnershipHistory","Nodes","WorkFiles","dataprotectionkeys", "delta"]'
+- name: apiConnSuffix
+  value: 'AC-${{ variables.suffixHyphenated }}'
+- name: blobConnectionDisplayName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-BC'
+- name: blobConnectionName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-BC'
+- name: blobFolderPathToStoreMQMessages
+  value: '/true/sinoper/xml/'
+- name: blobFolderPathToStoreMQMessagesTest
+  value: '/true-test/sinoper/xml/'
+- name: blobFolderPathToStoreMQMessagesTestUriFormat
+  value: '%2ftrue-test%2fsinoper%2fxml%2f'
+- name: invQueueShortName
+  value: 'inv'
+- name: labelPassingToQueueForIdentification
+  value: 'sinoper_'
+- name: logicAppLocation
+  value: 'eastus'
+- name: loQueueMsgType
+  value: 'Loss'
+- name: loQueueShortName
+  value: 'lo'
+- name: moQueueMsgType
+  value: 'Movement'
+- name: movQueueShortName
+  value: 'mov'
+- name: mqAuthType
+  value: 'basic'
+- name: mqConnectionDisplayName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-MQ'
+- name: mqConnectionName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-MQ'
+- name: mqEnableSSL
+  value: 'false'
+- name: recurrenceFrequencyOfLogicApp
+  value: 'Second'
+- name: recurrenceIntervalOfLogicAppInSeconds
+  value: '10'
+- name: recurrenceIntervalOfLogicAppInDays
+  value: '1'
+- name: recurrenceIntervalOfTestLogicAppInSeconds
+  value: '3000'
+- name: serviceBusConnectionDisplayName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-SB'
+- name: serviceBusConnectionName
+  value: 'AC-${{ variables.locationShortName }}-${{ variables.companyName }}-$(env)-SB'
+- name: splMoQueueMsgType
+  value: 'SpecialMovement'
+- name: splMovQueueShortName
+  value: 'sm'
+- name: systemName
+  value: 'true'
+- name: consortiumName
+  value: 'CNS-${{ variables.suffixHyphenated }}'
+- name: consortiumNameBlockchain
+  value: 'CNS${{ variables.suffix }}'
+- name: publisherEmail
+  value: 'epoffteam@microsoft.com'
+- name: contactEmail
+  value: 'carlos.pena@ecopetrol.com.co'  
+- name: publisherName
+  value: 'EcoPetrol'  
+- name: locationName
+  value: eastus
+- name: relativeUrl
+  value: 'true'
+- name: ethAccountAddressKey
+  value: EthereumAccountAddress
+- name: ethAccountSecretKey
+  value: EthereumAccountKey
+- name: rolloutenvironment
+  value: '${{ variables.locationName }}.asazure.windows.net'
+- name: aasAdminMembers
+  value: '["obj:$(adsGroupPrincipalId)@$(tenantId)","obj:$(aasAdminGroup)@$(tenantId)","app:$(aasAppClientId)@$(tenantId)","app:$(powerBIAppID)@$(tenantId)"]'
+- name: modelPath
+  value: 'TabularModel'
+- name: aasModelName
+  value: 'EcpTrueDIAas'
+- name: deploymentslimit
+  value: '500'
+- name: powerBIReportName
+  value: 'PB-${{ variables.suffixHyphenated }}'
+- name: trafficManagerDNSName
+  value: 'tm-${{ variables.suffixHyphenated }}-ui'
+- name: trafficManagerDNSNameApi
+  value: 'tm-${{ variables.suffixHyphenated }}-api'
+- name: subNetAppGateway
+  value: 'sn-${{ variables.suffixHyphenated }}'
+- name: appGatewayName
+  value: 'ag-${{ variables.suffixHyphenated }}'
+- name: virtualNetworkAppGateway
+  value: 'vn-${{ variables.suffixHyphenated }}'
+- name: publicIPAddressAppGateway
+  value: 'pi-${{ variables.suffixHyphenated }}'
+- name: healthProbeNameAppGateway
+  value: 'hp-${{ variables.suffixHyphenated }}'
+- name: vNetAddressPrefixAppGateway
+  value: '10.0.0.0/16'
+- name: vNetSubnetPrefixAppGateway
+  value: '10.0.0.0/28'
+- name: externalEndpointNameTM
+  value: 'ee-${{ variables.suffixHyphenated }}'
+- name: odbcSqlConnectionStringName
+  value: 'OdbcSqlConnectionString'
+- name: webAppAccessRestrictionRuleName
+  value: 'appgatewayAccessRule'
+- name: subnetNameofWebAppVnet
+  value: 'websn-${{ variables.suffixHyphenated }}'
+- name: pitrDays
+  value: 35
+- name: blobStorageRetentionDays
+  value: 7
+- name: ltrWeekly
+  value: "P6W"
+- name: ltrMonthly
+  value: "P12M"
+- name: ltrYearly
+  value: "P10Y"
+- name: ltrWeekOfYear
+  value: 16
+- name: dbBackupsBlobContainer
+  value: 'dbbackups'
+- name: runAsAccountCertName
+  value: 'AzureRunAsCertificate'
+- name: apiProjectName
+  value: ecptrue
+- name: analyticsProjectName
+  value: ecptrue-ana
+- name: sapApiProjectName
+  value: ecptrue-sap
+- name: flowApiProjectName
+  value: ecptrue-flow
+- name: aksDevClusterName
+  value: 'AKS-${{ variables.suffixHyphenated }}-COMUN'
+- name: aksDevResourceGroup
+  value: 'RG-${{ variables.suffixHyphenated }}-AKS-COMUN'
+- name: aksDnsPrefix
+  value: 'AKS-${{ variables.suffixHyphenated }}'
+- name: aksAgentPoolName
+  value: 'akspool'
+- name: aksAgentPoolVmSize
+  value: 'Standard_D4s_v3'
+- name: aksAgentPoolVmCount
+  value: 4
+- name: aksNetworkPlugin
+  value: 'azure'
+- name: aksServiceCidr
+  value: '10.0.0.0/16'
+- name: aksDnsServiceIP
+  value: '10.0.0.10'
+- name: aksdockerBridgeCidr
+  value: '172.17.0.1/16'
+- name: namespace
+  value: 'app-blockchain'
+- name: serviceAccount
+  value: 'tiller'
+- name: identityName
+  value: 'MSI-AKS-${{ variables.suffixHyphenated }}'
+- name: signalRServiceMode
+  value: 'Default'
+- name: signalRConnectionStringName
+  value: 'Settings--SignalRConnectionString'
+- name: apimDisplayName
+  value: 'True Admin API'
+- name: apimSAPDisplayName
+  value: 'True SAP API'
+- name: apimFlowDisplayName
+  value: 'TRUE Flow API'
+- name: apimApiName
+  value: 'TRUEAPI'
+- name: apimProductName
+  value: 'TRUE'
+- name: datFilesContainerName
+  value: 'workfiles'
+- name: aksSubnetServiceEndpoint
+  value: 'Microsoft.Sql,Microsoft.Web,Microsoft.ServiceBus,Microsoft.KeyVault'
+- name: apimSubnetServiceEndpoint
+  value: 'Microsoft.Web,Microsoft.ServiceBus,Microsoft.KeyVault'
+- name: sqlSubnetServiceEndpoint
+  value: 'Microsoft.Sql,Microsoft.Web'
+- name: aksNamespace
+  value: 'app-blockchain'
+- name: apimAnalyticsDisplayName
+  value: 'True Analytics API'
+- name: sqlPackageExePath
+  value: 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150\sqlpackage.exe'
+- name: excelEventQueue
+  value: 'excelevent'
+- name: homologatedEventQueue
+  value: 'homologatedevents'
+- name: registerEventQueue
+  value: 'registerevents'
+- name: flowApprovalsQueueName
+  value: 'flowapprovals'
+- name: excelQueueName
+  value: 'excel'
+- name: invQueueName
+  value: 'inventory'
+- name: loQueueName
+  value: 'losses'
+- name: movQueueName
+  value: 'movements'
+- name: splMovQueueName
+  value: 'specialmovements'
+- name: invBCQueueName
+  value: 'inventorybc'
+- name: movBCQueueName
+  value: 'movementsbc'
+- name: calQueueName
+  value: calculations
+- name: tfmMovQueueName
+  value: 'homologatedmovements'
+- name: tfmInvQueueName
+  value: 'homologatedinventory'
+- name: valInvQueueName
+  value: 'validatedinventory'
+- name: valMovQueueName
+  value: 'validatedmovements'
+- name: adminQueueName
+  value: 'admin'
+- name: ownInvQueueName
+  value: 'ownershipinventory'
+- name: ownMovQueueName
+  value: 'ownershipmovements'
+- name: ownCalQueueName
+  value: 'calculateOwnership'
+- name: reqOwnQueueName
+  value: 'requestOwnership'
+- name: blockchainEventsQueueName
+  value: 'blockchainevents'
+- name: registerContractsQueueName
+  value: 'registercontracts'
+- name: excelContractQueueName
+  value: 'excelcontract'
+- name: homologatedContractsQueueName
+  value: 'homologatedcontracts'
+- name: approvalsQueueName
+  value: 'approvals'
+- name: registerNodeProductCalculationsQueueName
+  value: 'nodeproductcalculations'
+- name: nodeOwnershipCalculationsQueueName
+  value: 'nodeownershipcalculations'
+- name: "retryMessageQueueName"
+  value: 'json'
+- name: logisticsQueue
+  value: 'logistics'
+- name: analyticalOwnershipQueue
+  value: 'analyticalownership'
+- name: strategiesQueue
+  value: 'strategies'
+- name: ownershipRulesQueue
+  value: 'ownershiprulessync'
+- name: blockchainMovementQueueName
+  value: 'blockchainmovement'
+- name: blockchainInventoryProductQueueName
+  value: 'blockchaininventoryproduct'
+- name: blockchainOwnerQueueName
+  value: 'blockchainowner'
+- name: blockchainNodeQueueName
+  value: 'blockchainnode'
+- name: blockchainNodeConnectionQueueName
+  value: 'blockchainnodeconnection'
+- name: blockchainOwnershipQueueName
+  value: 'blockchainownership'
+- name: blockchainNodeProductCalculationQueueName
+  value: 'blockchainnodeproductcalculation'
+- name: ownershipQueueName
+  value: 'ownership'
+- name: operationalCutoffQueueName
+  value: 'operationalcutoff'
+- name: RecalculateOperationalCutoffBalanceQueueName
+  value: 'recalculateoperationalcutoffbalance'
+- name: deadletterQueueName
+  value: 'deadletter'
+- name: sapQueueName
+  value: 'sap'
+- name: sapLogisticQueueName
+  value: 'saplogistic'
+- name: deltaQueueName
+  value: 'delta'
+- name: offchainQueueName
+  value: 'offchain'
+- name: officialdeltaQueueName
+  value: 'officialdelta'
+- name: consolidationQueueName
+  value: 'consolidation'
+- name: dataQueueName
+  value: 'data'
+- name: beforeCutoffReportQueueName
+  value: 'beforecutoffreport'
+- name: officialNodeBalanceReportQueueName
+  value: 'officialnodebalancereport'
+- name: officialInitialBalanceReportQueueName
+  value: 'officialinitialbalancereport'
+- name: operativeBalanceReportQueueName
+  value: 'operativebalancereport'
+- name: sapBalanceReportQueueName
+  value: 'sapbalancereport'
+- name: userRolesAndPermissionsReportQueueName
+  value: 'userrolesandpermissionsreport'
+- name: deltaApprovalsQueueName
+  value: 'deltaapprovals'
+- name: officialLogisticsQueueName
+  value: 'officiallogistics'
+- name: conciliationQueueName
+  value: 'conciliationqueue' 
+- name: RecalculateOwnershipBalanceQueueName
+  value: 'recalculateownershipbalance'
+- name: blockchainOfficialQueueName
+  value: 'blockchainofficial'
+- name: transformPurgeInterval
+  value: '0 0 * * * *'
+- name: operationalCutOffPurgeInterval
+  value: '0 0 * * * *'
+- name: ownershipPurgeInterval
+  value: '0 0 * * * *'
+- name: reconcilerInterval
+  value: '0 */30 * * * *'
+- name: deltaPurgeInterval
+  value: '0 0 * * * *'
+- name: officialDeltaPurgeInterval
+  value: '0 0 * * * *'
+- name: blockchainRoleName
+  value: 'Blockchain Member Node Access (Preview)'
+- name: blockchainMemberResourceId
+  value: '5838b1ed-6c81-4c2f-8ca1-693600b4e6ca'
+- name: analysisClientSecret
+  value: 'AnalysisSettingsClientSecret'
+- name: analyticsClientSecret
+  value: 'AnalyticsSettingsClientSecret'
+- name: summary
+  value: 'TRUE' 
+- name: managedBlockchainResourceGroupId
+  value: 'RG-${{ variables.suffixHyphenated }}-${{ variables.summary }}-QBS'
+- name: resourceGroupName
+  value: 'RG-${{ variables.suffixHyphenated }}-${{ variables.summary }}'
+- name: sharedResourceGroupName
+  value: 'RG-${{ variables.suffixHyphenated }}-Shared'
+- name: infrastructureResourceGroupName
+  value: 'RG-${{ variables.suffixHyphenated }}-Infrastructure'
+- name: aksNodeResourceGroup
+  value: '${{ variables.sharedResourceGroupName }}-NODOS'
+- name: aksManagedClustersName
+  value: 'K8-${{ variables.suffixHyphenated }}-MainAKS$(env)'
+- name: aksClusterName
+  value: 'K8-${{ variables.suffixHyphenated }}-MainAKS$(env)'
+- name: aksCertName
+  value: 'red.ecopetrol.com.co'
+- name: logAnalyticsWorkspaceName
+  value: 'LA-${{ variables.suffixHyphenated }}-MainLAW$(env)'
+- name: apiManagementServiceName
+  value: 'am-${{variables.suffixHyphenated}}-mainapimgmt$(env)'
+- name: hostName
+  value: '$(env)-aks.red.ecopetrol.com.co'
+- name: adminApiUrl
+  value: 'https://${{ variables.hostName }}'
+- name: analyticsApiUrl
+  value: 'https://${{ variables.hostName }}/analytics'
+- name: sapApiUrl
+  value: 'https://${{ variables.hostName }}/sap'
+- name: flowApiUrl
+  value: 'https://${{ variables.hostName }}/flow'
+- name: openAPIUrl
+  value: 'https://${{ variables.hostName }}/swagger/v1/swagger.json'
+- name: openAPIUrlAnalytics
+  value: 'https://${{ variables.hostName }}/analytics/swagger.json'
+- name: openAPIUrlSAP
+  value: 'https://${{ variables.hostName }}/sap/swagger/v1/swagger.json'
+- name: openAPIUrlFlow
+  value: 'https://${{ variables.hostName }}/flow/swagger/v1/swagger.json'
+- name: appGatewayCertName
+  value: '${{ variables.appGatewayName }}-true-cert'
+- name: appGatewaybackendPoolName
+  value: 'BP-${{ variables.suffixHyphenated }}-TRUE'
+- name: appGatewayFrontEndportName
+  value: '${{ variables.appGatewayName }}-frontendport'
+- name: appGatewayListenerName
+  value: 'Listener$(env)True'
+- name: appGatewayProbeConfigName
+  value: '${{ variables.appGatewayName }}-probeconfig'
+- name: appGatewayBackendHttpSettingsName
+  value: 'HttpSetting$(env)True'
+- name: appGatewayRuleName
+  value: '$(env)True'
+- name: appGatewayResourceGroupName
+  value: 'RG-AEU-ECP-SHD-Shared'
+- name: appGatewaySharedName
+  value: 'AG-AEU-ECP-SHD-ApplicationGateway'
+- name: privateDnsZoneLinkName
+  value: 'LK-${{ variables.suffixHyphenated }}-VN'
+- name: databaseName
+  value: 'db${{ variables.suffix }}true'
+- name: adminPath
+  value: 'true'
+- name: analyticsPath
+  value: 'analytics'
+- name: sapPath
+  value: 'sap'
+- name: flowPath
+  value: 'flow'
+- name: dataFactoryName
+  value: 'df-${{ variables.suffixHyphenated }}-MainDF$(env)'
+- name: applicationInsights
+  value: 'AI-${{ variables.suffixHyphenated }}-MainAI$(env)'
+- name: calFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}calculate'
+- name: bcFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}blockchain'
+- name: dltFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}transactions'
+- name: transformFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}homologate'
+- name: valFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}validate'
+- name: ownershipFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}ownership'
+- name: approvalsFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}approvals'
+- name: dlFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}deadletter'
+- name: deltaFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}delta'
+- name: sapFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}sap'
+- name: reportingFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}reporting'
+- name: appServiceNameUI
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}UserInterface'
+- name: blockchainMemberName
+  value: 'qbs${{ variables.suffix }}${{ variables.systemName }}'
+- name: analysisServicesName
+  value: 'as${{ variables.locationShortName }}${{ variables.companyName }}$(env)true'
+- name: serviceBusNamespaceNameInt
+  value: 'sb-${{ variables.suffixHyphenated }}-${{ variables.systemName }}'
+- name: storageAccountName
+  value: 'sa${{ variables.suffix }}${{ variables.systemName }}'
+- name: storageNameforXmlInsertion
+  value: 'sa${{ variables.suffix }}${{ variables.systemName }}'
+- name: keyVault
+  value: 'KV-${{ variables.suffixHyphenated }}-${{ variables.systemName }}'
+- name: keyVaultShared
+  value: 'KV-${{ variables.suffixHyphenated }}-Shared'
+- name: keyVaultAddress
+  value: '${{ variables.keyVault }}'
+- name: keyVaultUrl
+  value: 'https://${{ variables.keyVault }}.vault.azure.net/'
+- name: appServicePlanName
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}'
+- name: sharedAppServicePlanName
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}-SHARED'
+- name: logicAppMovementQueueNameSuffix
+  value: 'Movements'
+- name: logicAppInventoryQueueNameSuffix
+  value: 'Inventory'
+- name: logicAppSpecialMovementsQueueNameSuffix
+  value: 'SpecialMovements'
+- name: logicAppLossesQueueNameSuffix
+  value: 'Losses'
+- name: containerRegistry
+  value: 'cr${{ variables.suffix }}${{ variables.systemName }}'
+- name: imageRegistryName
+  value: 'cr${{ variables.suffix }}${{ variables.systemName }}'
+- name: logicAppSuffix
+  value: 'LP-${{ variables.suffixHyphenated }}'
+- name: appServiceConsumptionPlanName
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}Consumption'
+- name: rpcendpoint
+  value: 'https://${{ variables.blockchainMemberName }}.blockchain.azure.com:3200/'
+- name: blockchainResourceId
+  value: '/subscriptions/$(subscriptionId)/resourceGroups/${{ variables.resourceGroupName }}/providers/Microsoft.Blockchain/blockchainMembers/${{variables.blockchainMemberName}}'
+- name: analysisServer
+  value: 'asazure://$(deploymentRegion).asazure.windows.net/as${{variables.suffix}}${{variables.systemName}}'
+- name: analysisServerModel
+  value: '${{variables.companyName}}${{variables.systemName}}diaas'
+- name: virtualMachineName
+  value: '$(regionShortName)${{ variables.companyName }}I${{ variables.systemName }}$(vmEnvSuffix)G1Q'
+- name: virtualMachineNicName
+  value: '${{variables.virtualMachineName}}-NI'
+- name: logAnalyticsResourceID
+  value: '/subscriptions/$(subscriptionId)/resourceGroups/${{ variables.sharedResourceGroupName }}/providers/Microsoft.OperationalInsights/workspaces/${{variables.logAnalyticsWorkspaceName}}'
+- name: redisCacheName
+  value: 'rc-${{ variables.suffixHyphenated }}-true'
+- name: signalRServiceName
+  value: 'sr-${{ variables.suffixHyphenated }}-true'
+- name: workspaceName
+  value: 'WS-${{ variables.suffixHyphenated }}-TRUE'
+- name: sendGridName
+  value: 'SG-${{ variables.suffixHyphenated }}-TRUE'
+- name: sharedDashboardName
+  value: 'SD-${{ variables.suffixHyphenated }}-MainSD$(env)'
+- name: msisqlconnectionstring
+  value: 'Data Source=$(sqlServerName);Initial Catalog=db${{variables.suffix}}true;Pooling=true;Max Pool Size=300;MultipleActiveResultSets=True;Connection Timeout=30;'
+- name: funcAppServicePlanName
+  value: '${{variables.appServicePlanName}}-FA'
+- name: deprecatedFunctions
+  value: '${{variables.dltFunctionAppName}},${{variables.approvalsFunctionAppName}}'
+- name: funcAppArrayForScaling
+  value: '${{variables.transformFunctionAppName}}'
+- name: availabilityFunctionAppName
+  value: 'fa-${{ variables.suffixHyphenated }}-${{ variables.systemName }}availability'
+- name: webAppsForAppSettingsUpdate
+  value: '${{variables.availabilityFunctionAppName}},${{variables.calFunctionAppName}},${{variables.sapFunctionAppName}},${{variables.deltaFunctionAppName}},${{variables.bcFunctionAppName}},${{variables.transformFunctionAppName}},${{variables.ownershipFunctionAppName}},${{variables.dlFunctionAppName}},${{variables.reportingFunctionAppName}}'
+- name: dataFactoryMsi
+  value: 'dataFactoryMsiId'
+- name: vmStorageAccountName
+  value: 'saaeuecp$(env)bootlogs'
+- name: dataScienceVirtualMachineName
+  value: '$(regionShortName)${{ variables.companyName }}I${{ variables.systemName }}DS1$(vmEnvSuffix)'
+- name: dataScienceVirtualMachineNicName
+  value: '${{variables.dataScienceVirtualMachineName}}-NI'
+- name: userDataScienceVm
+  value: 'DataScientist'
+- name: authCodeAuthServerName
+  value: '$(apiManagementServiceName)-authcode'
+- name: clientCredsAuthServerName
+  value: '$(apiManagementServiceName)-clientcreds'
+- name: appServicePlanNameUI
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}-UI'
+- name: solSignatureSecretName
+  value: 'FlowSolutionHash'
+- name: auditModelPath
+  value: 'AuditTabularModel'
+- name: analysisServerAuditModel
+  value: '${{variables.companyName}}${{variables.systemName}}diaasaudit'
+- name: sqlPowerBiReports
+  value: '10.10.03EvaluacionModelosAnaliticosPorcentajePropiedad03,10.10.04BalanceOperativo04,10.10.06ComprasyVentas06,10.10.07AprobacionesBalanceConPropiedadPorNodo07,10.10.08ConfiguracionDetalladaPorNodo08,10.10.13BalanceOficialInicialCargado13,10.10.16DeOtrosSegmentosConPropiedad16,10.10.18EstadosEnvioSap18,10.10.19RoleConMenus19,10.10.20NodeOficialStatus20,10.10.21UserRole21,10.10.22UserRoleMenu22'
+- name: auditModelPowerBiReports
+  value: '10.10.09AuditoriaDeConfiguraciones09,10.10.10AuditoriaDeMovimientos10,10.10.11AuditoriaDeInventarios11,10.10.15PendientesOficialesDePeriodosAnteriores15'
+- name: adfObjectsToDelete
+  value: ''
+- name: 'appServicePlanNameReporting'
+  value: 'AP-${{ variables.suffixHyphenated }}-${{ variables.systemName }}-REP'
+- name: 'actionGroupName'
+  value: 'AG-${{ variables.suffixHyphenated }}-${{ variables.systemName }}-ALERTS'
+- name: 'actionGroupShortName'
+  value: 'AG-${{ variables.systemName }}'
+- name: 'uiAppServicePlanCPUConsumptionAlertName'
+  value: 'RA-${{ variables.suffixHyphenated }}-UIServicePlanCPUConsumption'
+- name: 'uiAppServicePlanHttp404AlertName'
+  value: 'RA-${{ variables.suffixHyphenated }}-SecurityAlert_http404'
+- name: 'uiAppServicePlanHttp401AlertName'
+  value: 'RA-${{ variables.suffixHyphenated }}-SecurityAlert_authIssue_http401'
+- name: 'uiAppServicePlanHttp403AlertName'
+  value: 'RA-${{ variables.suffixHyphenated }}-SecurityAlert_authIssue_http403'
+- name: 'functionsServicePlanCPUConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-FunctionsServicePlanCPUConsumption'
+- name: uiAppServicePlanMemoryConsumptionAlertName
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEUIServicePlanMemoryConsumption'
+- name: functionsServicePlanMemoryConsumptionAlertName
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEFunctionsServicePlanMemoryConsumption'
+- name: 'uiServerErrorsAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEUIServerErrors'
+- name: 'blockChainMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEBlockChainMemoryConsumption'
+- name: 'blockChainCpuConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEBlockChainCPUConsumption'
+- name: 'ecptrueControllerCpuConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-trueControllerCPUConsumption'
+- name: 'ecptrueAnalyticsControllerCpuConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-anaControllerCPUConsumption'
+- name: 'ecptrueSapControllerCpuConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-sapControllerCPUConsumption'
+- name: 'ecptrueFlowControllerCpuConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-flowControllerCPUConsumption'
+- name: 'ecptrueControllerMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-trueControllerMemoryConsumption'
+- name: 'ecptrueAnalyticsControllerMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-anaControllerMemoryConsumption'
+- name: 'ecptrueSapControllerMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-sapControllerMemoryConsumption'
+- name: 'ecptrueFlowControllerMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-true-flowControllerMemoryConsumption'
+- name: 'aKSNodesAvailableDiskConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-AKSNodesAvailableDisk'
+- name: 'registrationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueRegistrationFailure'
+- name: 'cutoffFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueCutoffFailure'
+- name: 'sapUploadSellFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueSapUploadSellFailure'
+- name: 'sapUploadPurchaseFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueSapUploadPurchaseFailure'
+- name: 'sapUploadMovementOrInventoryFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueSapUploadMovementOrInventoryFailure'
+- name: 'sapUploadLogisticMovementFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueSapUploadLogisticMovementFailure'
+- name: 'conciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueConciliationFailure'
+- name: 'operativeDeltaFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueOperativeDeltaFailure'
+- name: 'ownershipFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueOwnershipFailure'
+- name: 'officialDeltaFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueOfficialDeltaFailure'
+- name: 'officialTransferPointRegistrationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TrueOfficialTransferPointRegistrationFailure'
+- name: 'nodeReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-NodeReconcileFailed'
+- name: 'nodeConnectionReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-NodeConnectionReconcileFailed'
+- name: 'offchainSyncFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-OffchainSyncFailed'
+- name: 'movementReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-MovementReconcileFailed'
+- name: 'inventoryReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-InventoryReconcileFailed'
+- name: 'unbalanceReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-UnbalanceReconcileFailed'
+- name: 'ownershipReconciliationFailureAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-OwnershipReconcileFailed'
+- name: 'serviceBusCPUConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEServiceBusCPUConsumption'
+- name: 'serviceBusMemoryConsumptionAlertName'
+  value: 'AR-${{ variables.suffixHyphenated }}-TRUEServiceBusMemoryConsumption'
+- name: 'trueUnhealthyResources'
+  value: 'RA-${{ variables.suffixHyphenated }}-TrueUnhealthyResources'
+- name: 'registrationFailureEvent'
+  value: 'RegistrationFailure'
+- name: 'cutoffFailureEvent'
+  value: 'CutoffFailure'
+- name: 'operativeDeltaFailureEvent'
+  value: 'OperativeDeltaFailure'
+- name: 'ownershipFailureEvent'
+  value: 'OwnershipFailure'
+- name: 'officialDeltaFailureEvent'
+  value: 'OfficialDeltaFailure'
+- name: 'officialTransferPointRegistrationFailureEvent'
+  value: 'OfficialTransferPointRegistrationFailure'
+- name: 'nodeReconciliationFailureEvent'
+  value: 'NodeReconcileFailed'
+- name: 'nodeConnectionReconciliationFailureEvent'
+  value: 'NodeConnectionReconcileFailed'
+- name: 'offchainSyncFailureEvent'
+  value: 'OffchainSyncFailed'
+- name: 'movementReconciliationFailureEvent'
+  value: 'MovementReconcileFailed'
+- name: 'inventoryReconciliationFailureEvent'
+  value: 'InventoryReconcileFailed'
+- name: 'unbalanceReconciliationFailureEvent'
+  value: 'UnbalanceReconcileFailed'
+- name: 'ownershipReconciliationFailureEvent'
+  value: 'OwnershipReconcileFailed'
+- name: availabilityInterval
+  value: '0 */5 * * * *'
+- name: availabilityChaos
+  value: false
+- name: officialLogisticsQueueName
+  value: 'officiallogistics'
+- name: sessionQueues
+  value: '${{variables.officialLogisticsQueueName}},${{variables.operationalCutoffQueueName}},${{variables.ownershipQueueName}},${{ variables.blockchainMovementQueueName }},${{ variables.blockchainInventoryProductQueueName }},${{ variables.blockchainNodeQueueName }},${{ variables.blockchainNodeConnectionQueueName }},${{ variables.blockchainOwnershipQueueName }},${{ variables.blockchainNodeProductCalculationQueueName }},${{ variables.tfmMovQueueName }},${{ variables.tfmInvQueueName }},${{ variables.homologatedContractsQueueName }},${{ variables.homologatedEventQueue }},${{ variables.ownershipRulesQueue }},${{ variables.deltaQueueName }},${{ variables.sapQueueName }},${{ variables.officialdeltaQueueName }},${{ variables.consolidationQueueName }},${{ variables.officialLogisticsQueueName }},${{ variables.blockchainOfficialQueueName }},${{ variables.blockchainOwnerQueueName }},${{ variables.sapLogisticQueueName }},${{ variables.conciliationQueueName }},${{ variables.RecalculateOperationalCutoffBalanceQueueName }}'
+- name: normalQueues
+  value: '${{variables.finalizerQueueName}},${{variables.deadletterQueueName}},${{ variables.retryMessageQueueName }},${{ variables.excelContractQueueName }},${{ variables.excelEventQueue }},${{ variables.logisticsQueue }},${{ variables.ownCalQueueName }},${{ variables.excelQueueName }},${{ variables.approvalsQueueName }},${{ variables.flowApprovalsQueueName }},${{ variables.offchainQueueName }},${{ variables.dataQueueName }},${{ variables.deltaApprovalsQueueName }},${{ variables.beforeCutoffReportQueueName }},${{ variables.officialInitialBalanceReportQueueName }},${{ variables.operativeBalanceReportQueueName }},${{ variables.sapBalanceReportQueueName }},${{ variables.userRolesAndPermissionsReportQueueName }},${{ variables.RecalculateOwnershipBalanceQueueName }}'
+- name: deprecatedQueues
+  value: '${{variables.dataQueueName}},${{variables.officialNodeBalanceReportQueueName}},${{variables.strategiesQueue}},${{variables.ownMovQueueName}},${{variables.ownInvQueueName}},${{variables.registerContractsQueueName}},${{variables.registerEventQueue}},${{variables.valMovQueueName}},${{variables.valInvQueueName}},${{variables.registerNodeProductCalculationsQueueName}},${{variables.nodeOwnershipCalculationsQueueName}},${{variables.adminQueueName}},${{variables.calQueueName}},${{variables.reqOwnQueueName}},${{variables.analyticalOwnershipQueue}},${{variables.blockchainEventsQueueName}},${{ variables.movQueueName }},${{ variables.invQueueName }},${{ variables.splMovQueueName }},${{ variables.loQueueName }}'
+- name: reportPurgeInterval
+  value: '0 0 0 * * *'
+- name: acrId
+  value: 'pid-adb8eac6-989a-5354-8580-19055546ec74'
+- name: connSufficLogicApp
+  value: '${{variables.apiConnSuffix}}-${{variables.systemName}}'
+- name: depricatedLogicAppConnections
+  value: '${{variables.connSufficLogicApp}}BLOBSTORAGE,${{variables.connSufficLogicApp}}SERVICEBUS,${{variables.connSufficLogicApp}}SQLSERVER,${{variables.connSufficLogicApp}}MQINVENTORY,${{variables.connSufficLogicApp}}MQMOVEMENTS,${{variables.connSufficLogicApp}}MQLOSSES,${{variables.connSufficLogicApp}}MQSPECIALMOVEMENTS'
+- name: suffixLa
+  value: '${{variables.logicAppSuffix}}-${{variables.systemName}}'
+- name: depricatedLogicApp
+  value: '${{variables.suffixLa}}INVENTORY,${{variables.suffixLa}}INVENTORY-TEST,${{variables.suffixLa}}LOSSES,${{variables.suffixLa}}LOSSES-TEST,${{variables.suffixLa}}MOVEMENTS,${{variables.suffixLa}}MOVEMENTS-TEST,${{variables.suffixLa}}SPECIALMOVEMENTS-TEST,${{variables.suffixLa}}SPECIALMOVEMENTS'
+- name: appserviceplan
+  value: 'appserviceplan'
+- name: webapp
+  value: 'webapp'
+- name: kvRequiredSecretKeys
+  value: 'sslCertPasswordForAks,sslCertPasswordForApi,sslCertPasswordForUI'
+- name: kvRequiredCertificateKeys
+  value: 'redecopetrolcomco,$(env)apiecopetrolcomco,$(env)trueecopetrolcomco'
+- name: storageTableNameForConfiguration
+  value: 'ConfigurationSetting'

@@ -1,0 +1,19 @@
+variables:
+    - group: true-secrets-nonprd-shared
+    - group: true-release-threshold
+    - group: true-secrets-qas
+    - group: true-network-qas
+    - group: true-mq-qas
+    - template: ../Templates/Variables/package.yml
+    - template: ../Templates/Variables/infra.yml
+    - template: ../Templates/Variables/non-prod.yml
+    
+trigger: none
+pr: none
+    
+stages:
+- template: ../Templates/Stage/db.build.yml
+- template: ../Templates/Stage/db.backup.yml
+  parameters:
+    dbBackUp: 'true'
+    offshoreChanges: "$(offshoreChanges)"

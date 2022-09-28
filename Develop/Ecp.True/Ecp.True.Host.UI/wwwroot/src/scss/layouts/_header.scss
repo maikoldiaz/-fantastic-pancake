@@ -1,0 +1,145 @@
+﻿// _header.scss
+
+#{$ep}-header {
+    position: relative;
+    background: $white;
+    height:pxToRem(56);
+    padding: 0 pxToRem(20);
+    border-bottom: solid 1px map-get($gray, 'C1C1C1');
+    #{$ep}-logo{
+        display: inline-block;
+        margin-left: pxToRem(-12);
+        &__img,
+        &__ttl{
+            display: inline-block;
+        }
+        &__img{
+            width:pxToRem(60);
+            margin-top:pxToRem(8);
+        }
+        &__ttl{
+            font-family: $font-family-ep;
+            font-size: pxToRem(26);
+            font-weight: normal;
+            color:$ep-logo-color;
+            margin-top:pxToRem(12);
+            margin-left:pxToRem(10);
+        }
+    }
+    &__title{
+        display: inline-block;
+        font-family: $font-family-lt;
+        font-size: pxToRem(20);
+        color: $black;
+        padding-left: pxToRem(15);
+        margin-left: pxToRem(15);
+        border-left:solid 1px map-get($gray, 'C1C1C1');
+    }
+    &__profile {
+        position: absolute;
+        right: 0;
+        display: inline-flex;
+        align-items: center;  
+        height: pxToRem(56);
+        border-left: solid 1px map-get($gray, 'C1C1C1');
+        padding-left:pxToRem(5);
+        padding-right:pxToRem(20);
+        &-name, &-role {
+            display: block;
+            font-family: $font-family-sb;
+            font-size: pxToRem(16);
+        }
+
+        &-name{
+            text-transform: capitalize;
+            margin-right:pxToRem(15);
+            color:$ep-logo-color;
+        }
+        &-user{
+            color:$black;
+            font-family: $font-family;
+        }
+
+        &-role {
+            font-family: $font-family-lt;
+        }
+
+        &-pic {
+            display: inline-block;
+            @include mix-circle(34px);
+            border: solid 2px $white;
+            box-shadow: 0px 2px 5px map-get($gray, 'CCCCCC');
+            margin: 0 pxToRem(15);
+            background: map-get($gray, 'EEEEEE');
+            overflow: hidden;
+
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+        cursor: pointer;
+        &:hover{
+            & #{$ep}-header{
+                &__logout{
+                    display: block;
+                }
+            }
+        }
+    }
+
+    &__dd{
+        position: relative;
+        cursor: pointer;
+        z-index: 100000;
+        &-menu{
+            
+            position: absolute;
+            right: pxToRem(-15);            
+            top: pxToRem(45);
+            width: pxToRem(150);
+            box-shadow: -3px 2px 5px 0px map-get($gray, 'CCCCCC');
+            background:map-get($gray, 'EEEEEE');
+
+            &-lnk{                
+                display: block;                
+                text-align: right;
+                padding: pxToRem(10) pxToRem(20);
+                font-weight: 500;
+            }
+
+            &:after{
+                content: "";
+                position: absolute ;
+                top:-7px;
+                right: pxToRem(15);
+                @include mix-square(pxToRem(10));
+                transform: rotate(45deg);
+                background: map-get($gray, 'EEEEEE');
+            }
+        }
+    }
+
+    &__logout{
+        position: absolute;
+        right:pxToRem(1);
+        top:pxToRem(56);
+        width:100%;
+        background: $white;
+        height: pxToRem(56);
+        border: solid 1px map-get($gray, 'C1C1C1');
+        border-top: none;
+        border-bottom-left-radius: pxToRem(6);
+        border-bottom-right-radius: pxToRem(6);
+        padding-left: pxToRem(20);
+        padding-right: pxToRem(20);
+        line-height: pxToRem(54);       
+        color: $btn-color;
+        z-index: 100000;
+        &-btn{            
+            cursor: pointer;
+        }
+        display: none;
+    }
+}

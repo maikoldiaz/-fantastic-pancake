@@ -1,0 +1,60 @@
+﻿steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: Download Build Artifacts
+    inputs:
+      artifactName: Drop
+      downloadPath: '$(System.ArtifactsDirectory)'
+    condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+
+  - ${{ if eq(parameters['downloadArtifacts'], 'true') }}:
+      - template: ../Infra/fetchSecrets.yml
+        parameters:
+          azureSubscriptionName: '${{parameters.serviceConnection}}'
+          keyVaultName: '$(keyVault)'
+          secretsFilter: '*'
+
+  - script: echo '##vso[task.setvariable variable=Settings.VaultName]$(keyVaultAddress)
+    displayName: Set Key Vault Address
+
+  - script: echo '##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$(instrumentationkey)
+    condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+    displayName: Set Instrumentation Key
+
+  - script: echo '##vso[task.setvariable variable=AzureAd.ClientId]$(uiAppClientId)
+    condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+    displayName: Set Web Portal ClientId
+
+  - script: echo '##vso[task.setvariable variable=AzureAd.SecurityLevel]select_account
+    condition: and(succeeded(), eq(variables['env'], 'dev'))
+    displayName: Set Account
+
+  - powershell: |
+      $apiScope = "api://$(apiAppClientId)/user_impersonation"
+      Write-Host "##vso[task.setvariable variable=EcoPetrolApi.EcoPetrolApiScope]$apiScope"
+    displayName: Set Web Portal API Scope
+
+  - powershell: |
+      $apim= "$(apiEndpoint)/true"
+      Write-Host "##vso[task.setvariable variable=Settings.ApiEndpoint]$apim"
+    displayName: Set API Endpoint
+
+  - task: AzureRmWebAppDeployment@4
+    displayName: Deploy UI
+    inputs:
+      ConnectionType: 'AzureRM'
+      azureSubscription: '${{parameters.serviceConnection}}'
+      appType: 'webApp'
+      WebAppName: '$(appServiceNameUI)'
+      deployToSlotOrASE: true
+      ResourceGroupName: '$(resourceGroupName)'
+      SlotName: 'STAGING'
+      JSONFiles: '**/*.json'
+      packageForLinux: '$(Build.ArtifactStagingDirectory)/Drop/Ecp.True.Host.UI.zip'
+
+  - task: AzurePowerShell@4
+    displayName: Restart SignalR Service
+    inputs:
+      azureSubscription: '${{parameters.serviceConnection}}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-SignalrService.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -name "$(signalRServiceName)"'
+      azurePowerShellVersion: latestVersion

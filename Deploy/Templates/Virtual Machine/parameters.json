@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "adminUsername"
+    },
+    "adminPassword": {
+      "value": ""
+    },
+    "windowsOSVersion": {
+      "value": "2008-R2-SP1"
+    },
+    "vmSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "location": {
+      "value": "East US"
+    },
+    "storageAccountName": {
+      "value": "storageaccountname622"
+    },
+    "vmName": {
+      "value": "vmname"
+    },
+    "subnetName": {
+      "value": "subnetname"
+    },
+    "virtualNetworkID": {
+      "value": "virtualnetworkiD"
+    },
+    "networkInterfaceName": {
+      "value": "networkinterfacename"
+    },
+    "fileurls": {
+      "value": [
+        "https://someblob.blob.core.windows.net/bs-aeu-ecp-env-storagemedios-1/archivescript/archivescript.zip"
+      ]
+    }
+  }
+}

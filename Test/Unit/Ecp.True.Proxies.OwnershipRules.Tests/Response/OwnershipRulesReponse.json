@@ -1,0 +1,78 @@
+{
+	"volPayload": {
+		"volInput": {
+			"estrategiasActivas": false,
+			"tipoLlamada": "BUSCA_ESTRATEGIA"
+		},
+		"volOutput": {
+			"auditedSteps": [
+				{
+					"scope": "BUSINESS",
+					"stepMessage": " - Inicio - Mar 16, 2020 6:25:33.261 PM UTC",
+					"stepName": "Decision_Flow"
+				},
+				{
+					"scope": "BUSINESS",
+					"stepMessage": "- Inicio -",
+					"stepName": "Decision Flow"
+				},
+				{
+					"scope": "BUSINESS",
+					"stepMessage": "Busca Estrategia",
+					"stepName": "Decision Flow"
+				},
+				{
+					"scope": "BUSINESS",
+					"stepMessage": "Busca Estrategia Fin",
+					"stepName": "Decision Flow"
+				},
+				{
+					"scope": "BUSINESS",
+					"stepMessage": " - Fin - Mar 16, 2020 6:25:33.722 PM UTC",
+					"stepName": "Decision_Flow"
+				}
+			],
+			"calculatedVars": [],
+			"estrategiaConexiones": [
+				{
+					"estrategia": "Entradas",
+					"idEstrategia": 1
+				},
+				{
+					"estrategia": "Disponible",
+					"idEstrategia": 2
+				},
+				{
+					"estrategia": "Eventos",
+					"idEstrategia": 3
+				}
+			],
+			"estrategiaPropiedadNodo": [
+				{
+					"estrategia": "Entradas",
+					"idEstrategia": 1
+				},
+				{
+					"estrategia": "Disponible",
+					"idEstrategia": 2
+				}
+			],
+			"estrategiaPropiedadNodoProducto": [
+				{
+					"estrategia": "Salidas",
+					"idEstrategia": 1
+				},
+				{
+					"estrategia": "Inventário Final",
+					"idEstrategia": 2
+				}
+			],
+			"inventariosErrores": [],
+			"movimientosErrores": [],
+			"movimientosNuevos": [],
+			"resultadoInventarios": [],
+			"resultadoMovimientoComerciales": [],
+			"resultadoMovimientos": []
+		}
+	}
+}

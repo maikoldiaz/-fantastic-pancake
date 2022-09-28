@@ -1,0 +1,27 @@
+{
+  "solution": {
+    "path": "Ecp.True.All.sln",
+    "projects": [
+      "..\\Test\\Unit\\Ecp.True.Entities.Tests\\Ecp.True.Entities.Tests.csproj",
+      "..\\Test\\Unit\\Ecp.True.Processor.Delta.Tests\\Ecp.True.Processor.Delta.Tests.csproj",
+      "Ecp.True\\Ecp.True.Caching\\Ecp.True.Caching.csproj",
+      "Ecp.True\\Ecp.True.Chaos\\Ecp.True.Chaos.csproj",
+      "Ecp.True\\Ecp.True.Configuration\\Ecp.True.Configuration.csproj",
+      "Ecp.True\\Ecp.True.Core\\Ecp.True.Core.csproj",
+      "Ecp.True\\Ecp.True.DataAccess.Sql\\Ecp.True.DataAccess.Sql.csproj",
+      "Ecp.True\\Ecp.True.DataAccess\\Ecp.True.DataAccess.csproj",
+      "Ecp.True\\Ecp.True.Entities.Configuration\\Ecp.True.Entities.Configuration.csproj",
+      "Ecp.True\\Ecp.True.Entities.Core\\Ecp.True.Entities.Core.csproj",
+      "Ecp.True\\Ecp.True.Entities\\Ecp.True.Entities.csproj",
+      "Ecp.True\\Ecp.True.ExceptionHandling\\Ecp.True.ExceptionHandling.csproj",
+      "Ecp.True\\Ecp.True.Ioc\\Ecp.True.Ioc.csproj",
+      "Ecp.True\\Ecp.True.KeyStore\\Ecp.True.KeyStore.csproj",
+      "Ecp.True\\Ecp.True.Logging\\Ecp.True.Logging.csproj",
+      "Ecp.True\\Ecp.True.Processors.Core\\Ecp.True.Processors.Core.csproj",
+      "Ecp.True\\Ecp.True.Processors.Delta\\Ecp.True.Processors.Delta.csproj",
+      "Ecp.True\\Ecp.True.Proxies.Azure\\Ecp.True.Proxies.Azure.csproj",
+      "Ecp.True\\Ecp.True.Proxies.OwnershipRules\\Ecp.True.Proxies.OwnershipRules.csproj",
+      "Ecp.True\\Ecp.True.Repositories\\Ecp.True.Repositories.csproj"
+    ]
+  }
+}

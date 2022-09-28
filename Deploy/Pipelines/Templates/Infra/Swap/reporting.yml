@@ -1,0 +1,12 @@
+steps:
+- script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+  displayName: Set Environment
+
+- task: AzurePowerShell@4
+  displayName: Reporting
+  condition:  and(succeeded(), eq(variables['functionsSwap'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+    ScriptArguments: '-action "SWITCH" -slotName "STAGING" -appServicePlanName "$(appServicePlanNameReporting)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(reportingFunctionAppName)"'
+    azurePowerShellVersion: LatestVersion

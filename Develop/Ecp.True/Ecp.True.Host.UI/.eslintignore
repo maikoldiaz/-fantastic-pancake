@@ -1,0 +1,8 @@
+﻿# /node_modules/* and /bower_components/* in the project root are ignored by default
+
+# Ignore built files except build/index.js
+
+wwwroot/dist/js/*
+wwwroot/dist/js/__tests__/*
+wwwroot/src/js/__tests__/**
+wwwroot/src/js/scripts/**

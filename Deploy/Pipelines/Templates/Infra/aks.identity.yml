@@ -1,0 +1,118 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: Kubernetes@1
+    displayName: Deploy Pod Identity
+    inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscriptionEndpoint: '${{ parameters.azureSubscriptionName }}'
+      azureResourceGroup: '${{ parameters.resourceGroupName }}'
+      kubernetesCluster: '$(aksManagedClustersName)'
+      useClusterAdmin: true
+      command: apply
+      useConfigurationFile: true
+      configuration: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/Configurations/aadpodidentity_deployment.yml'
+
+  - task: AzurePowerShell@4
+    displayName: Add Tags to Kubernetes
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier " " -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(aksManagedClustersName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Create Managed Identity
+    inputs:
+      azureSubscription: '${{ parameters.nodeServiceConnection }}'
+      resourceGroupName: '${{ parameters.nodeResourceGroup }}'
+      location: '$(deployLocation)'
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/deploy.json'
+      overrideParameters: '-identityName "$(identityName)"
+        -description "$(description)"
+        -createdBy "$(createdBy)"
+        -responsible "$(responsible)"
+        -projectName "$(projectName)"
+        -companyName "$(companyName)"
+        -environment "$(environment)"
+        -organizationUnit "$(organizationUnit)"
+        -tier "$(tier)"
+        -dataProfileDataSecurityLevel "$(dataProfileDataSecurityLevel)"
+        -creationDate "$(creationDate)"
+        -pidDeploymentName "PodIdentity"'
+      deploymentOutputs: armOut
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: Set Build Variable From ARM Output
+    inputs:
+      azureSubscription: '${{ parameters.nodeServiceConnection }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.nodeResourceGroup }}" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Set KV Access Policy for Pod Identity
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+      ScriptArguments: '-vaultName "${{ parameters.keyVaultName }}" -targetObjectId "$(ou_identity_principalId)" -resourceGroupName "$(resourceGroupName)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.shared}}', 'false'))
+
+  - task: AzurePowerShell@5
+    displayName: Set MSI in AD Group - Pod identity
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SecurityGroupMember.ps1'
+      ScriptArguments: '-groupObjectId "$(msiAdGroupObjectId)" -memberObjectId "$(ou_identity_principalId)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(ou_identity_principalId)" -resourceName "$(serviceBusNamespaceNameInt)" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Storage
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(ou_identity_principalId)" -resourceName "$(storageAccountName)" -roleDefinitionName "Storage Blob Data Contributor" -resourceType "Microsoft.Storage/storageAccounts"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    displayName: Replace managed identity in podidentity
+    inputs:
+      targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/Configurations/aadpodidentity.yml'
+      actionOnMissing: fail
+
+  - task: Kubernetes@1
+    displayName: Create Pod Identity
+    inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscriptionEndpoint: '${{ parameters.azureSubscriptionName }}'
+      azureResourceGroup: '${{ parameters.resourceGroupName }}'
+      kubernetesCluster: '$(aksManagedClustersName)'
+      useClusterAdmin: true
+      command: apply
+      useConfigurationFile: true
+      configuration: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/Configurations/aadpodidentity.yml'
+
+  - task: Kubernetes@1
+    displayName: Create Pod Identity Binding
+    inputs:
+      connectionType: 'Azure Resource Manager'
+      azureSubscriptionEndpoint: '${{ parameters.azureSubscriptionName }}'
+      azureResourceGroup: '${{ parameters.resourceGroupName }}'
+      kubernetesCluster: '$(aksManagedClustersName)'
+      useClusterAdmin: true
+      command: apply
+      useConfigurationFile: true
+      configuration: '$(System.ArtifactsDirectory)/Drop/Templates/User Identity/Configurations/aadpodidentitybinding.yml'

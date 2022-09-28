@@ -1,0 +1,47 @@
+steps:
+    - ${{ if eq(parameters['analytics'], 'false') }}:
+      - template: ../Infra/fetchSecrets.yml
+        parameters:
+          azureSubscriptionName : '${{parameters.azureSubscription}}'
+          keyVaultName: '$(keyVault)'
+          secretsFilter: '*'
+
+    - script: echo '##vso[task.setvariable variable=Settings.VaultName]$(keyVaultAddress)'
+      displayName: Set Key Vault Address
+
+    - script: echo '##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$(instrumentationkey)'
+      displayName: Set Instrumentation Key
+
+    - script: echo '##vso[task.setvariable variable=AzureAd.ClientId]$(apiAppClientId)'
+      displayName: Set Client Id
+
+    - task: FileTransform@1
+      inputs:
+       folderPath: '${{ parameters.folderPath }}'
+       fileType: 'json'
+       targetFiles: '${{ parameters.targetFiles }}'
+      condition: and(succeeded(), eq('${{parameters.analytics}}', 'false'))
+
+    - task: AzureCLI@1
+      displayName: Docker Login
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptLocation: inlineScript
+        inlineScript: |
+                docker login $(imageRegistryName).azurecr.io --username $(aksServicePrincipalProfileClientId) --password $(aksServicePrincipalProfileSecret)
+
+    - task: AzureCLI@1
+      displayName: Docker Build
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptLocation: inlineScript
+        inlineScript: |
+                docker build -t $(imageRegistryName).azurecr.io/${{ parameters.repository }}:${{parameters.tag}} --file ${{ parameters.dockerfile }} ${{ parameters.path }}
+
+    - task: AzureCLI@1
+      displayName: Docker Push
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptLocation: inlineScript
+        inlineScript: |
+                docker push $(imageRegistryName).azurecr.io/${{ parameters.repository }}:${{parameters.tag}}

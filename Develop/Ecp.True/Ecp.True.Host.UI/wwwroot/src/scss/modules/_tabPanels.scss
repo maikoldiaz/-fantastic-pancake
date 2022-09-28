@@ -1,0 +1,56 @@
+﻿// _tabPanels.scss
+
+#{$ep}-tabpanels {
+    $tbp:&;
+    height: 100%;
+    &__hdr{
+        background-color: $white;
+        padding: pxToRem(15);
+        justify-content: space-between;
+        display: flex;
+        border: solid 1px #DCDCDC;
+        border-bottom: none;
+        & + #{$ep}-content{
+            & #{$ep}-content__body{
+                padding-top: 0;
+                & #{$ep}-tabpanels__panels{
+                    overflow: visible;
+                }
+            }
+        }
+    }
+    &__tab {
+        height: pxToRem(59);
+        display: inline-block;
+        background-color: $white;
+        flex-basis: 100%;
+        flex-grow: 1;
+        font-size: pxToRem(16);
+        font-family: $font-family-sb;
+        text-align: center;
+        line-height: pxToRem(59);
+        border: solid 1px #DCDCDC;
+        cursor: pointer;
+        &s{
+            display: flex;
+            flex-flow: nowrap;
+        }
+
+        &--active{
+            background-color: $ep-secondary-color;
+            color:$white;
+            border-bottom: solid 3px $ep-primary-color;
+        }
+    }
+    &__panel {    
+        height: 100%;    
+        &s{            
+            height: calc(100% - 59px);
+            border: solid 1px #DCDCDC;
+            border-top: none;
+            padding: pxToRem(20) pxToRem(45);
+            background: $white;
+            overflow: auto;
+        }
+    }
+}

@@ -1,0 +1,13 @@
+variables:
+  - group: true-threshold
+  - template: ../../Templates/Variables/package.yml
+
+trigger: none
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/ui.build.yml

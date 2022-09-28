@@ -1,0 +1,8 @@
+steps:
+  - task: AzureCLI@2
+    displayName: Set Automation Script Permission Key in Key Vault
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      scriptType: ps
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+      arguments: '-keyVaultName "${{ parameters.keyVaultName }}" -secretName "CanExecuteAutomation" -secretValue "${{ parameters.canExecuteAutomation }}"'

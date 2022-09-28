@@ -1,0 +1,8 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Refreshing ${{ parameters.apiDisplayName }}
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Refresh-APIMSwagger.ps1'
+      ScriptArguments: '-resourceGroup ${{ parameters.resourceGroupName }} -swaggerUrl ${{ parameters.swaggerUrl }} -apimName "$(apiManagementServiceName)" -apimApiDisplayName "${{ parameters.apiDisplayName }}" -apimApiPath "${{ parameters.apimApiPath }}" -serviceUrl "${{ parameters.serviceUrl }}"'
+      azurePowerShellVersion: LatestVersion

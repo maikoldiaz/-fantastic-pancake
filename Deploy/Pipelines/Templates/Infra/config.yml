@@ -1,0 +1,169 @@
+steps:
+ - task: AzureCLI@2
+   displayName: Set Analysis settings client secret in Key-Vault
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "$(analysisClientSecret)" -secretValue "$(aasAppSecret)"'
+
+ - task: AzureCLI@2
+   displayName: Set Analytics server client secret in Key-Vault
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "$(analyticsClientSecret)" -secretValue "$(analyticsAppSecret)"'
+
+ - template: ../Infra/fetchSecrets.yml
+   parameters:
+     azureSubscriptionName : '${{parameters.azureSubscriptionName}}'
+     keyVaultName: '$(keyVault)'
+     secretsFilter: '*'
+
+ - task: AzurePowerShell@3
+   displayName: System Settings Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-SystemSettingsConfig.ps1'
+     ScriptArguments: '-BasePath "$(dnsNameForUI)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Analysis Server Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AnalysisServerConfig.ps1'
+     ScriptArguments: '-TenantId "$(tenantId)" -ClientID "$(aasAppClientId)" -AnalysisServerName "$(analysisServicesName)" -AnalysisServerModelName "$(analysisServerModel)" -AnalysisServerAuditModelName "$(analysisServerAuditModel)" -Region "$(locationName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: AD Role Group Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-RoleGroupConfig.ps1'
+     ScriptArguments: '-AdministratorGroupId "$(roleGroupIdAdministrator)" -ApproverGroupId "$(roleGroupIdApprover)" -ProfessionalSegmentBalancesGroupId "$(roleGroupIdProfessionalSegmentBalances)" -ProgrammerGroupId "$(roleGroupIdProgrammer)" -QueryGroupId "$(roleGroupIdQuery)" -AuditorGroupId "$(roleGroupIdAuditor)" -ChainGroupId "$(roleGroupIdChain)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Ownership Rule Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OwnershipRuleConfig.ps1'
+     ScriptArguments: '-BasePath "$(ownershipRuleBasePath)" -OwnershipRulePath "$(ownershipRulePath)" -OwnershipClientId "$(ownershipRuleClientId)" -RegistrationPath "$(ownershipRuleRegistrationPath)" -DeltaBasePath "$(deltaBasePath)" -DeltaApiPath "$(deltaApiPath)" -OfficialDeltaBasePath "$(officialDeltaBasePath)" -OfficialDeltaApiPath "$(officialDeltaApiPath)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Sap Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-SapConfig.ps1'
+     ScriptArguments: '-BasePath "$(sapBasePath)" -Username "$(sapUsername)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Analytics Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AnalyticsConfig.ps1'
+     ScriptArguments: '-TenantId "$(tenantId)" -ClientId "$(analyticsAppClientId)" -Scope "api://$(apiAppClientId)/.default"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Graph API Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-GraphServerConfig.ps1'
+     ScriptArguments: '-TenantId "$(tenantId)" -ClientId "$(uiAppClientId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Service Bus Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-ServiceBusConfig.ps1'
+     ScriptArguments: '-Namespace "$(serviceBusNamespaceNameInt)" -TenantId "$(tenantId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Storage Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-StorageConfig.ps1'
+     ScriptArguments: '-accountName "$(storageAccountName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Flow Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-PowerAutomateConfig.ps1'
+     ScriptArguments: '-EnvironmentId "$(powerAutomateEnvironmentId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: SQL Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SQLConfig.ps1'
+     ScriptArguments: '-TenantId "$(tenantId)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@3
+   displayName: Availability Config
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-AvailabilityConfig.ps1'
+     ScriptArguments: '-availabilityClientId "$(availabilityClientId)" 
+                       -tenantId "$(tenantId)" 
+                       -trueResourceGroup "$(resourceGroupName)"
+                       -sharedResourceGroup "$(sharedResourceGroupName)"
+                       -appGatewayRG "$(appGatewayResourceGroupName)"
+                       -appGatewaysubscriptionId "$(appGatewaySubscriptionId)"
+                       -subscriptionId "$(subscriptionId)"
+                       -apim "$(apiManagementServiceName)"
+                       -appGateway "$(appGatewaySharedName)"
+                       -sqlDatabase "$(databaseName)"
+                       -keyVault "$(keyVault)"
+                       -storage "$(storageAccountName)"
+                       -redis "$(redisCacheName)"
+                       -serviceBus "$(serviceBusNamespaceNameInt)"
+                       -aks "$(aksManagedClustersName)"
+                       -analysisServer "$(analysisServicesName)"
+                       -homologateFunctionApp "$(transformFunctionAppName)"
+                       -calculatorFunctionApp "$(calFunctionAppName)"
+                       -blockchainFunctionApp "$(bcFunctionAppName)"
+                       -deadletterFunctionApp "$(dlFunctionAppName)"
+                       -sapFunctionApp "$(sapFunctionAppName)"
+                       -ownershipFunctionApp "$(ownershipFunctionAppName)"
+                       -deltaFunctionApp "$(deltaFunctionAppName)"
+                       -reportingFunctionApp "$(reportingFunctionAppName)"
+                       -abs "$(blockchainMemberName)"
+                       -appServiceName "$(appServiceNameUI)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: ExtractFiles@1
+   displayName: Extract Config Files
+   inputs:
+     archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.ConfigurationManager.zip'
+     destinationFolder: '$(System.ArtifactsDirectory)\Config'
+     cleanDestinationFolder: false
+
+ - script: dotnet.exe $(System.ArtifactsDirectory)\Config\Ecp.True.ConfigurationManager.dll $(storageconnectionstring) "" "$(forceUpdateConfigs)" $(reportconfig) $(analysisServerConfig) $(graphServerConfig) $(flowconfig) $(analyticsConfig) $(ownershipRuleConfig) $(sapConfig) $(roleGroupConfig) $(sqlconfig) $(systemSettingsConfig) $(storageConfig) $(serviceBusConfig) $(ModuleAvailabilityTrueAdminSettings) $(ModuleAvailabilityTrueApprovalsSettings) $(ModuleAvailabilityTrueLoadFilesTransportSettings) $(ModuleAvailabilityTrueCutOffSettings) $(ModuleAvailabilityTrueOperativeDeltasSettings) $(ModuleAvailabilityTrueOwnershipSettings) $(ModuleAvailabilityTrueOwnershipAdjSettings) $(ModuleAvailabilityTrueLoadFilesChainSettings) $(ModuleAvailabilityTrueOfficialDeltasSettings) $(ModuleAvailabilityTrueReportsSettings) $(ModuleAvailabilityTrueSapPoApiSettings) $(AvailabilitySettings)
+   displayName: Running Configuration Manager
+
+ - task: AzurePowerShell@4
+   displayName: Stop Web App
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+     ScriptArguments: '-action "STOP" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+     azurePowerShellVersion: latestVersion
+
+ - task: AzurePowerShell@4
+   displayName: Start Web App
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+     ScriptArguments: '-action "START" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+     azurePowerShellVersion: latestVersion

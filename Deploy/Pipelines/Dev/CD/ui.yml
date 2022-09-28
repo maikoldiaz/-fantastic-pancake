@@ -1,0 +1,59 @@
+variables:
+  - group: true-threshold
+  - group: true-secrets-nonprd-shared
+  - group: true-secrets-dev
+  - group: true-network-dev
+  - group: true-automation
+  - template: ../../Templates/Variables/package.yml
+  - template: ../../Templates/Variables/infra.yml
+  - template: ../../Templates/Variables/non-prod.yml
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - Develop/Ecp.True/Ecp.True.Host.UI/*
+
+pr: none
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../../Templates/Build/build.yml
+            parameters:
+              ui: 'true'
+              publish: 'true'
+              infra: 'true'
+
+  - stage: Deploy
+    jobs:
+      - deployment: Deploy
+        pool:
+          vmImage: 'windows-latest'
+        environment: $(env)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: ../../Templates/Deploy/ui.deploy.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    uiWebAppName: '$(appServiceNameUI)'
+                    downloadArtifacts: 'true'
+
+                - template: ../../Templates/Deploy/automation.yml
+                  parameters:
+                    azureSubscriptionName: '$(serviceConnection)'
+                    canExecuteAutomation: '$(dev)'
+                    keyVaultName: '$(keyVault)'
+
+                - template: ../../Templates/Infra/Swap/ui.yml
+                  parameters:
+                    serviceConnection: $(serviceConnection)
+                    env: '$(env)'

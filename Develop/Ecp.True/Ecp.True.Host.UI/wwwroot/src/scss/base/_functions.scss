@@ -1,0 +1,13 @@
+﻿@function pxToRem($pxUnit){
+    $unit:'rem';
+    $remUnit : $pxUnit/$base-font-size;
+    @return unquote($remUnit + $unit);
+}
+
+@function image($file) {
+  @return url($asset-base-path + '/' + $file);
+}
+
+@function tint($color, $percentage) {
+  @return mix(white, $color, $percentage);
+}

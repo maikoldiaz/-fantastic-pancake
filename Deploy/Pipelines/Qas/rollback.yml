@@ -1,0 +1,33 @@
+variables:
+  - group: true-secrets-qas
+  - group: true-release-threshold
+  - group: true-secrets-nonprd-shared
+  - group: true-network-qas
+  - group: true-mq-qas
+
+  - template: ../Templates/Variables/package.yml
+  - template: ../Templates/Variables/non-prod.yml
+  - template: ../Templates/Variables/tags.yml
+  - template: ../Templates/Variables/infra.yml
+
+# set pr trigger to none to prevent daily build running against master branch changess
+pr: none
+
+trigger: none
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - template: ../Templates/Build/build.yml
+            parameters:
+              db: 'true'
+              certs: 'false'
+              config: 'true'
+              blockchain: 'true'
+              infra: 'true'
+
+  - template: ../Templates/Stage/rollback.deploy.yml

@@ -1,0 +1,33 @@
+﻿//sass variables
+@font-face {
+    font-family: 'Ecopetrol';
+    src: url('../../../dist/fonts/Ecopetrol.ttf') format('truetype');
+}
+@keyframes lines {
+    0% {
+      background-position: 0 10px;
+    }    
+    100% {
+      background-position: 0 0;
+    }
+}
+
+$ep: '.ep';
+
+$asset-base-path: './../images';
+$overlay-bg: rgba(0,0,0,.5);
+$base-font-size:14;
+$font-family: 'Segoe UI','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$font-family-lt: 'Segoe UI Light', Tahoma, Geneva, Verdana, sans-serif;
+$font-family-sb: 'Segoe UI Semibold', Tahoma, Geneva, Verdana, sans-serif;
+$font-family-ep: 'Ecopetrol','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+$tr-fast:0.9ms;
+$tr-med:0.1s;
+$tr-slow:0.5s;
+
+$bx-sd: 0px 3px 6px #ccc;
+$bx-sd-gl: 0 0 5px 5px rgba(180, 219, 245, 1);
+$bg-stripes-45deg: linear-gradient(45deg, transparent 40%, #C1C1C1 40%, #C1C1C1 50%, transparent 50%, transparent 90%, #C1C1C1 90%, #C1C1C1 100%);
+
+$bp-tablet-p: 'only screen and (min-width : 768px) and (max-width : 1024px) and (orientation : portrait)';

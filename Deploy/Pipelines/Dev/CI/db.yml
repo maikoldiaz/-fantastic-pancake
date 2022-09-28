@@ -1,0 +1,13 @@
+variables:
+  - group: true-threshold
+  - template: ../../Templates/Variables/package.yml
+
+trigger: none
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+     vmImage: 'windows-2019'
+    steps:
+    - template: ../../Templates/Build/db.build.yml

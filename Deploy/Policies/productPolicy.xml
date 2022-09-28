@@ -1,0 +1,26 @@
+<policies>
+  <inbound>
+    <validate-jwt header-name="Authorization" output-token-variable-name="jwt">
+      <openid-config url="https://login.microsoftonline.com/ecopetrol.onmicrosoft.com/.well-known/openid-configuration" />
+    </validate-jwt>
+    <choose>
+      <when condition="@(!((Jwt)context.Variables[&quot;jwt&quot;]).Claims[&quot;aud&quot;].Contains(&quot;{{audience}}&quot;))">
+        <return-response>
+          <set-status code="401" reason="Invalid access token, it must have {{audience}} audience." />
+        </return-response>
+      </when>
+    </choose>
+    <base />
+  </inbound>
+  <outbound>
+    <set-header name="X-Powered-By" exists-action="delete" />
+    <set-header name="X-AspNet-Version" exists-action="delete" />
+    <base />
+  </outbound>
+  <backend>
+    <forward-request />
+  </backend>
+  <on-error>
+    <base />
+  </on-error>
+</policies>

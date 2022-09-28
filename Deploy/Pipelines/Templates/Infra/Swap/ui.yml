@@ -1,0 +1,12 @@
+steps:
+- script: echo '##vso[task.setvariable variable=env]${{parameters.env}}
+  displayName: Set Environment
+
+- task: AzurePowerShell@4
+  displayName: UI Web App
+  condition:  and(succeeded(), eq(variables['uiSwap'], 'true'))
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+    ScriptArguments: '-action "SWITCH" -slotName "STAGING" -appServicePlanName "$(appServicePlanNameUI)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(appServiceNameUI)"'
+    azurePowerShellVersion: LatestVersion

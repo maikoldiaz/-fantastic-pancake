@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowAlphanumericWithSpecialCharactersAndSpaceMessage" xml:space="preserve">
+    <value>5009-Only alphanumeric spaces and special characters like ':' '_' '-' are allowed</value>
+  </data>
+  <data name="DescriptionMaxLength1000" xml:space="preserve">
+    <value>5007-The description can contain maximum of 1000 characters</value>
+  </data>
+  <data name="DuplicateEntityInsert" xml:space="preserve">
+    <value>5026-This entity already exists</value>
+  </data>
+  <data name="DuplicateNodeStorageLocationId" xml:space="preserve">
+    <value>5047-The node storage location id must be unique</value>
+  </data>
+  <data name="DuplicateStorageLocationProductId" xml:space="preserve">
+    <value>5048-The node storage location product id must be unique</value>
+  </data>
+  <data name="ElementDoesNotExist" xml:space="preserve">
+    <value>The category element does not exist</value>
+  </data>
+  <data name="ElementStatusRequired" xml:space="preserve">
+    <value>5032-The category element status is required</value>
+  </data>
+  <data name="EntityNameMustBeUnique" xml:space="preserve">
+    <value>5025-The entity name must be unique</value>
+  </data>
+  <data name="EntityNotExists" xml:space="preserve">
+    <value>5028-The related entity does not exist</value>
+  </data>
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>5027-The entity does not exist</value>
+  </data>
+  <data name="InvalidNodeId" xml:space="preserve">
+    <value>5040-The node identifier is invalid</value>
+  </data>
+  <data name="InvalidNodeStorageLocations" xml:space="preserve">
+    <value>5041-The node storage location is invalid</value>
+  </data>
+  <data name="InvalidProductLocations" xml:space="preserve">
+    <value>5042-The product is invalid</value>
+  </data>
+  <data name="Max1000Characters" xml:space="preserve">
+    <value>5013-The node description can contain maximum 1000 characters</value>
+  </data>
+  <data name="Max150Characters" xml:space="preserve">
+    <value>5011-The name can contain maximum 150 characters</value>
+  </data>
+  <data name="Max20Characters" xml:space="preserve">
+    <value>5012-The logistic center can contain maximum 20 characters</value>
+  </data>
+  <data name="NameMaxLength150" xml:space="preserve">
+    <value>5004-The name can contain maximum 150 characters</value>
+  </data>
+  <data name="INVALID_NODE_STATUS_FOR_CONNECTION" xml:space="preserve">
+    <value>Cannot create connections to or from inactive nodes</value>
+  </data>
+  <data name="NotNullConstraintsError" xml:space="preserve">
+    <value>5030-The entity does not exist</value>
+  </data>
+  <data name="OnlyAlphaNumericAllowed" xml:space="preserve">
+    <value>5003-Only alphanumeric characters are allowed</value>
+  </data>
+  <data name="OperatorRequired" xml:space="preserve">
+    <value>5019-The operator is required</value>
+  </data>
+  <data name="ProductIdRequired" xml:space="preserve">
+    <value>5038-The product id is required</value>
+  </data>
+  <data name="ProductMustBeActive" xml:space="preserve">
+    <value>5037-The product must be active</value>
+  </data>
+  <data name="SapCodeRequired" xml:space="preserve">
+    <value>5020-The SAP code is required</value>
+  </data>
+  <data name="SegmentRequired" xml:space="preserve">
+    <value>5018-The segment is required</value>
+  </data>
+  <data name="StorageNameMustBeUnique" xml:space="preserve">
+    <value>5024-The storage name must be unique</value>
+  </data>
+  <data name="StoreShouldHaveAtLeastOneProduct" xml:space="preserve">
+    <value>5023-A storage location should have atleast one product</value>
+  </data>
+  <data name="TypeRequired" xml:space="preserve">
+    <value>5021-The type is required</value>
+  </data>
+  <data name="RegisterFileActionTypeRequired" xml:space="preserve">
+    <value>5075-Register file action type is required.</value>
+  </data>
+  <data name="RegisterFileBlobPathMaxLength500" xml:space="preserve">
+    <value>5077-The blob path of register blob path should not have more than 500 characters</value>
+  </data>
+  <data name="RegisterFileBlobPathRequired" xml:space="preserve">
+    <value>5076-Register file blob path is required.</value>
+  </data>
+  <data name="RegisterFileNameRequired" xml:space="preserve">
+    <value>5074-Register file name is required.</value>
+  </data>
+  <data name="RegisterFilesUploadedSuccessfully" xml:space="preserve">
+    <value>5078-Regiater files uploaded successfully.</value>
+  </data>
+  <data name="RegisterFileUploadFileIdRequired" xml:space="preserve">
+    <value>5073-Register file upload file id is required.</value>
+  </data>
+  <data name="RegisterFileUploadIdMustBeUnique" xml:space="preserve">
+    <value>5072-File upload id must be unique.</value>
+  </data>
+  <data name="OnlyGuidIsAllowed" xml:space="preserve">
+    <value>5079-Only guid is allowed in register file upload id.</value>
+  </data>
+  <data name="OWNERID_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5080-The owner identifier is mandatory</value>
+  </data>
+  <data name="OWNERSHIPPERCENTAGE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5081-The ownership percentage is mandatory</value>
+  </data>
+  <data name="OWNERSHIPVALUE_REQUIREDVALIDATION" xml:space="preserve">
+    <value>5082-The ownership value is mandatory</value>
+  </data>
+  <data name="CommentMaxLength1000" xml:space="preserve">
+    <value>The comments can contain maximum of 1000 characters.</value>
+  </data>
+  <data name="OperationalCutOffSaveSuccess" xml:space="preserve">
+    <value>Operational cutoff saved Successfully.</value>
+  </data>
+  <data name="CommentsRequired" xml:space="preserve">
+    <value>The comments are required.</value>
+  </data>
+  <data name="INVALID_PRIORITY" xml:space="preserve">
+    <value>5087-The priority should be a value between 1 and 10</value>
+  </data>
+  <data name="INVENTORY_TANK_LENGTHVALIDATION" xml:space="preserve">
+    <value>5083-Tank Name should not have more than 20 characters.</value>
+  </data>
+  <data name="OperatorDoesNotExist" xml:space="preserve">
+    <value>5091-Operator does not exist</value>
+  </data>
+  <data name="SegmentDoesNotExist" xml:space="preserve">
+    <value>5092-Segment does not exist</value>
+  </data>
+  <data name="InvalidGroupType" xml:space="preserve">
+    <value>The Group Type is invalid</value>
+  </data>
+  <data name="InvalidInputType" xml:space="preserve">
+    <value>Given Input type is invalid.</value>
+  </data>
+  <data name="RetryMessageError" xml:space="preserve">
+    <value>It is not possible to retry messages related to technical exceptions. These types of exceptions must be resolved in the source system. Uncheck messages that have the option retry on the grid disabled</value>
+  </data>
+  <data name="OwnershipNodeForApprovalFailed" xml:space="preserve">
+    <value>OwnershipNode sent For Approval Failed</value>
+  </data>
+</root>

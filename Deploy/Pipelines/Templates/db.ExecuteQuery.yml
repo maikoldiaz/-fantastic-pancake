@@ -1,0 +1,33 @@
+parameters:
+- name: env
+  type: string  
+  default: null
+- name: queryNameScript
+  type: string
+  default: null
+- name: updateAction
+  type: boolean
+stages:
+  - stage: ExecuteScript
+    condition: or(not(${{ parameters.updateAction }}), succeeded('DBBackUpBase'))
+    jobs:
+      - deployment: Run
+        pool:
+          vmImage: ubuntu-latest
+        environment: ${{ parameters.env }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: PowerShell@2
+                  inputs:
+                    filePath: '$(Build.SourcesDirectory)/Deploy/Scripts/Execute-QueryScript.ps1'
+                    arguments: '-ModulePath "$(Build.SourcesDirectory)" -FolderCsvPath "$(Build.SourcesDirectory)/Deploy/Csv" -SqlServerConnectionString "$(sqlconnectionstring)" -QueryNameScript "$(queryNameScript)" -updateAction "${{ parameters.updateAction }}"'
+                    showWarnings: true
+                - task: PublishBuildArtifacts@1
+                  displayName: Publicar Consulta
+                  inputs:
+                    pathToPublish: $(Build.SourcesDirectory)/Deploy/Csv
+                    TargetPath: $(Build.SourcesDirectory)/Deploy/Csv
+                    ArtifactName: Consultas

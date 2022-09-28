@@ -1,0 +1,3950 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "location": {
+          "type": "String"
+      },
+      "sharedDashboardName": {
+          "type": "String"
+      },
+      "resourceGroupName": {
+          "type": "String"
+      },
+      "applicationInsightsName": {
+          "type": "String"
+      },
+      "logAnalyticsName": {
+          "type": "String"
+      },
+      "subscriptionId": {
+          "type": "String"
+      },
+      "env": {
+          "type": "String"
+      }
+  },
+  "variables": {
+      "externalInsightsId": "[concat('/subscriptions/',parameters('subscriptionId'),'/resourceGroups/',parameters('resourceGroupName'),'/providers/Microsoft.Insights/components/',parameters('applicationInsightsName'))]",
+      "externalAnalyticsId": "[concat('/subscriptions/',parameters('subscriptionId'),'/resourceGroups/',parameters('resourceGroupName'),'/providers/Microsoft.operationalinsights/workspaces/',parameters('logAnalyticsName'))]",
+      "environmentCapital": "[toUpper(parameters('env'))]"
+  },
+  "resources": [
+      {
+        "apiVersion": "2018-02-01",
+        "name": "pid-adb8eac6-989a-5354-8580-19055546ec74",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": []
+          }
+        }
+      },
+      {
+          "type": "Microsoft.Portal/dashboards",
+          "apiVersion": "2019-01-01-preview",
+          "name": "[parameters('sharedDashboardName')]",
+          "location": "[parameters('location')]",
+          "tags": {
+              "hidden-title": "[concat('Dashboard - ',variables('environmentCapital'))]"
+          },
+          "properties": {
+            "lenses": {
+              "0": {
+                "order": 0,
+                "parts": {
+                  "0": {
+                    "position": {
+                      "x": 0,
+                      "y": 0,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Ownership</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "1": {
+                    "position": {
+                      "x": 0,
+                      "y": 1,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Ownership\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by operation_Name\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "operation_Name",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "956f3326-0282-4e66-8b1c-12194314d8cc"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Ownership exceptions by operation",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Ownership\"\n| project problemId, operation_Name, cloud_RoleInstance\n| summarize count() by operation_Name\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "2": {
+                    "position": {
+                      "x": 5,
+                      "y": 1,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Ownership\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "90edaf65-0945-4001-934c-467e50119580"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Ownership exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Ownership\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "3": {
+                    "position": {
+                      "x": 11,
+                      "y": 1,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "requests\r\n| where * contains \"Ownership\" and success == false\r\n| project timestamp, name, url, success, resultCode, duration , performanceBucket , operation_Name, itemCount \r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-02-10T03:43:19.000Z/2020-04-10T03:43:19.353Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "092606ea-212c-4279-9d14-552648d10838"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Ownership failed requests",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "requests\n| where * contains \"Ownership\" and success == false\n| project timestamp, itemCount \n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "4": {
+                    "position": {
+                      "x": 0,
+                      "y": 5,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "dependencies\r\n| where success == false and * contains \"Ownership\"\r\n| project timestamp, target, type, name, success, resultCode, duration, performanceBucket, customDimensions, itemCount \r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "11dd949f-64f7-4194-9913-07ba9db11ce2"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Ownership dependency failures",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "dependencies\n| where success == false and * contains \"Ownership\"\n| project timestamp, itemCount \n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "5": {
+                    "position": {
+                      "x": 6,
+                      "y": 5,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "union\r\n(exceptions\r\n| where * contains \"Ownership\" and * contains \"Blockchain\"\r\n| project problemId, cloud_RoleInstance, timestamp, exceptionCount=itemCount),\r\n(customEvents\r\n| where * contains \"Critical\"\r\n| project eventCount=itemCount, timestamp)\r\n| summarize [\"Exceptions\"] = sum(exceptionCount),[\"Critical Events\"] = sum(eventCount) by bin(timestamp,1h)\r\n| order by timestamp asc\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "Exceptions",
+                                "type": "long"
+                              },
+                              {
+                                "name": "Critical Events",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "51ca97c6-e4cb-4120-86f8-d12518ca6363"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Blockchain registration - failures",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "6": {
+                    "position": {
+                      "x": 12,
+                      "y": 5,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Ownership\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "type",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "8235d9bb-5928-46cc-b15f-4f4bdd96d99f"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Ownership exceptions by type",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Ownership\"\n| project problemId, type, cloud_RoleInstance, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "7": {
+                    "position": {
+                      "x": 0,
+                      "y": 9,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Balance Calculation</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "8": {
+                    "position": {
+                      "x": 0,
+                      "y": 10,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by operation_Name"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "operation_Name",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "919a113b-189f-4bc4-b83d-8fb6e510f9b6"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cutoff exceptions by operation",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Cutoff\"\n| project problemId, operation_Name, cloud_RoleInstance, timestamp\n| summarize count() by operation_Name"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "9": {
+                    "position": {
+                      "x": 5,
+                      "y": 10,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "4e49b346-1384-4410-8615-4d9cc3a87c44"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cutoff exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Cutoff\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "10": {
+                    "position": {
+                      "x": 11,
+                      "y": 10,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "requests\r\n| where * contains \"Cutoff\" and success == false\r\n| project timestamp, name, url, success, resultCode, duration , performanceBucket , operation_Name, itemCount \r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-02-10T03:43:19.000Z/2020-04-10T03:43:19.353Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "4619dcde-7080-48df-a693-7e7bd6f955ad"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cutoff failed requests",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "requests\n| where * contains \"Cutoff\" and success == false\n| project timestamp, itemCount \n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "11": {
+                    "position": {
+                      "x": 0,
+                      "y": 14,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "dependencies\r\n| where success == false and * contains \"Cutoff\"\r\n| project timestamp, target, type, name, success, resultCode, duration, performanceBucket, customDimensions, itemCount \r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "1256de89-761f-414e-9310-d7beaaf77c84"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cutoff dependency failures",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "dependencies\n| where success == false and * contains \"Cutoff\"\n| project timestamp, itemCount \n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "12": {
+                    "position": {
+                      "x": 6,
+                      "y": 14,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\r\n| where * contains \"Ownership\" and * contains \"Blockchain\"\r\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n| order by timestamp asc\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "8b9d2c0a-65d1-4b6a-957f-d2dcb1327a2a"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Blockchain registration of cutoff exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Cutoff\" and * contains \"Blockchain\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "13": {
+                    "position": {
+                      "x": 12,
+                      "y": 14,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "type",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "53ddc323-fa3f-4fc3-9127-724a0b9d7ebf"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cutoff exceptions by type",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Cutoff\"\n| project problemId, type, cloud_RoleInstance, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "14": {
+                    "position": {
+                      "x": 0,
+                      "y": 18,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Function Apps</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "15": {
+                    "position": {
+                      "x": 0,
+                      "y": 19,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "FunctionAppLogs\r\n| where Level != \"Information\" and isnotnull(ExceptionType)\r\n| project TimeGenerated, Level, ExceptionType, ExceptionMessage, Message, ExceptionDetails, _ResourceId\r\n| parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \r\n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName   \r\n| summarize count() by resourceName,Level, bin(TimeGenerated, 1s)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "resourceName",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "112edd94-15c0-440d-8501-7495895044ec"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Exceptions by origin",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "FunctionAppLogs\n| where Level != \"Information\" and isnotnull(ExceptionType)\n| project TimeGenerated, Level, _ResourceId\n| parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName   \n| summarize count() by resourceName,Level, bin(TimeGenerated, 1s)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "16": {
+                    "position": {
+                      "x": 5,
+                      "y": 19,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "FunctionAppLogs\r\n| where isnotnull(ExceptionType)\r\n| project TimeGenerated, ExceptionType, ExceptionMessage, Message, ExceptionDetails, split(_ResourceId, \"/\")[8]\r\n| summarize count() by ExceptionType, TimeGenerated, bin(TimeGenerated, 1h)\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "ExceptionType",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "2b032121-ab62-4a2d-892e-f854d144475d"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Exceptions by type",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "FunctionAppLogs\n| where isnotnull(ExceptionType)\n| project TimeGenerated, ExceptionType, split(_ResourceId, \"/\")[8]\n| summarize count() by ExceptionType, TimeGenerated, bin(TimeGenerated, 1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "17": {
+                    "position": {
+                      "x": 11,
+                      "y": 19,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "FunctionAppLogs\r\n| where Level != \"Information\" and isnotnull(ExceptionType)\r\n| project TimeGenerated, Level, ExceptionType, ExceptionMessage, Message, ExceptionDetails, split(_ResourceId, \"/\")[8]\r\n| summarize count() by Level, TimeGenerated, bin(TimeGenerated, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "Level",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "12fb6bc7-10b1-4ca3-81f2-8832c7484743"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Exceptions by level",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "FunctionAppLogs\n| where Level != \"Information\" and isnotnull(ExceptionType)\n| project TimeGenerated, Level\n| summarize count() by Level, TimeGenerated, bin(TimeGenerated, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "18": {
+                    "position": {
+                      "x": 0,
+                      "y": 23,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">App Services</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "19": {
+                    "position": {
+                      "x": 0,
+                      "y": 24,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AppServiceHTTPLogs\r\n| extend type = strcat(CsMethod, \" \", CsUriStem) \r\n| project CsMethod, CsUriStem , ScStatus , TimeTaken , Result, _ResourceId, TimeGenerated, type\r\n| summarize count() by type, bin(TimeGenerated, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-01-01T22:32:20.000Z/2020-04-09T22:32:20.886Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "type",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "147382c3-10e3-4813-9741-57fab7b656f0"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "App services http logs by operation",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AppServiceHTTPLogs\n| extend type = strcat(CsMethod, \" \", CsUriStem) \n| project TimeGenerated, type\n| summarize count() by type, bin(TimeGenerated, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "20": {
+                    "position": {
+                      "x": 5,
+                      "y": 24,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AppServiceHTTPLogs\r\n| project CsMethod, CsUriStem , ScStatus , TimeTaken , Result, _ResourceId, TimeGenerated \r\n| summarize count() by tostring(ScStatus), bin(TimeGenerated, 1h)\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-01-01T22:32:20.000Z/2020-04-09T22:32:20.886Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "ScStatus",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "13fe81e2-65c4-46d4-b573-1b3fd51e7a19"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "App services http logs by status",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AppServiceHTTPLogs\n| project ScStatus, TimeGenerated \n| summarize count() by tostring(ScStatus), bin(TimeGenerated, 1h)\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "21": {
+                    "position": {
+                      "x": 11,
+                      "y": 24,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AppServiceHTTPLogs\r\n| extend type = strcat(tostring(ScStatus), \"-\", CsMethod) \r\n| project CsMethod, CsUriStem , ScStatus , TimeTaken , Result, _ResourceId, TimeGenerated, type\r\n| summarize count() by type, bin(TimeGenerated, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-01-01T22:32:20.000Z/2020-04-09T22:32:20.886Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "type",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "8c70bb6a-0d1e-4855-9914-0ee89431253b"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "App services http logs by method-status",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AppServiceHTTPLogs\n| extend type = strcat(tostring(ScStatus), \"-\", CsMethod) \n| project TimeGenerated, type\n| summarize count() by type, bin(TimeGenerated, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "22": {
+                    "position": {
+                      "x": 0,
+                      "y": 28,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Redis/Caching</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "23": {
+                    "position": {
+                      "x": 0,
+                      "y": 29,
+                      "colSpan": 8,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "traces\r\n| where * contains \"1B38011B-0C4C-4E70-B082-E6D2AC21B9F0\"\r\n| extend level = iff(severityLevel == 0, \"Verbose\", iff(severityLevel == 1, \"Information\", iff(severityLevel == 2, \"Warning\", iff(severityLevel == 3, \"Error\", iff(severityLevel == 4, \"Critical\", \"Unknown\")))))\r\n| project timestamp, level , customDimensions, message\r\n| summarize count() by level, bin(timestamp, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "level",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "51a6236a-711d-4188-a35b-8ba781359726"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Cache traces by level",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "traces\n| where * contains \"1B38011B-0C4C-4E70-B082-E6D2AC21B9F0\"\n| extend level = iff(severityLevel == 0, \"Verbose\", iff(severityLevel == 1, \"Information\", iff(severityLevel == 2, \"Warning\", iff(severityLevel == 3, \"Error\", iff(severityLevel == 4, \"Critical\", \"Unknown\")))))\n| project timestamp, level\n| summarize count() by level, bin(timestamp, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "24": {
+                    "position": {
+                      "x": 8,
+                      "y": 29,
+                      "colSpan": 9,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Redis\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "type",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "4f8e68ff-46fa-4283-845d-f3fd651337ab"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Redis/Cache exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Redis\" or * contains \"1B38011B-0C4C-4E70-B082-E6D2AC21B9F0\"\n| project problemId, type, cloud_RoleInstance, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "25": {
+                    "position": {
+                      "x": 0,
+                      "y": 33,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Configuration</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "26": {
+                    "position": {
+                      "x": 0,
+                      "y": 34,
+                      "colSpan": 8,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Configuration\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by operation_Name, bin(timestamp, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-02-10T04:47:59.000Z/2020-04-10T04:47:59.209Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "operation_Name",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "36d262f9-bf62-4a1f-8892-65e228298547"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Configuration exceptions by operation",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Configuration\"\n| project problemId, operation_Name, cloud_RoleInstance, timestamp\n| summarize count() by operation_Name, bin(timestamp, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "27": {
+                    "position": {
+                      "x": 8,
+                      "y": 34,
+                      "colSpan": 9,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Configuration\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-02-10T04:47:59.000Z/2020-04-10T04:47:59.209Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "97e49ad5-2980-4ad7-a230-176931670e34"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Configuration exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Configuration\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "28": {
+                    "position": {
+                      "x": 0,
+                      "y": 38,
+                      "colSpan": 17,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Database</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "29": {
+                    "position": {
+                      "x": 0,
+                      "y": 39,
+                      "colSpan": 8,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AzureDiagnostics\r\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \r\n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" remnant\r\n | where ResourceProvider == \"MICROSOFT.LOGIC\" and status_s == \"Failed\"\r\n | project Resource, ResourceType, resourceName, _ResourceId, Level, status_s, code_s, TimeGenerated  \r\n | summarize [\"count\"] = count() by bin(TimeGenerated, 1h)\r\n | order by TimeGenerated asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "13d52dd3-5a18-4a2f-8c48-af7be43a08f4"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Managed instanced diagnostic failures",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AzureDiagnostics\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" remnant\n | where ResourceProvider == \"MICROSOFT.SQL\" and status_s == \"Failed\"\n | project TimeGenerated  \n | summarize [\"count\"] = count() by bin(TimeGenerated, 1h)\n | order by TimeGenerated asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "30": {
+                    "position": {
+                      "x": 8,
+                      "y": 39,
+                      "colSpan": 9,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AzureDiagnostics\r\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \r\n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" remnant\r\n | where ResourceProvider == \"MICROSOFT.LOGIC\" and status_s == \"Failed\"\r\n | project Resource, ResourceType, resourceName, _ResourceId, Level, status_s, code_s, TimeGenerated  \r\n | summarize [\"count\"] = count() by bin(TimeGenerated, 1h)\r\n | order by TimeGenerated asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "TimeGenerated",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "0ca2d738-d856-4e87-b552-baa4613288fa"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Database diagnostic failures",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AzureDiagnostics\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" databases \"/\" dbname \"/\" remnant\n | where databases == \"databases\" and status_s == \"Failed\"\n | project TimeGenerated  \n | summarize [\"count\"] = count() by bin(TimeGenerated, 1h)\n | order by TimeGenerated asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "31": {
+                    "position": {
+                      "x": 0,
+                      "y": 43,
+                      "colSpan": 12,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Reporting</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "32": {
+                    "position": {
+                      "x": 12,
+                      "y": 43,
+                      "colSpan": 6,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Analytics</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "33": {
+                    "position": {
+                      "x": 0,
+                      "y": 44,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "9b61d9d8-0f4c-4275-8148-86dcd99b2a52"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Report exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Powerbi\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "34": {
+                    "position": {
+                      "x": 6,
+                      "y": 44,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "5d4ec54b-233d-4846-a6c8-42c3b11cae9a"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Analysis service refresh exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"AnalysisServiceRefresh\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "35": {
+                    "position": {
+                      "x": 12,
+                      "y": 44,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\r\n| project problemId, cloud_RoleInstance, timestamp, itemCount\r\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\r\n| order by timestamp asc\r\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "9d4a506d-5009-43f7-b10c-dce5c411c405"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Analytical failures after approval",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"ANALITYCAL_PROCESS_INVOKE_FAIL\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "36": {
+                    "position": {
+                      "x": 0,
+                      "y": 48,
+                      "colSpan": 18,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;text-align:center;\">Logic App - SignalR, Flow Approval</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "37": {
+                    "position": {
+                      "x": 0,
+                      "y": 49,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('logAnalyticsName')]",
+                            "ResourceId": "[variables('externalAnalyticsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "AzureDiagnostics\r\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \r\n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" remnant\r\n | where resourceName !contains \"test\" and ResourceProvider == \"MICROSOFT.LOGIC\" and status_s == \"Failed\"\r\n | project Resource, ResourceType, resourceName, _ResourceId, Level, status_s, code_s, TimeGenerated  \r\n | summarize count() by code_s, bin(TimeGenerated, 1h)\r\n | order by TimeGenerated asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "2020-02-04T06:04:46.000Z/2020-04-10T06:04:46.206Z"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "code_s",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "148865e0-597f-4a71-8510-73b08c6112a6"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('logAnalyticsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "workspace"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Logic App failed diagnostics",
+                          "PartSubTitle": "[parameters('logAnalyticsName')]",
+                          "Query": "AzureDiagnostics\n | parse tolower(_ResourceId) with \"/subscriptions/\" subscriptionId \"/resourcegroups/\" \n    resourceGroup \"/providers/\" provider \"/\" resourceType \"/\" resourceName  \"/\" remnant\n | where resourceName !contains \"test\" and ResourceProvider == \"MICROSOFT.LOGIC\" and status_s == \"Failed\"\n | project code_s, TimeGenerated  \n | summarize count() by code_s, bin(TimeGenerated, 1h)\n | order by TimeGenerated asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "38": {
+                    "position": {
+                      "x": 6,
+                      "y": 49,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * has \"61f12b0a-9435-4f99-b1c1-6ef06209b890\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "3499de18-af04-4e53-b836-c968a5111e37"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "SignalR exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * has \"61f12b0a-9435-4f99-b1c1-6ef06209b890\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "39": {
+                    "position": {
+                      "x": 12,
+                      "y": 49,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| where * contains \"Cutoff\"\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "120cbcdc-1980-416e-a811-8060170503f9"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Flow approval exceptions",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| where * contains \"Approval\"\n| project problemId, cloud_RoleInstance, timestamp, itemCount\n| summarize [\"count\"] = sum(itemCount) by bin(timestamp,1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "40": {
+                    "position": {
+                      "x": 0,
+                      "y": 53,
+                      "colSpan": 16,
+                      "rowSpan": 1
+                    },
+                    "metadata": {
+                      "inputs": [],
+                      "type": "Extension/HubsExtension/PartType/MarkdownPart",
+                      "settings": {
+                        "content": {
+                          "settings": {
+                            "content": "<h1 style=\"margin:0px; padding-top:4px;font-size:22px;text-align:center;\">Overview</h1>\r\n<p style=\"margin:0px; padding-top:4px;text-align:center;\">Exceptions, Dependencies, Requests, Traces, Events</h1>",
+                            "title": "",
+                            "subtitle": "",
+                            "markdownSource": 1
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "41": {
+                    "position": {
+                      "x": 0,
+                      "y": 54,
+                      "colSpan": 4,
+                      "rowSpan": 3
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "options",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "sharedTimeRange",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                      "settings": {
+                        "content": {
+                          "options": {
+                            "chart": {
+                              "metrics": [
+                                {
+                                  "resourceMetadata": {
+                                    "id": "[variables('externalInsightsId')]"
+                                  },
+                                  "name": "exceptions/count",
+                                  "aggregationType": 1,
+                                  "namespace": "microsoft.insights/components/kusto",
+                                  "metricVisualization": {
+                                    "displayName": "Exceptions"
+                                  }
+                                }
+                              ],
+                              "title": "Exceptions",
+                              "titleKind": 2,
+                              "visualization": {
+                                "chartType": 2,
+                                "legendVisualization": {
+                                  "isVisible": true,
+                                  "position": 2,
+                                  "hideSubtitle": false
+                                },
+                                "axisVisualization": {
+                                  "x": {
+                                    "isVisible": true,
+                                    "axisType": 2
+                                  },
+                                  "y": {
+                                    "isVisible": true,
+                                    "axisType": 1
+                                  }
+                                },
+                                "disablePinning": true
+                              },
+                              "grouping": {
+                                "dimension": "exception/type",
+                                "sort": 2,
+                                "top": 50
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "42": {
+                    "position": {
+                      "x": 4,
+                      "y": 54,
+                      "colSpan": 4,
+                      "rowSpan": 3
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "options",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "sharedTimeRange",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                      "settings": {
+                        "content": {
+                          "options": {
+                            "chart": {
+                              "metrics": [
+                                {
+                                  "resourceMetadata": {
+                                    "id": "[variables('externalInsightsId')]"
+                                  },
+                                  "name": "requests/failed",
+                                  "aggregationType": 1,
+                                  "namespace": "microsoft.insights/components/kusto",
+                                  "metricVisualization": {
+                                    "displayName": "Failed requests"
+                                  }
+                                }
+                              ],
+                              "title": "Failed requests",
+                              "titleKind": 2,
+                              "visualization": {
+                                "chartType": 2,
+                                "legendVisualization": {
+                                  "isVisible": true,
+                                  "position": 2,
+                                  "hideSubtitle": false
+                                },
+                                "axisVisualization": {
+                                  "x": {
+                                    "isVisible": true,
+                                    "axisType": 2
+                                  },
+                                  "y": {
+                                    "isVisible": true,
+                                    "axisType": 1
+                                  }
+                                },
+                                "disablePinning": true
+                              },
+                              "grouping": {
+                                "dimension": "request/resultCode",
+                                "sort": 2,
+                                "top": 50
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "43": {
+                    "position": {
+                      "x": 8,
+                      "y": 54,
+                      "colSpan": 4,
+                      "rowSpan": 3
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "options",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "sharedTimeRange",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                      "settings": {
+                        "content": {
+                          "options": {
+                            "chart": {
+                              "metrics": [
+                                {
+                                  "resourceMetadata": {
+                                    "id": "[variables('externalInsightsId')]"
+                                  },
+                                  "name": "dependencies/failed",
+                                  "aggregationType": 1,
+                                  "namespace": "microsoft.insights/components/kusto",
+                                  "metricVisualization": {
+                                    "displayName": "Dependency failures"
+                                  }
+                                }
+                              ],
+                              "title": "Dependency failures",
+                              "titleKind": 2,
+                              "visualization": {
+                                "chartType": 2,
+                                "legendVisualization": {
+                                  "isVisible": true,
+                                  "position": 2,
+                                  "hideSubtitle": false
+                                },
+                                "axisVisualization": {
+                                  "x": {
+                                    "isVisible": true,
+                                    "axisType": 2
+                                  },
+                                  "y": {
+                                    "isVisible": true,
+                                    "axisType": 1
+                                  }
+                                },
+                                "disablePinning": true
+                              },
+                              "grouping": {
+                                "dimension": "dependency/type",
+                                "sort": 2,
+                                "top": 50
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "44": {
+                    "position": {
+                      "x": 12,
+                      "y": 54,
+                      "colSpan": 4,
+                      "rowSpan": 3
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "options",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "sharedTimeRange",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                      "settings": {
+                        "content": {
+                          "options": {
+                            "chart": {
+                              "metrics": [
+                                {
+                                  "resourceMetadata": {
+                                    "id": "[variables('externalInsightsId')]"
+                                  },
+                                  "name": "traces/count",
+                                  "aggregationType": 1,
+                                  "namespace": "microsoft.insights/components/kusto",
+                                  "metricVisualization": {
+                                    "displayName": "Traces"
+                                  }
+                                }
+                              ],
+                              "title": "Traces",
+                              "titleKind": 2,
+                              "visualization": {
+                                "chartType": 2,
+                                "legendVisualization": {
+                                  "isVisible": true,
+                                  "position": 2,
+                                  "hideSubtitle": false
+                                },
+                                "axisVisualization": {
+                                  "x": {
+                                    "isVisible": true,
+                                    "axisType": 2
+                                  },
+                                  "y": {
+                                    "isVisible": true,
+                                    "axisType": 1
+                                  }
+                                },
+                                "disablePinning": true
+                              },
+                              "grouping": {
+                                "dimension": "trace/severityLevel",
+                                "sort": 2,
+                                "top": 10
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "45": {
+                    "position": {
+                      "x": 0,
+                      "y": 57,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by operation_Name\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "operation_Name",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "14c3edb3-13c9-46e2-9010-a059c3012f7f"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Exceptions by operation",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| project problemId, operation_Name, cloud_RoleInstance\n| summarize count() by operation_Name\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "46": {
+                    "position": {
+                      "x": 5,
+                      "y": 57,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "requests\n| extend intstatus = toint(resultCode)\n| extend series = iff(intstatus >= 100 and intstatus < 200, \"1xx\", iff(intstatus >= 200 and intstatus < 300, \"2xx\", iff(intstatus >= 300 and intstatus < 400, \"3xx\", iff(intstatus >= 400 and intstatus < 500, \"4xx\",iff(intstatus >= 500 and intstatus < 600, \"5xx\", \"Other\")))))\n| project timestamp, name, url, success, resultCode, duration , performanceBucket , operation_Name, series\n| summarize count() by series, bin(timestamp, 1h)\n| order by timestamp asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "series",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "24c268a0-e4a0-4d4a-813d-9b9c04344099"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Requests by status type",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "requests\n| extend intstatus = toint(resultCode)\n| extend series = iff(intstatus >= 100 and intstatus < 200, \"1xx\", iff(intstatus >= 200 and intstatus < 300, \"2xx\", iff(intstatus >= 300 and intstatus < 400, \"3xx\", iff(intstatus >= 400 and intstatus < 500, \"4xx\",iff(intstatus >= 500 and intstatus < 600, \"5xx\", \"Other\")))))\n| project timestamp, series\n| summarize count() by series, bin(timestamp, 1h)\n| order by timestamp asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "47": {
+                    "position": {
+                      "x": 11,
+                      "y": 57,
+                      "colSpan": 5,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "dependencies\r\n| where success == false\r\n| project timestamp, target, type, name, success, resultCode, duration, performanceBucket, customDimensions\r\n| summarize count() by type, bin(timestamp, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "type",
+                              "type": "string"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "733b073d-104d-4857-b148-4d6f1e12069f"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsDonut"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Dependency failures by type",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "dependencies\n| where success == false\n| project timestamp, type\n| summarize count() by type, bin(timestamp, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "48": {
+                    "position": {
+                      "x": 0,
+                      "y": 61,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "exceptions\n| project itemType, problemId, type, outerType, outerMessage, outerMethod, details, customDimensions, operation_Name, client_City, cloud_RoleInstance, appName, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "type",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "8945f5f4-246c-48c5-b112-a37cdc802155"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Bar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Exceptions by type",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "exceptions\n| project problemId, type, cloud_RoleInstance, timestamp\n| summarize count() by type, bin(timestamp, 1h)\n| order by timestamp asc\n"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "49": {
+                    "position": {
+                      "x": 6,
+                      "y": 61,
+                      "colSpan": 6,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "requests\n| where success == false\n| project timestamp, name, url, success, resultCode, duration , performanceBucket , operation_Name\n| summarize count() by operation_Name, bin(timestamp, 1h)\n| order by timestamp asc"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "operation_Name",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "31b46acf-4394-4dad-8120-f9620a968752"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "Line"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Failed requests by operation",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "requests\n| where success == false\n| project timestamp, operation_Name\n| summarize count() by operation_Name, bin(timestamp, 1h)\n| order by timestamp asc"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  },
+                  "50": {
+                    "position": {
+                      "x": 12,
+                      "y": 61,
+                      "colSpan": 4,
+                      "rowSpan": 4
+                    },
+                    "metadata": {
+                      "inputs": [
+                        {
+                          "name": "ComponentId",
+                          "value": {
+                            "SubscriptionId": "[parameters('subscriptionId')]",
+                            "ResourceGroup": "[parameters('resourceGroupName')]",
+                            "Name": "[parameters('applicationInsightsName')]",
+                            "ResourceId": "[variables('externalInsightsId')]"
+                          }
+                        },
+                        {
+                          "name": "Query",
+                          "value": "dependencies\r\n| where success == false\r\n| project timestamp, target, type, name, success, resultCode, duration, performanceBucket, customDimensions\r\n| summarize count() by target, bin(timestamp, 1h)"
+                        },
+                        {
+                          "name": "TimeRange",
+                          "value": "P1D"
+                        },
+                        {
+                          "name": "Dimensions",
+                          "value": {
+                            "xAxis": {
+                              "name": "timestamp",
+                              "type": "datetime"
+                            },
+                            "yAxis": [
+                              {
+                                "name": "count_",
+                                "type": "long"
+                              }
+                            ],
+                            "splitBy": [
+                              {
+                                "name": "target",
+                                "type": "string"
+                              }
+                            ],
+                            "aggregation": "Sum"
+                          }
+                        },
+                        {
+                          "name": "Version",
+                          "value": "1.0"
+                        },
+                        {
+                          "name": "PartId",
+                          "value": "4a2546ae-020b-4ef3-aa1e-e0559311c723"
+                        },
+                        {
+                          "name": "PartTitle",
+                          "value": "Analytics"
+                        },
+                        {
+                          "name": "PartSubTitle",
+                          "value": "[parameters('applicationInsightsName')]"
+                        },
+                        {
+                          "name": "resourceTypeMode",
+                          "value": "components"
+                        },
+                        {
+                          "name": "ControlType",
+                          "value": "AnalyticsChart"
+                        },
+                        {
+                          "name": "SpecificChart",
+                          "value": "GroupedBar"
+                        },
+                        {
+                          "name": "DashboardId",
+                          "isOptional": true
+                        }
+                      ],
+                      "type": "Extension/AppInsightsExtension/PartType/AnalyticsPart",
+                      "settings": {
+                        "content": {
+                          "PartTitle": "Dependency failures by target",
+                          "PartSubTitle": "[parameters('applicationInsightsName')]",
+                          "Query": "dependencies\n| where success == false\n| project timestamp, target\n| summarize count() by target, bin(timestamp, 1h)"
+                        }
+                      },
+                      "asset": {
+                        "idInputName": "ComponentId",
+                        "type": "ApplicationInsights"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "model": {
+                "timeRange": {
+                  "value": {
+                    "relative": {
+                      "duration": 24,
+                      "timeUnit": 1
+                    }
+                  },
+                  "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+                },
+                "filterLocale": {
+                  "value": "en-us"
+                },
+                "filters": {
+                  "value": {
+                    "MsPortalFx_TimeRange": {
+                      "model": {
+                        "format": "local",
+                        "granularity": "auto",
+                        "relative": "24h"
+                      },
+                      "displayCache": {
+                        "name": "Local Time",
+                        "value": "Past 24 hours"
+                      },
+                      "filteredPartIds": [
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a008",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a00a",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a00c",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a00e",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a010",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a012",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a016",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a018",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a01a",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a01c",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a01e",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a020",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a024",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a026",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a028",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a02c",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a02e",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a030",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a034",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a036",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a03a",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a03c",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a040",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a042",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a048",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a04a",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a04e",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a050",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a052",
+                        "StartboardPart-MonitorChartPart-39274464-a730-4f96-963b-d39d34f7a056",
+                        "StartboardPart-MonitorChartPart-39274464-a730-4f96-963b-d39d34f7a058",
+                        "StartboardPart-MonitorChartPart-39274464-a730-4f96-963b-d39d34f7a05a",
+                        "StartboardPart-MonitorChartPart-39274464-a730-4f96-963b-d39d34f7a05c",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a05e",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a060",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a062",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a064",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a066",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a068",
+                        "StartboardPart-AnalyticsPart-39274464-a730-4f96-963b-d39d34f7a06e"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+      }
+  ]
+}

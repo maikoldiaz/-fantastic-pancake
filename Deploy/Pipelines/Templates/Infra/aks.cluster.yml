@@ -1,0 +1,166 @@
+steps:
+ - task: AzurePowerShell@4
+   displayName: AKS - VNET Role Assignment
+   inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignment.ps1'
+      ScriptArguments: '-AccessLevel "Network Contributor" -AppId "$(aksServicePrincipalProfileClientId)" -Scope "$(virtualNetworkId)"'
+      azurePowerShellVersion: LatestVersion
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: AKS - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "$(deployLocation)"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/deploy.json'
+     overrideParameters: '-logAnalyticsResourceId "$(logAnalyticsResourceId)"
+                          -aksManagedClustersName "$(aksManagedClustersName)" 
+                          -aksDnsPrefix "$(aksDnsPrefix)"
+                          -aksAgentPoolName "$(aksAgentPoolName)"
+                          -aksAgentPoolVmSize "$(aksAgentPoolVmSize)"
+                          -aksAgentPoolVmCount "$(aksAgentPoolVmCount)"
+                          -aksLinuxProfileKeyData "$(aksLinuxProfileKeyData)"
+                          -aksServicePrincipalProfileClientId "$(aksServicePrincipalProfileClientId)"
+                          -aksServicePrincipalProfileSecret "$(aksServicePrincipalProfileSecret)"
+                          -aksNodeResourceGroup "$(aksNodeResourceGroup)"
+                          -aksNetworkPlugin "$(aksNetworkPlugin)"
+                          -aksServiceCidr "$(aksServiceCidr)"
+                          -aksDnsServiceIP "$(aksDnsServiceIP)"
+                          -aksdockerBridgeCidr "$(aksdockerBridgeCidr)"
+                          -aksAadProfileClientAppID "$(aksAadProfileClientAppID)"
+                          -aksAadProfileServerAppID "$(aksAadProfileServerAppID)"
+                          -aksAadProfileServerAppSecret "$(aksAadProfileServerAppSecret)"
+                          -aksVnetSubnetID "$(virtualNetworkId)/subnets/$(aksSubnetName)"'
+     deploymentOutputs: armOut
+
+ - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+   displayName: AKS - Replace Namespace Tokens
+   inputs:
+     targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/namespace.yml'
+     actionOnMissing: fail
+
+ - task: Kubernetes@1
+   displayName: AKS - Create Namespace
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint:  '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName }}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/namespace.yml'
+
+ - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+   displayName: AKS - Replace Role Tokens
+   inputs:
+     targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/role-dev-namespace.yml'
+     actionOnMissing: fail
+
+ - task: Kubernetes@1
+   displayName: AKS - Create Cluster Dev Role
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint:  '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName}}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     namespace: '$(namespace)'
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/role-dev-namespace.yml'
+
+ - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+   displayName: AKS - Replace Role Binding Tokens
+   inputs:
+     targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/rolebinding-dev-namespace.yml'
+     actionOnMissing: fail
+
+ - task: Kubernetes@1
+   displayName: AKS - Create Cluster DEV Role Binding
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint: '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName}}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     namespace: '$(namespace)'
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/rolebinding-dev-namespace.yml'
+
+ - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+   displayName: AKS - Replace HELM SA Tokens
+   inputs:
+      targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/serviceaccount.yml'
+      actionOnMissing: fail
+
+ - task: Kubernetes@1
+   displayName: AKS - Create SA For HELM Install
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint: '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName }}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     namespace: 'kube-system'
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/serviceaccount.yml'
+
+ - task: Kubernetes@1
+   displayName: AKS - Create Role Binding For HELM Install
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint: '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName }}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     namespace: 'kube-system'
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/serviceaccountrolebinding.yml'
+
+ - task: HelmInstaller@1
+   displayName: AKS - Install Helm
+   inputs:
+     helmVersionToInstall: 3.4.0
+
+ - task: AzureCLI@1
+   displayName: AKS - Get Azure Credentials
+   inputs:
+      azureSubscription: '${{parameters.azureSubscriptionName}}'
+      scriptLocation: inlineScript
+      inlineScript: 'az aks get-credentials --resource-group "${{ parameters.resourceGroupName }}" --name $(aksManagedClustersName) --admin'
+
+ - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+   displayName: AKS - Replace Internal Ingress Controller Tokens
+   inputs:
+      targetFiles: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/internal-ingress.yml'
+      actionOnMissing: fail
+
+ - bash: |
+     helm upgrade --atomic --install nginxecptrue stable/nginx-ingress --wait --namespace $(namespace) -f '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/internal-ingress.yml' --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux
+   displayName: AKS - Helm upgrade
+
+ - task: AzureCLI@2
+   displayName: AKS - Diagnostics
+   inputs:
+     azureSubscription: '${{parameters.azureSubscriptionName}}'
+     scriptType: pscore
+     scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Enable-AKSDiagnostics.ps1'
+     arguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -aksResourceName "$(aksManagedClustersName)" -logAnalyticsResourceId "$(logAnalyticsResourceId)"'
+
+ - task: Kubernetes@1
+   displayName: AKS - Prometheus
+   inputs:
+     connectionType: 'Azure Resource Manager'
+     azureSubscriptionEndpoint: '${{parameters.azureSubscriptionName}}'
+     azureResourceGroup: '${{ parameters.resourceGroupName }}'
+     kubernetesCluster: '$(aksManagedClustersName)'
+     useClusterAdmin: true
+     namespace: 'monitoring'
+     command: apply
+     useConfigurationFile: true
+     configuration: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Kubernetes Services/Configurations/prometheus.yml'

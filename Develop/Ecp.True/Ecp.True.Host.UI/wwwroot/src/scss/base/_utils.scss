@@ -1,0 +1,557 @@
+﻿//
+// File Name - _utilities.scss
+// Description - CSS utility classes for any web project.These classes are mainly for some CSS properties that we mostly used in our web projects/sites.
+//
+
+$spacer: 5px;
+
+//
+// Utilities - Margin and Padding
+//
+
+@each $box in a, x, y, t, b, l, r {
+    @for $i from 0 through 8 {
+        .m-#{$box}-#{$i} {
+            @if $box == 'a' {
+                margin: ($spacer * $i) !important;
+            }
+
+            @if $box == 'x' {
+                margin-left: ($spacer * $i) !important;
+                margin-right: ($spacer * $i) !important;
+            }
+
+            @if $box == 'y' {
+                margin-top: ($spacer * $i) !important;
+                margin-bottom: ($spacer * $i) !important;
+            }
+
+            @if $box == 't' {
+                margin-top: ($spacer * $i) !important;
+            }
+
+            @if $box == 'b' {
+                margin-bottom: ($spacer * $i) !important;
+            }
+
+            @if $box == 'l' {
+                margin-left: ($spacer * $i) !important;
+            }
+
+            @if $box == 'r' {
+                margin-right: ($spacer * $i) !important;
+            }
+        }
+
+        .p-#{$box}-#{$i} {
+            @if $box == 'a' {
+                padding: ($spacer * $i) !important;
+            }
+
+            @if $box == 'x' {
+                padding-left: ($spacer * $i) !important;
+                padding-right: ($spacer * $i) !important;
+            }
+
+            @if $box == 'y' {
+                padding-top: ($spacer * $i) !important;
+                padding-bottom: ($spacer * $i) !important;
+            }
+
+            @if $box == 't' {
+                padding-top: ($spacer * $i) !important;
+            }
+
+            @if $box == 'b' {
+                padding-bottom: ($spacer * $i) !important;
+            }
+
+            @if $box == 'l' {
+                padding-left: ($spacer * $i) !important;
+            }
+
+            @if $box == 'r' {
+                padding-right: ($spacer * $i) !important;
+            }
+        }
+    }
+}
+
+.m {
+    &-l-10{
+        margin-left: pxToRem(50) !important;
+    }
+    &-auto{
+        margin: auto !important;
+    }
+}
+
+//
+// Utilities - Border
+//
+.br {
+    &-r {
+        &-0 {
+            border-right: 0px !important;
+        }
+        &-1 {
+            border-right: solid 1px map-get($gray, 'CCCCCC') !important;
+        }
+    }
+
+    &-l {
+        &-0 {
+            border-left: 0px !important;
+        }
+        &-1 {
+            border-left: solid 1px map-get($gray, 'CCCCCC') !important;
+        }
+    }
+
+    &-b {
+        &-0 {
+            border-bottom: 0px !important;
+        }
+        &-1 {
+            border-bottom: solid 1px map-get($gray, 'CCCCCC') !important;
+        }
+    }
+
+    &-t {
+        &-0 {
+            border-top: 0px !important;
+        }
+        &-1 {
+            border-top: solid 1px map-get($gray, 'CCCCCC') !important;
+        }
+    }
+}
+
+//
+// Utilities - Vertical Align
+//
+.va {
+    &-sub {
+        vertical-align: sub !important;
+    }
+
+    &-middle {
+        vertical-align: middle !important;
+    }
+
+    &-bottom {
+        vertical-align: bottom !important;
+    }
+
+    &-top {
+        vertical-align: top !important;
+    }
+
+    &-baseline {
+        vertical-align: baseline !important;
+    }
+
+    &-auto {
+        vertical-align: auto !important;
+    }
+
+    &-text-bottom {
+        vertical-align: text-top;
+    }
+}
+
+
+//
+// Utilities - Display
+//
+.d {
+    &-block {
+        display: block !important;
+    }
+
+    &-inline-block {
+        display: inline-block !important;
+    }
+
+    &-inline {
+        display: inline !important;
+    }
+
+    &-table {
+        display: table !important;
+    }
+
+    &-flex {
+        display: flex !important;
+
+        &--a-center{
+            align-items: center;
+        }
+
+        &--a-start{
+            align-items: start;
+        }
+
+        &--jc-sb{
+            justify-content: space-between;
+        }
+
+        &--jc-cen{
+            justify-content: center;
+        }
+    }
+
+    &-inline-flex {
+        display: inline-flex !important;
+    }
+}
+
+
+// //
+// // Utilities - Z Indexes
+// //
+.z-in {
+    &-1 {
+        z-index: 1;
+    }
+
+    &-2 {
+        z-index: 2;
+    }
+
+    &-3 {
+        z-index: 3;
+    }
+}
+
+//
+// Utilities - font-size
+//
+.fs {
+    &-8 {
+        font-size: pxToRem(8) !important;
+    }
+
+    &-10 {
+        font-size: pxToRem(10) !important;
+    }
+
+    &-11 {
+        font-size: pxToRem(11) !important;
+    }
+
+    &-12 {
+        font-size: pxToRem(12) !important;
+    }
+
+    &-14 {
+        font-size: pxToRem(14) !important;
+    }
+
+    &-16 {
+        font-size: pxToRem(16) !important;
+    }
+
+    &-18 {
+        font-size: pxToRem(18) !important;
+    }
+
+    &-20 {
+        font-size: pxToRem(20) !important;
+    }
+
+    &-22 {
+        font-size: pxToRem(22) !important;
+    }
+
+    &-24 {
+        font-size: pxToRem(24) !important;
+    }
+
+    &-30 {
+        font-size: pxToRem(30) !important;
+    }
+    
+    &-36 {
+        font-size: pxToRem(36) !important;
+    }
+}
+
+//
+// Utilities - font-weight
+//
+.fw {
+    &-n {
+        font-weight: normal !important;
+    }
+
+    &-400 {
+        font-weight: 400 !important;
+    }
+
+    &-500 {
+        font-weight: 500 !important;
+    }
+
+    &-600 {
+        font-weight: 600 !important;
+    }
+
+    &-bold {
+        font-weight: bold !important;
+    }
+
+    &-r{
+        font-family: $font-family;
+        font-weight: 400;
+    }
+
+    &-lt{
+        font-family: $font-family-lt;
+    }
+
+    &-sb{
+        font-family: $font-family-sb;
+    }
+}
+
+//
+// Utilities - Rotate
+//
+
+.ra {
+    &-45 {
+        transform: rotate(45deg);
+    }
+
+    &-90 {
+        transform: rotate(90deg);
+    }
+
+    &-180 {
+        transform: rotate(180deg);
+    }
+
+    &-270 {
+        transform: rotate(270deg);
+    }
+
+    &-360 {
+        transform: rotate(270deg);
+    }
+}
+
+
+//
+// Utilities - Position
+//
+
+
+.p {
+    &-abs {
+        position: absolute !important;
+    }
+
+    &-rel {
+        position: relative !important;
+    }
+
+    &-fix {
+        position: fixed !important;
+    }
+
+    &-init {
+        position: initial !important;
+    }
+}
+
+
+// //
+// // Utilities - Text Transform
+// //
+
+.text {
+    &-caps {
+        text-transform: capitalize !important;
+    }
+
+    &-uppercase {
+        text-transform: uppercase !important;
+    }
+
+    &-lowercase {
+        text-transform: lowercase !important;
+    }
+
+    &-fl-ucase:first-letter {
+        text-transform: uppercase !important;
+    }
+
+    &-normal{
+        text-transform: normal !important;
+    }
+
+    &-unset{
+        text-transform: unset !important;
+    }
+
+    &-center {
+        text-align: center !important;
+    }
+
+    &-left {
+        text-align: left !important;
+    }
+
+    &-right {
+        text-align: right !important;
+    }
+
+    &-line-through {
+        text-decoration: line-through;
+    }
+
+    &-italic {
+        font-style: italic !important;
+    }
+}
+
+// //
+// // Utilities - Text Colors
+// //
+.fc {
+    &-primary{
+        color:$ep-primary-color;
+    }
+    &-secondary{
+        color:$ep-secondary-color;
+    }
+    &-error{
+        color: $error;
+    }
+    &-white{
+        color: $white!important;
+    }
+    &-green{
+        color: $success!important;
+    }
+    &-label{
+        color: $label!important;
+    }
+}
+
+// //
+// // Utilities - Float
+// //
+.float {
+    &-none {
+        float: none !important;
+    }
+
+    &-l {
+        float: left !important;
+    }
+
+    &-r {
+        float: right !important;
+    }
+}
+
+
+// //
+// // Utilities - Cursor
+// //
+.cursor {
+    &-move {
+        cursor: move !important;
+    }
+
+    &-default {
+        cursor: default !important;
+    }
+
+    &-pointer {
+        cursor: pointer !important;
+    }
+
+    &-restrict{
+        cursor: not-allowed !important;
+    }
+}
+
+// //
+// // Utilities - Box Sizing
+// //
+.box {
+    &-content * {
+        -webkit-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+
+    &-border * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+}
+
+// //
+// // Utilities - Others
+// //
+.selection-off {
+    * {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: -moz-none;
+        -o-user-select: none;
+        user-select: none;
+    }
+}
+
+.ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+.full {
+    &-height {
+        height: 100% !important;
+    }
+
+    &-width {
+        width: 100% !important;
+    }
+}
+
+.hidden{
+    display: none;
+}
+
+.clearfix{
+    clear: both;
+
+    &:after{
+        content: "";
+        display: block;
+        clear: both;
+    }
+}
+
+.nowrap{
+    flex-wrap: nowrap;
+}
+
+// //
+// // For Accessibility
+// //
+.sr-only {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}

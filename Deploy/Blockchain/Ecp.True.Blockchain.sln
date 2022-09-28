@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28809.33
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecp.True.Blockchain", "Ecp.True.Blockchain\Ecp.True.Blockchain.csproj", "{390A1FC8-5933-47A9-A51D-E840095B2F22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{966E4860-D0EF-4D98-91F2-0B66F4BF7E48}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecp.True.ExceptionHandling", "..\..\Develop\Ecp.True\Ecp.True.ExceptionHandling\Ecp.True.ExceptionHandling.csproj", "{7E211D3C-14F0-40B7-8CEE-6B3F587617A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecp.True.Core", "..\..\Develop\Ecp.True\Ecp.True.Core\Ecp.True.Core.csproj", "{7E148C2C-5040-4C37-ADD4-D81EC313F0B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{390A1FC8-5933-47A9-A51D-E840095B2F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{390A1FC8-5933-47A9-A51D-E840095B2F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{390A1FC8-5933-47A9-A51D-E840095B2F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{390A1FC8-5933-47A9-A51D-E840095B2F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E211D3C-14F0-40B7-8CEE-6B3F587617A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E211D3C-14F0-40B7-8CEE-6B3F587617A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E211D3C-14F0-40B7-8CEE-6B3F587617A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E211D3C-14F0-40B7-8CEE-6B3F587617A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E148C2C-5040-4C37-ADD4-D81EC313F0B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E148C2C-5040-4C37-ADD4-D81EC313F0B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E148C2C-5040-4C37-ADD4-D81EC313F0B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E148C2C-5040-4C37-ADD4-D81EC313F0B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5122B6CF-EE8A-4BEF-BF89-9D40BE8B286A}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,50 @@
+﻿// _body.scss
+
+#{$ep}-body {
+    $body:&;
+    display: flex;
+    flex-flow: row nowrap;
+    height: calc(100% - 56px);
+
+    &__aside {
+        $aside:&;
+        flex-basis: pxToRem(55);
+        width: pxToRem(55);
+        background-color: $white;
+        box-shadow: $bx-sd;
+        height: 100%;
+        overflow: auto;
+        transition: all $tr-med;
+
+        /*+ #{$body}__content{
+            flex-basis: calc(100% - 55px);
+        }*/
+
+        &--expand{
+            flex-basis: pxToRem(375);
+            width: pxToRem(375);
+
+            // + #{$body}__content{
+            //     flex-basis: calc(100% - 325px);
+            // }
+
+            #{$ep}-navbar__toggler{
+                width: 100%;
+                text-align: right;
+                padding: 0 pxToRem(10);
+
+                .fa-angle-double-right{
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    &__content {
+        position: relative;
+        flex-basis: calc(100% - 55px);
+        padding: pxToRem(25) pxToRem(40);
+        overflow: auto;
+        overflow-x: hidden;
+    }
+}

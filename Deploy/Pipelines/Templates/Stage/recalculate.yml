@@ -1,0 +1,65 @@
+stages:
+  - stage: Recalculate
+    condition: or(eq(variables['cutoff'], 'true'), eq(variables['ownership'], 'true'))
+    jobs:
+      - deployment: Recalculate
+        timeoutInMinutes: 120 # depending on size of data recalculation can take anywhere between 45mins to 120mins.
+        pool:
+          vmImage: "windows-latest"
+        environment: $(envApp)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download Build Artifacts
+                  inputs:
+                    artifactName: Drop
+                    downloadPath: '$(System.ArtifactsDirectory)'
+
+                - template: ../Infra/fetchSecrets.yml
+                  parameters:
+                    azureSubscriptionName : '${{parameters.serviceConnection}}'
+                    keyVaultName: '$(keyVault)'
+                    secretsFilter: '*'
+
+                - task:  AzurePowerShell@4
+                  displayName: Backup Database
+                  inputs:
+                    azureSubscription: '${{parameters.serviceConnection}}'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Create-DatabaseBackup.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -ServerName "$(sqlServerName)" -DatabaseName "$(databaseName)" -StorageAccountConnectionString "$(storageconnectionstring)" -BlobContainerName "$(dbBackupsBlobContainer)" -SqlPackageExePath "$(sqlPackageExePath)" -Clone "$(cloneDatabase)" -ResourceGroupName "$(sharedResourceGroupName)"'
+                    azurePowerShellVersion: LatestVersion
+
+                - task:  AzurePowerShell@4
+                  displayName: Recalculate Cutoff
+                  inputs:
+                    azureSubscription: '${{parameters.serviceConnection}}'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Recalculate-Cutoff.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -TicketIds "$(ticketIds)" -Recalculate "$(recalculate)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq(variables['cutoff'], 'true'))
+
+                - task:  AzurePowerShell@4
+                  displayName: Recalculate Ownership
+                  inputs:
+                    azureSubscription: '${{parameters.serviceConnection}}'
+                    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Recalculate-Ownership.ps1'
+                    ScriptArguments: '-ModulePath "$(System.ArtifactsDirectory)\Drop\Scripts\Modules" -SqlServerConnectionString "$(sqlconnectionstring)" -TicketIds "$(ticketIds)"'
+                    azurePowerShellVersion: LatestVersion
+                  condition: and(succeeded(), eq(variables['ownership'], 'true'))
+
+  - stage: Refresh
+    condition: eq(variables['refreshaas'], 'true')
+    jobs:
+    - job: Refresh
+      pool:
+        vmImage: "windows-latest"
+      steps:
+        - task: AzurePowerShell@3
+          displayName: Refresh Tabular Model
+          inputs:
+            azureSubscription: "${{ parameters.serviceConnection }}"
+            ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Refresh-AnalysisServiceModel.ps1'
+            ScriptArguments: '-aasADAppClientId "$(aasAppClientId)" -aasADAppClientSecret "$(aasAppSecret)" -TenantId "$(tenantId)" -analysisServicesName "$(analysisServicesName)" -modelName "$(analysisServerModel)" -rolloutenvironment "$(rolloutenvironment)"'
+            azurePowerShellVersion: LatestVersion

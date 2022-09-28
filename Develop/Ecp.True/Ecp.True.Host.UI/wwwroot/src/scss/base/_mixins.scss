@@ -1,0 +1,14 @@
+﻿// _mixins.scss
+
+@mixin mix-square($val) {
+    display: inline-block;
+    height: $val;
+    width: $val;
+}
+
+@mixin mix-circle($val) {
+    display:inline-block;
+    height: $val;
+    width: $val;
+    border-radius:100%;
+}

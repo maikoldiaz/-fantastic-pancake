@@ -1,0 +1,48 @@
+steps:
+ - powershell: |
+     $guid=(New-Guid).Guid
+     Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+   displayName: Set PID Name
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: Log Analytics - ARM
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     resourceGroupName: "${{ parameters.resourceGroupName }}"
+     location: "${{ parameters.deployLocation }}"
+     csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Log Analytics/deploy.json'
+     overrideParameters: '-workspaceName "${{parameters.workspaceName}}"'
+     deploymentOutputs: armOut
+     deploymentName: '$(deploymentsuffix)'
+
+ - task: AzurePowerShell@4
+   displayName: Log Analytics - Set Output Variables
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzureCLI@2
+   displayName: Log Analytics - Set Workspace Key In KV
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "${{ parameters.logAnalyticsKeyName }}" -secretValue "$(ou_LawsSharedKey)"'
+
+ - task: AzureCLI@2
+   displayName: og Analytics - Set WorkspaceId In KV
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     scriptType: ps
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-Secret.ps1'
+     arguments: '-keyVaultName "$(keyVault)" -secretName "${{ parameters.logAnalyticsWorkspaceId }}" -secretValue "$(ou_LawsId)"'
+
+ - task: AzurePowerShell@4
+   displayName: Log Analytics - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{ parameters.workspaceName }}"'
+     azurePowerShellVersion: LatestVersion

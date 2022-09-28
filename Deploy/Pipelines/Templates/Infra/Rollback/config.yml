@@ -1,0 +1,14 @@
+steps:
+  - template: ../fetchSecrets.yml
+    parameters:
+      azureSubscriptionName: '$(serviceConnection)'
+      keyVaultName: '$(keyVault)'
+      secretsFilter: '*'
+
+  - task: AzurePowerShell@4
+    displayName: Delete Config
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Config.ps1'
+      ScriptArguments: '-storageName "$(storageAccountName)" -storageTableName "$(storageTableNameForConfiguration)" -resourceGroupName "$(resourceGroupName)"'
+      azurePowerShellVersion: LatestVersion

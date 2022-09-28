@@ -1,0 +1,73 @@
+  {
+    "SourceSystem": "SINOPER",
+    "EventType": "Insert",
+    "SystemTypeId": 2,
+    "MovementId": 123,
+    "MovementTypeId": 25,
+    "OperationalDate": "2019-08-24T15:59:00.36",
+    "Period": {
+      "StartTime": "2019-08-24T04:59:00.36",
+      "EndTime": "2019-08-24T08:59:00.36",
+      "CreatedBy": "user1",
+      "CreatedDate": "2019-08-24T15:59:00.36"
+    },
+    "MovementSource": {
+      "SourceNodeId": 2,
+      "SourceStorageLocationId": 1,
+      "SourceProductId": "2",
+      "SourceProductTypeId": 0,
+      "CreatedBy": "user1",
+      "CreatedDate": "2019-08-24T15:59:00.36"
+    },
+    "MovementDestination": {
+      "DestinationNodeId": 3,
+      "DestinationStorageLocationId": 2,
+      "DestinationProductId": "3",
+      "DestinationProductTypeId": 2,
+      "CreatedBy": "user1",
+      "CreatedDate": "2019-08-24T15:59:00.36"
+    },
+    "GrossStandardVolume": 10,
+    "NetStandardVolume": 9,
+    "MeasurementUnit": "1",
+    "Scenario": "test",
+    "Observations": "observations_123",
+    "Classification": "Movement",
+    "CreatedBy": "user1",
+    "CreatedDate": "2019-08-24T15:59:00.36",
+    "MessageTypeId": 2,
+    "Owners": [
+      {
+        "OwnerId": 1,
+        "OwnershipValue": "12",
+        "OwnershipValueUnit": "1",
+        "CreatedDate": "2019-08-24T14:59:00.36",
+        "CreatedBy": "user1"
+      },
+      {
+        "OwnerId": 12,
+        "OwnershipValue": "28",
+        "OwnershipValueUnit": "Volume",
+        "CreatedDate": "2019-08-24T14:59:00.36",
+        "CreatedBy": "user1"
+      }
+    ],
+    "Attributes": [
+      {
+        "AttributeId": 1,
+        "AttributeValue": 12,
+        "ValueAttributeUnit": 30,
+        "AttributeDescription": "desc",
+        "CreatedDate": "2019-08-24T14:59:00.36",
+        "CreatedBy": "user1"
+      },
+      {
+        "AttributeId": "2",
+        "AttributeValue": 13,
+        "ValueAttributeUnit": 23,
+        "AttributeDescription": "desc2",
+        "CreatedDate": "2019-08-24T14:59:00.36",
+        "CreatedBy": "user1"
+      }
+    ]
+  }

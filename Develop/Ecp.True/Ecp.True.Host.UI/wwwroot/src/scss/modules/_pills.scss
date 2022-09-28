@@ -1,0 +1,24 @@
+﻿// _pills.scss
+
+#{$ep}-pill {
+    $pill:&;
+    @include mix-circle(9px);
+    &--active {
+        background-color: $active;
+        border:solid 1px $inactive;
+    }
+
+    &--inactive {
+        background-color: $inactive;
+    }
+}
+
+#{$ep}-badge-pill {
+    background-color: #013162;
+    color: white;
+    display: inline-block;
+    margin-right: 20px;
+    padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}

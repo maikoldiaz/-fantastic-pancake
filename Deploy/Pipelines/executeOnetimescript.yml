@@ -1,0 +1,60 @@
+parameters:
+- name: env
+  type: string
+  values: 
+  - 'dev-app'
+  - 'uat-app'
+  - 'qas-app'
+  - 'stg-app'
+  - 'prd-app'
+  default: 'dev-app'
+- name: updateAction
+  displayName: Modifica objetos de base de datos?
+  type: boolean
+  default: false
+  
+variables:
+  - template: /Deploy/Pipelines/Templates/Variables/package.yml
+  - template: /Deploy/Pipelines/Templates/Variables/infra.yml
+
+  - ${{ if eq(parameters.env, 'dev-app') }}:
+    - group: true-secrets-dev
+    - name: env
+      value: dev
+  - ${{ if eq(parameters.env, 'uat-app') }}:
+    - group: true-secrets-uat
+    - name: env
+      value: uat
+  - ${{ if eq(parameters.env, 'stg-app') }}:
+    - group: true-secrets-stg
+    - name: env
+      value: stg
+  - ${{ if eq(parameters.env, 'qas-app') }}:
+    - group: true-secrets-qas
+    - name: env
+      value: qas
+  - ${{ if eq(parameters.env, 'prd-app') }}:
+    - group: true-secrets-prd
+    - name: env
+      value: prd
+    - template: /Deploy/Pipelines/Templates/Variables/prod.yml
+
+  - ${{ if not(eq(parameters.env, 'prd-app')) }}:
+    - template: /Deploy/Pipelines/Templates/Variables/non-prod.yml
+
+trigger: none
+pr: none
+  
+stages:
+- ${{ if eq(parameters.updateAction, true) }}:
+  - template: /Deploy/Pipelines/Templates/Stage/db.build.yml
+- ${{ if eq(parameters.updateAction, true) }}:
+  - template: /Deploy/Pipelines/Templates/db.BackupDatabase.yml
+    parameters:
+      env: "${{ parameters.env }}"
+      serviceConnection : $(serviceConnection)
+- template: /Deploy/Pipelines/Templates/db.ExecuteQuery.yml
+  parameters:
+    env: "${{ parameters.env }}"
+    queryNameScript: "$(queryNameScript)"
+    updateAction: "${{ parameters.updateAction }}"

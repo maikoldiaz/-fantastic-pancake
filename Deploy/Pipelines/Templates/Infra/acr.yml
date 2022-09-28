@@ -1,0 +1,47 @@
+steps:
+ - powershell: |
+     $guid=(New-Guid).Guid
+     Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+   displayName: Set PID Name
+
+ - task: AzureResourceGroupDeployment@2
+   displayName: ACR - ARM
+   inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      resourceGroupName: "${{ parameters.resourceGroupName }}"
+      location: "$(deployLocation)"
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Azure Container Registry/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -acrName "$(imageRegistryName)" -acrAdminUserEnabled "false" -acrSku "$(acrSku)"'
+      deploymentName: '$(deploymentsuffix)'
+
+ - task: AzurePowerShell@4
+   displayName: ACR - Tags
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+     ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "$(imageRegistryName)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: ACR - Set Build Variable
+   inputs:
+     azureSubscription: "${{ parameters.azureSubscriptionName }}"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+     ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -deploymentName "$(deploymentsuffix)"'
+     azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: ACR - Pull Role Assignment
+   inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignment.ps1'
+      ScriptArguments: '-AccessLevel "acrpull" -AppId "$(aksServicePrincipalProfileClientId)" -Scope "$(ou_acr_resourceId)"'
+      azurePowerShellVersion: LatestVersion
+
+ - task: AzurePowerShell@4
+   displayName: ACR - Push Role Assignment
+   inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignment.ps1'
+      ScriptArguments: '-AccessLevel "acrpush" -AppId "$(aksServicePrincipalProfileClientId)" -Scope "$(ou_acr_resourceId)"'
+      azurePowerShellVersion: LatestVersion

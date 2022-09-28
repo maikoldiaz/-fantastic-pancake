@@ -1,0 +1,17 @@
+﻿variables:
+  - group: true-threshold
+  - template: ./Templates/Variables/package.yml
+
+schedules:
+# M-F 3:00 AM (UTC + 5:30) India
+- cron: "30 21 * * Sun-Thu"
+  displayName: Daily Build
+  branches:
+    include:
+    - master
+
+# set pr trigger to none to prevent daily build running against master branch changess
+pr: none
+
+stages:
+- template: ./Templates/Stage/daily.build.yml

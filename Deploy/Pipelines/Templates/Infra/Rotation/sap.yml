@@ -1,0 +1,21 @@
+steps:
+ - task: AzurePowerShell@3
+   displayName: Set Sap Config
+   inputs:
+     azureSubscription: "$(serviceConnection)"
+     ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-SapConfig.ps1'
+     ScriptArguments: '-BasePath "$(sapBasePath)" -Username "$(sapUsername)"'
+     azurePowerShellVersion: LatestVersion
+   condition:  and(succeeded(), eq(variables['sap'], 'true'))
+
+ - task: ExtractFiles@1
+   displayName: Extract Config Files
+   inputs:
+     archiveFilePatterns: '$(System.ArtifactsDirectory)/Drop/Ecp.True.ConfigurationManager.zip'
+     destinationFolder: '$(System.ArtifactsDirectory)\Config'
+     cleanDestinationFolder: false
+   condition:  and(succeeded(), eq(variables['sap'], 'true'))
+
+ - script: dotnet.exe $(System.ArtifactsDirectory)\Config\Ecp.True.ConfigurationManager.dll $(storageconnectionstring) "" "" $(sapConfig)
+   displayName: Add Azure Table Configuration
+   condition:  and(succeeded(), eq(variables['sap'], 'true'))

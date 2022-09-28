@@ -1,0 +1,16 @@
+﻿steps:
+  - task: VSBuild@1
+    displayName: Build Database Project
+    inputs:
+      solution: $(dbProjectFilePath)
+      maximumCpuCount: 8
+
+  - task: VSBuild@1
+    displayName: Build Tabular Model Project
+    inputs:
+      solution: $(aasProjectFilePath)
+
+  - task: VSBuild@1
+    displayName: Build Audit Tabular Model Project
+    inputs:
+      solution: $(aasAuditProjectFilePath)

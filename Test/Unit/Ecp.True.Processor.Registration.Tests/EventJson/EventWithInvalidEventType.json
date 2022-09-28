@@ -1,0 +1,19 @@
+{
+  "EventId": 1,
+  "EventTypeId": 10001,
+  "SourceNodeId": 1,
+  "DestinationNodeId": 1,
+  "SourceProductId": "1",
+  "DestinationProductId": "1",
+  "StartDate": "2019-09-04T07:19:03.1202318+05:30",
+  "EndDate": "2019-09-04T07:19:03.1202318+05:30",
+  "OwnerId": 1,
+  "Volume": 1.2,
+  "IsDeleted": false,
+  "DestinationNode": null,
+  "DestinationProduct": null,
+  "Owner": null,
+  "CategoryElement": null,
+  "SourceNode": null,
+  "SourceProduct": null
+}

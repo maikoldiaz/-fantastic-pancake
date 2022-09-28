@@ -1,0 +1,51 @@
+variables:
+ - group: true-config-certify
+ - group: true-secrets-nonprd-shared
+ - group: true-secrets-uat
+ - template: ../Templates/Variables/infra.yml
+ - template: ../Templates/Variables/package.yml
+ - template: ../Templates/Variables/non-prod.yml
+
+trigger: none
+pr: none
+
+stages:
+- stage: Certify
+  jobs:
+  - job: Config
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Templates/package.yml
+      parameters:
+        infra: 'true'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: Download Build Artifacts
+      inputs:
+        artifactName: Drop
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - template: ../Templates/Stage/certify.config.yml
+      parameters:
+        serviceConnection : $(serviceConnection)
+        uiAppPermissions: $(uiApp-nonprd)
+        apiAppPermissions: $(apiApp-nonprd)
+        sapAppPermissions: $(sapApp-nonprd)
+        analyticsAppPermissions: $(analyticsApp-nonprd)
+        requiredSecretKeys: $(kvRequiredSecretKeys)
+        requiredCertificateKeys: $(kvRequiredCertificateKeys)
+
+  - job: Data
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../Templates/Build/build.yml
+      parameters:
+        db: 'true'
+
+    - template: ../Templates/Stage/certify.db.yml
+      parameters:
+        env: '$(env)'
+        serviceConnection : $(serviceConnection)
+        downloadArtifacts : "true"

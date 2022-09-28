@@ -1,0 +1,51 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="KeyVaultRetrySettings.cs" company="Microsoft">
+//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+//   THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+//   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+//   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//   OTHER DEALINGS IN THE SOFTWARE.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+namespace Ecp.True.Entities.Configuration
+{
+    /// <summary>
+    /// The key vault retry settings.
+    /// </summary>
+    public class KeyVaultRetrySettings
+    {
+         /// <summary>
+         /// Gets or sets the retry count.
+         /// </summary>
+         /// <value>
+         /// The retry count.
+         /// </value>
+        public int RetryCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum backoff.
+        /// </summary>
+        /// <value>
+        /// The minimum backoff.
+        /// </value>
+        public double MinBackoff { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum backoff.
+        /// </summary>
+        /// <value>
+        /// The maximum backoff.
+        /// </value>
+        public double MaxBackoff { get; set; }
+
+        /// <summary>
+        /// Gets or sets the delta backoff.
+        /// </summary>
+        /// <value>
+        /// The delta backoff.
+        /// </value>
+        public double DeltaBackoff { get; set; }
+    }
+}

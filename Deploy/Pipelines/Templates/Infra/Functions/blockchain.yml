@@ -1,0 +1,111 @@
+steps:
+  - powershell: |
+      $guid=(New-Guid).Guid
+      Write-Host "##vso[task.setvariable variable=deploymentsuffix]$guid"
+    displayName: Set PID Name
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Worker Count
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Reset-WebWorkerCount.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.bcFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureResourceGroupDeployment@2
+    displayName: Blockchain Function App - ARM
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      resourceGroupName: '${{ parameters.resourceGroupName }}'
+      location: '${{ parameters.deployLocation }}'
+      csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Function App/deploy.json'
+      overrideParameters: '-pidDeploymentName "${{parameters.processJobId}}$(build.buildId)" -sku "$(functionAppSKU)" -logAnalyticsResourceId "$(logAnalyticsResourceId)" -functionAppName "${{parameters.bcFunctionAppName}}" -apphostingPlanName "$(sharedAppServicePlanName)"'
+      deploymentName: '$(deploymentsuffix)'
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Tags
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-Tags.ps1'
+      ScriptArguments: '-tier "${{parameters.tier}}" -resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.bcFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Diagnostics
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-DetailedErrorAndTraceLogging.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -resourceName "${{parameters.bcFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Set Build Variable
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-OutputVariable.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroupName }}" -outputKeySuffix "Bc" -outputKeyName "ou_FunctionAppPrincipalId" -deploymentName "$(deploymentsuffix)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - KV MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-KeyVault-SecurityPermissions.ps1'
+      ScriptArguments: '-vaultName "$(keyVault)" -targetObjectId "$(ou_FunctionAppPrincipalIdBc)" -resourceGroupName "${{ parameters.resourceGroupName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App- SQL MSI 
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-SecurityGroupMember.ps1'
+      ScriptArguments: '-groupObjectId "$(msiAdGroupObjectId)" -memberObjectId "$(ou_FunctionAppPrincipalIdBc)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - SB MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(ou_FunctionAppPrincipalIdBc)" -resourceName "$(serviceBusNamespaceNameInt)" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Storage MSI
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroupName }}" -objectId "$(ou_FunctionAppPrincipalIdBc)" -resourceName "$(storageAccountName)" -roleDefinitionName "Storage Blob Data Contributor" -resourceType "Microsoft.Storage/storageAccounts"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Staging Slot
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "CREATE" -slotName "STAGING" -appServicePlanName "$(sharedAppServicePlanName)" -resourceGroupName "${{ parameters.resourceGroupName }}" -appServiceName "$(bcFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - App Settings
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Set-AppSettings.ps1'
+      ScriptArguments: '-slot "STAGING" -AppSettings @{"AzureWebJobsStorage"="${{ parameters.storageConnectionString }}";"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"="${{ parameters.storageConnectionString }}";"WEBSITE_MAX_DYNAMIC_APPLICATION_SCALE_OUT"="1";"WEBSITE_CONTENTSHARE"="${{parameters.bcFunctionAppName}}";"FUNCTIONS_EXTENSION_VERSION"="~3";"WEBSITE_NODE_DEFAULT_VERSION"="8.11.1";"FUNCTIONS_WORKER_RUNTIME"="dotnet";"VaultName"="$(keyVault)";"APPINSIGHTS_INSTRUMENTATIONKEY"="${{ parameters.instrumentationKey }}";"IntegrationServiceBusConnectionString"="${{ parameters.serviceBusConnectionString }}"; "BlockchainMovement"="$(blockchainMovementQueueName)";"BlockchainInventoryProduct"="$(blockchainInventoryProductQueueName)";"BlockchainNode"="$(blockchainNodeQueueName)";"BlockchainNodeConnection"="$(blockchainNodeConnectionQueueName)";"BlockchainOwnership"="$(blockchainOwnershipQueueName)";"BlockchainNodeProductCalculation"="$(blockchainNodeProductCalculationQueueName)";"BlockchainOwner"="$(blockchainOwnerQueueName)";"BlockchainOfficial"="$(blockchainOfficialQueueName)";"IntegrationStorageConnectionString"="${{ parameters.storageConnectionString }}";} -resourceGroupName "${{ parameters.resourceGroupName }}" -webAppName "${{parameters.bcFunctionAppName}}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Function App - Stop Staging Slot
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "STOP" -slotName "STAGING" -appServicePlanName "$(sharedAppServicePlanName)" -resourceGroupName "${{ parameters.resourceGroupName }}" -appServiceName "$(bcFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: Blockchain Function App - IP Whitelisting
+    inputs:
+      azureSubscription: '${{ parameters.azureSubscriptionName }}'
+      scriptType: ps
+      scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-IpRulesForBlockchain.ps1'
+      arguments: '-skipLoadBalancer "$(skipLoadBalancer)" -openAll "$(openAllFlagBlockchain)" -blockchainMemberName "$(blockchainMemberName)" -aksNodeResourceGroup "$(aksNodeResourceGroup)" -aksLoadBalancerName "$(aksLoadBalancerName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(bcFunctionAppName)"'

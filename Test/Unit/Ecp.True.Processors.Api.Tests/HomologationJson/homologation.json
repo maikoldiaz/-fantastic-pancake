@@ -1,0 +1,25 @@
+{
+    "homologationId" : 120,
+	"sourceSystemId": 1,
+	"destinationSystemId": 3,
+	"homologationGroups": [
+		{
+			"homologationGroupId": 12,
+			"groupTypeId" : 13,
+			"homologationId": 120,
+			"homologationObjects": [
+				{
+					"homologationObjectTypeId": 4,
+					"isRequiredMapping": true
+				}
+			],
+			"homologationDataMapping":[
+				{
+					"homologationDataMappingId": 12,
+					"sourceValue" : "Node 1",
+					"destinationValue": 1
+				}
+			]
+		}
+	]	
+}

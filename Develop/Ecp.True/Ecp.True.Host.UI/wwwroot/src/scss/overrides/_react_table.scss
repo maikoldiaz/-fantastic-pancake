@@ -1,0 +1,756 @@
+// React Table Overrides
+#{$ep}-table{
+    $tbl:&;
+    position: relative;
+    border:solid 1px map-get($gray ,'C1C1C1');
+    background-color: $white;
+    border-radius: 6px;
+    height: 100%;
+
+    .rt-table{
+        padding:0 pxToRem(28);
+    }
+
+    .rt-thead{
+
+        &.-headerGroups{
+            background-color: transparent;
+            border:none;
+
+            .rt-th{
+                text-align: center;
+                padding: pxToRem(10);
+            }     
+        }
+
+        &.-header{
+            padding-top: pxToRem(20);
+            box-shadow: none;
+            padding-left: pxToRem(18);
+            padding-right: pxToRem(18);
+
+            .rt-th{
+                text-transform: lowercase;
+                &::first-letter{
+                    text-transform: uppercase;
+                }
+                &.rt-sortable-header{
+
+                    &.-sort-asc,&.-sort-desc{
+                        box-shadow: none;   
+                        &:after{
+                            content:"";
+                            position: absolute;
+                            border:solid 1px $btn-color;
+                            @include mix-square(8px);                   
+                            right: pxToRem(15);
+                            top: 6px;
+                            transform: rotate(45deg); 
+                        }                   
+                    }
+
+                    &.-sort-asc{
+                        &:after{
+                            border-width: 1.5px 0 0 1.5px;
+                        }
+                    }
+
+                    &.-sort-desc{
+                        &:after{                               
+                            border-width: 0 1.5px 1.5px 0; 
+                        }
+                    }
+                }
+
+                #{$ep}-checkbox--gr-sel{
+                    position: absolute;
+                    top:pxToRem(3);
+                }
+            }
+
+            + .rt-tbody{
+                margin-top: pxToRem(10);
+            }
+        }
+
+        &.-filters{           
+            border-bottom: none;
+            padding-left: pxToRem(18);
+            padding-right: pxToRem(18);
+            .rt-th{
+                border-right: none;   
+                overflow: visible;
+            } 
+
+            #{$tbl}__filter{
+                #{$tbl}__filter-txt,#{$tbl}__filter-dp{
+                    width: 100%;
+                    border-color:map-get($gray, 'C1C1C1');
+                    border-radius: pxToRem(4);
+                }
+                &-dd__indicator{
+                    color:$btn-color;
+                }
+            }
+            .react-datepicker-wrapper .react-datepicker__input-container input[disabled]{
+                background-color: #eee;
+                cursor: not-allowed;
+            }
+        }
+
+        .rt-th{
+            border-right: none;
+            text-align: left;
+            font-size: pxToRem(14);
+            font-family: $font-family-sb;
+            padding: 0 pxToRem(10) 6px pxToRem(10);
+            color: $black;
+        }         
+
+        .rt-resizable-header-content{
+            padding-right: pxToRem(20);
+        }
+    }
+
+    .rt-tbody{
+        margin-left: pxToRem(18);
+        margin-right: pxToRem(18);
+        border-top: solid 2px #8C8C8C;
+        overflow-y: overlay;
+        .rt-td{
+            border-right: none;
+            padding: pxToRem(18) pxToRem(10);
+        }    
+
+        .rt-tr-group{
+            border-bottom:solid 1px #8C8C8C;
+            
+            &:hover{
+                background-color: $grid-row-hover;
+            }
+        }
+    }    
+
+    .rt-tfoot{
+        box-shadow: none;
+        border-top: solid 1px #ccc;
+        .rt-td{
+            border-right: none;
+        }
+    } 
+
+    .rt-noData{        
+        position: absolute;
+        font-family: $font-family-sb;
+        top: pxToRem(96);
+        background-color: #F0F0EE;
+        height: pxToRem(72);
+        display: block;
+        left: pxToRem(28);
+        right: pxToRem(28);
+        transform: none;
+        text-align: center;
+        font-size: pxToRem(14);
+        pointer-events: auto;
+        color: $black;
+    }
+
+    .rt-tr-group{
+        flex: 0;
+    }
+    
+    .rt-resizer{
+        border-left: dotted 1px $ep-secondary-color;
+        height: pxToRem(10);
+        width: pxToRem(10);
+        right: pxToRem(-5);
+        top: pxToRem(4);
+    }
+
+    &-wrap{
+        height: 100%;
+
+        &--hn150{
+            height: calc(100% - 150px);
+        }
+
+        &--hn47{
+            height: calc(100% - 47px);
+        }
+
+        &--mh100{
+            min-height: pxToRem(100);
+            #{$ep}-table{
+                min-height: pxToRem(100);
+            }
+        }
+
+        &--mh200{
+            min-height: pxToRem(200);
+            #{$ep}-table{
+                min-height: pxToRem(200);
+            }
+        }
+
+        &--sync{
+            height: calc(100% - 79px);
+        }
+    }
+
+    &__pagination{
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 pxToRem(28);
+        border-top: solid 1px #C1C1C1;
+        height: pxToRem(50);
+
+        &-control{
+            display: inline-flex;
+            align-items: center;
+        }
+
+        &-itm{
+            display: inline-block;
+            text-decoration: none;
+            font-size: pxToRem(12);
+            padding: 5px pxToRem(10);
+            color: $btn-color;
+            cursor: pointer;
+
+            &.active{
+                border:solid 1px #aaa;
+            }
+
+            &.disable{
+                color: $font-disabled;
+                cursor: not-allowed;
+            }
+        }
+
+        &-dd{
+            background: #eee;
+            border: none;
+            height: pxToRem(36);
+            width: pxToRem(70);
+            padding: 0 pxToRem(10);
+            border-radius: 2px;
+            margin: 0 pxToRem(10);
+        }
+        &-txt{
+            display: inline-block;
+            text-transform: lowercase;
+            &:first-letter{
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    &__filter{
+        $filter:&;
+        position: relative;
+        margin-bottom: pxToRem(15);
+        &-dd{
+            width: 100%;
+            #{$filter}-dd{
+                &__control{
+                    border-color:map-get($gray, 'C1C1C1');
+                    height: pxToRem(26);
+                    min-height: pxToRem(26);
+                    box-shadow: none;
+                    &:focus, &:hover{
+                        border-color:map-get($gray, 'C1C1C1');
+                        box-shadow: none;
+                    }
+                }
+
+                &__menu{
+                    z-index: 10;
+                    overflow-x: auto;
+                    &-list{
+                        display: table;
+                        width: 100%;                                  
+                    }
+                }
+
+                &__indicator{
+                    padding: 0;
+                }
+
+                &__value-container{
+                    padding: 0 pxToRem(7);
+                }
+            }
+        }
+
+        &-icn{
+            position: absolute;
+            right: pxToRem(10);
+            top: pxToRem(4);
+            color: $btn-color;
+        }
+
+        .react-datepicker-wrapper, .react-datepicker__input-container{
+            display: block;
+        }
+    }
+
+    &__actions{
+        display: flex;
+        justify-content: flex-end;
+        padding-right: pxToRem(20);
+        &-itm{
+            margin-left: pxToRem(15);
+        }
+
+        &-lnk{
+            position: relative;
+            cursor: pointer;
+            color: $btn-color;
+            font-size: pxToRem(17);
+
+            &.disabled, &[disabled]{
+                color: $font-disabled;
+                cursor: not-allowed;
+            }    
+            
+            &:hover{
+                color: map-get($gray, '_999999');
+            }
+        }
+    }
+
+    &__col-group-header{
+        border-bottom: solid 1px map-get($gray ,'C1C1C1');
+        margin-left:pxToRem(10);
+        margin-right:pxToRem(10);
+    }
+
+    &__cell{
+        &-num{
+            display: inline-block;
+            float: right;
+            @extend .ellipsis;
+            &::first-letter{
+                text-transform: uppercase;
+            }
+        }
+
+        &-bar{
+            position: absolute;
+            display: block;
+            top:0;
+            left: 0;
+            bottom: 0;
+            width: pxToRem(20);
+            margin-right: pxToRem(35);
+            opacity: 0.5;
+        }
+    }
+
+    &--wizard{
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        .rt-table{
+            padding:0;
+        }
+    }
+
+    &--list{
+        .rt-table{
+            padding:0;
+        }
+
+        .rt-thead{
+            background-color: map-get($gray, "FAFAFA");
+        }
+
+        .rt-tbody{
+            padding-left: 0;
+            padding-right: 0;
+
+            .rt-tr{
+                padding-left: pxToRem(20);
+                padding-right: pxToRem(20);
+            }
+
+            .rt-td{
+                padding-top: pxToRem(9);
+                padding-bottom: pxToRem(8);
+            }
+        }
+
+        #{$tbl}__pagination{
+            padding: 0 pxToRem(15);
+            &-txt{
+                font-size: pxToRem(10);
+            }
+        }
+    }
+
+    &--row-sm{
+        .rt-tbody{
+            .rt-td{
+                padding: pxToRem(10) pxToRem(10);
+            }    
+        }  
+    }
+
+    &--h200{
+        height: pxToRem(200);
+    }
+    
+    &--mh350{
+        max-height: pxToRem(350);
+    }
+
+    &--nofilter{
+        & .rt-noData {
+            top: pxToRem(50);
+        }
+    }
+
+    &--brless{
+        border:none;
+    }
+    &--smpl{
+        border: none;        
+        & > table{
+            border-collapse: collapse;
+            width: 100%;
+            & th,
+            & td{
+                padding: pxToRem(5);
+                text-align: left;
+                vertical-align: top;
+                color: $ep-font-color;
+            }
+            & > thead{
+                border-bottom: 1px solid $label;
+                font-family: $font-family-sb;
+                & tr {
+                    & th:first-child{
+                        padding-left: 0;
+                    }
+                    & th:last-child{
+                        padding-right: 0;
+                    }
+                }
+            }
+            & > tbody{
+                & tr {
+                    & td:first-child{
+                        padding-left: 0;
+                    }
+                    & td:last-child{
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+        &-nobr{
+            & > table{
+                & > thead{
+                    border-bottom: none;
+                }
+            }
+        }
+        & .rt-noData{
+            padding: pxToRem(20);
+            top:pxToRem(29);
+            left:0;
+            right: 0;
+            border-bottom: solid 1px map-get($gray ,'C1C1C1');
+        }
+    }
+
+    &--alt-row{
+        & > table{ 
+            & > thead{
+                border-bottom: 1px solid $label;
+                font-family: $font-family-sb;
+                & tr {
+                    & th:first-child{
+                        padding-left: pxToRem(5);
+                    }
+                    & th:last-child{
+                        padding-right: pxToRem(5);
+                    }
+                }
+            }
+            & > tbody{
+                & tr {
+                    & td:first-child{
+                        padding-left: pxToRem(5);
+                    }
+                    & td:last-child{
+                        padding-right: pxToRem(5);
+                    }
+
+                    &:nth-child(even){
+                        background-color: map-get($gray,'EEEEEE');
+                    }
+                }
+            }
+        }
+    }
+
+    &--headergroups{
+        & .rt-noData {
+            top: pxToRem(136);
+        }
+    }
+
+    &--pivotal{
+        border: none;
+
+        .rt-table{
+            padding: 0;
+        }
+
+        .rt-thead{
+            &.-header{
+                padding: 0;
+
+                + .rt-tbody{
+                    margin-top: 0;
+                }
+            }
+
+            .rt-th{
+                font-family: $font-family;
+                font-weight: 700;
+            }
+
+            .rt-resizable-header-content{
+                padding-right: 0;
+            }
+        } 
+
+        .rt-tbody{
+            padding: 0;
+            border-top: none;
+            margin: 0;
+
+            > .rt-tr-group{
+                > .rt-tr{
+                    background-color: #eee;
+                }
+            }
+
+            .rt-tr-group{
+                border-bottom: none;
+                &:hover{
+                    background-color: $white;
+                }
+            }
+
+            .rt-td{
+                padding: pxToRem(10) pxToRem(10);
+            } 
+        }
+
+        
+
+        .rt-tr{
+            &:hover{
+                background-color: $white;
+            }
+        }
+
+        .rt-tfoot{
+            .rt-tr{
+                background-color: #eee;
+            }
+
+            .rt-td{
+                padding: pxToRem(10) pxToRem(10);
+            }
+        }
+
+        .rt-noData{
+            top: pxToRem(26);
+            left: 0;
+            right: 0;
+        }
+        &-alt{
+            & .rt-tbody{
+                max-height: pxToRem(250);
+                border-top: solid 1px map-get($gray ,'C1C1C1');
+                border-bottom: solid 1px map-get($gray ,'C1C1C1');
+                margin-left: 0;
+                margin-right: 0;
+                & .rt-tr.-even{
+                    background-color: $white;
+                }
+                & .rt-td{
+                    padding-top: pxToRem(5);
+                    padding-bottom: pxToRem(5);
+                }
+            }
+        }
+    }
+
+    &--bar{
+        & .rt-table{
+            padding: 0;
+            overflow: visible;
+        }
+        border:none;
+        & .rt-thead{
+            display: none;
+        }
+        & .rt-tbody{
+            padding-left: 0;
+            padding-right: 0;
+            border-top: none;
+            margin: 0;
+            & .rt-tr-group{
+                height: pxToRem(55);
+                background-color: map-get($gray, 'F0F0EE');
+                margin-bottom: pxToRem(8);
+                border-bottom: none;
+                &:hover{
+                    background-color: map-get($gray, 'F0F0EE');
+                }
+                & > .rt-tr > .rt-td:first-child,
+                & > .rt-tr > .rt-td:last-child{
+                    min-width:33.33%;
+                }                 
+                & #{$ep}-adinpt-group__ttl{
+                    margin-top: pxToRem(5);
+                }
+                & #{$ep}-sbar--ad{
+                    height: 12px;
+                    width: auto;
+                    border:1px solid $card-label;
+                    border-radius: pxToRem(10);
+                    background-color: $white;
+                    margin-top: pxToRem(12);
+                    margin-right: pxToRem(58);        
+                }
+            }
+            & .rt-td{
+                padding-top: pxToRem(10);
+                padding-bottom: pxToRem(10);
+                &:first-child{
+                    padding: 0;
+                }
+            }
+        }
+        & .rt-tfoot{
+            background-color: $chart-leg;
+            border-left-color: $chart-leg;
+            color:$white;
+            height: pxToRem(55);
+            & > .rt-tr > .rt-td:first-child,
+            & > .rt-tr > .rt-td:last-child{
+                min-width:33.33%;
+            }
+            & .rt-td{
+                vertical-align: middle;
+                padding: pxToRem(10);
+                &:first-child{
+                    padding-left: pxToRem(55);
+                }
+                & .ep-ft-cell{
+                    display: block;                    
+                    background: $white;
+                    color: $ep-font-color;
+                    padding: pxToRem(8);
+                    border: 1px solid map-get($gray, 'C1C1C1');
+                    border-radius: pxToRem(4) ;
+                }
+            }
+        }
+        & .rt-noData{
+            display: none;
+        }
+    }
+    &--addon{
+        & #{$tbl}__actions{
+            padding-right: 0;
+            & #{$tbl}__actions-itm{
+                margin-left: 0;
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    }
+    &--expandable{
+        min-height: pxToRem(150);
+        & .rt-table{
+            padding: 0;
+            & .rt-thead{
+                & .rt-tr > .rt-th:first-child{
+                    padding-left: 0;
+                }
+                &.-header{
+                    padding-left: 0;
+                    padding-right: 0;    
+                    + .rt-tbody{
+                        margin: 0;
+                        & .rt-tr-group {
+                            & .rt-tr > .rt-td:first-child{
+                                padding-left: 0;
+                            }
+                        }
+                    }
+                }    
+                & .rt-th{
+                    font-family: $font-family;
+                    font-weight: 700;
+                }
+            }
+        }
+        & .rt-noData{
+            padding: pxToRem(20);
+            top:pxToRem(47);
+            left:0;
+            right: 0;
+            border-bottom: solid 1px map-get($gray ,'C1C1C1');
+        }
+    }
+    &--mh120{
+        min-height: pxToRem(120);
+    }
+    &--h170{
+        max-height: pxToRem(170);
+        overflow: auto;
+    }
+
+    &.ep-scroll-table {
+        max-height: 160px;
+        overflow-y: auto;
+
+        &.ep-sticky-header-table {
+            thead {
+                th {
+                    position: sticky;
+                    top: 0;
+                    background-color: white;
+                }
+            }
+        }
+    }
+}
+
+	
+_:-ms-lang(x),#{$ep}-table .rt-tr-group{
+    flex: 1;
+    max-height: pxToRem(70);
+    min-height: pxToRem(70);
+}
+
+@media #{$bp-tablet-p}{
+    #{$ep}-table{
+        & .rt-tbody{
+            & .rt-td{
+                min-height: pxToRem(50);
+            }
+        }
+    } 
+}

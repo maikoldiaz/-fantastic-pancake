@@ -1,0 +1,126 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Transform Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(transformFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Calculator Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(calFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Blockchain Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(sharedAppServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(bcFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Ownership Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(ownershipFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Deadletter Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(sharedAppServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(dlFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Delta Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(deltaFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: SAP Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(sapFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Reporting Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(appServicePlanNameReporting)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(reportingFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Availability Slot Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Slots/Manage-Slots.ps1'
+      ScriptArguments: '-action "DELETE" -slotName "STAGING" -appServicePlanName "$(sharedAppServicePlanName)" -resourceGroupName "$(resourceGroupName)" -appServiceName "$(availabilityFunctionAppName)"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4 
+    displayName: ReportingFn Deletion 
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Resource.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(reportingFunctionAppName)" -resourceType "Microsoft.Web/sites"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: Reporting App Service Plan Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Resource.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(appServicePlanNameReporting)" -resourceType "Microsoft.Web/serverfarms"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: SAPFn Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Resource.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(sapFunctionAppName)" -resourceType "Microsoft.Web/sites"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: DeltaFn Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Resource.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(deltaFunctionAppName)" -resourceType "Microsoft.Web/sites"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: AvailabilityFn Deletion
+    condition: and(succeeded(), eq(variables['functions'], 'true'))
+    inputs:
+      azureSubscription: '$(serviceConnection)'
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Rollback/Remove-Resource.ps1'
+      ScriptArguments: '-resourceGroupName "$(resourceGroupName)" -resourceName "$(availabilityFunctionAppName)" -resourceType "Microsoft.Web/sites"'
+      azurePowerShellVersion: LatestVersion

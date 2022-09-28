@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- File name extension must be .runsettings -->
+<!-- https://docs.microsoft.com/en-us/visualstudio/test/customizing-code-coverage-analysis -->
+<RunSettings>
+  <RunConfiguration>
+    <ResultsDirectory>.\TestResults</ResultsDirectory>
+
+    <!-- [x86] | x64
+      - You can also change it from menu Test, Test Settings, Default Processor Architecture -->
+    <TargetPlatform>x64</TargetPlatform>
+
+    <!-- Framework35 | [Framework40] | Framework45 -->
+    <!--<TargetFrameworkVersion>FrameworkCore10</TargetFrameworkVersion>-->
+
+    <!-- Path to Test Adapters -->
+  </RunConfiguration>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=16.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+        <Configuration>
+          <CodeCoverage>
+
+            <!-- Match assembly file paths: -->
+            <ModulePaths>
+              <Include>
+                <ModulePath>.*ecp.true.*\.dll$</ModulePath>
+                <ModulePath>.*ecp.true.*\.exe$</ModulePath>
+              </Include>
+              <Exclude>
+                <ModulePath>.*.Console.dll$</ModulePath>
+                <ModulePath>.*CPPUnitTestFramework.*</ModulePath>
+                <ModulePath>.*test.dll$</ModulePath>
+                <ModulePath>.*tests.dll$</ModulePath>
+                <ModulePath>.*.entities.*\.dll$</ModulePath>
+                <ModulePath>.*.dto.*\.dll$</ModulePath>
+                <ModulePath>.*.logging.dll$</ModulePath>
+                <ModulePath>.*uaf*\.dll$</ModulePath>
+                <ModulePath>.*.redis.*\.dll$</ModulePath>
+                <ModulePath>.*.webjobs.*\.dll$</ModulePath>
+                <ModulePath>.*.sockets.*\.dll$</ModulePath>
+                <ModulePath>.*.interactive.*\.dll$</ModulePath>
+                <ModulePath>.*.durabletask.*\.dll$</ModulePath>
+                <ModulePath>^(microsoft|system).*\.dll$</ModulePath>
+                <ModulePath>^(microsoft|system).*\.exe$</ModulePath>
+              </Exclude>
+            </ModulePaths>
+
+            <!-- Match fully qualified names of functions: -->
+            <!-- (Use "\." to delimit namespaces in C# or Visual Basic, "::" in C++.)  -->
+            <Functions>
+              <Exclude>
+                <Function>.*.Entities.*</Function>
+                <Function>.*.Interfaces.*</Function>
+                <Function>^AspNetCore.*</Function>
+                <Function>^Moq.*</Function>
+                <Function>.*.Models.*</Function>
+                <Function>.*.NLogTarget.*</Function>
+                <Function>.*::__GetTestMethodInfo.*</Function>
+                <Function>^Microsoft::VisualStudio::CppCodeCoverageFramework::.*</Function>
+                <Function>^Microsoft::VisualStudio::CppUnitTestFramework::.*</Function>
+              </Exclude>
+            </Functions>
+
+            <!-- Match attributes on any code element: -->
+            <Attributes>
+              <Exclude>
+                <!-- Don’t forget "Attribute" at the end of the name -->
+                <Attribute>^System.Diagnostics.DebuggerHiddenAttribute$</Attribute>
+                <Attribute>^System.Diagnostics.DebuggerNonUserCodeAttribute$</Attribute>
+                <Attribute>^System.Runtime.CompilerServices.CompilerGeneratedAttribute$</Attribute>
+                <Attribute>^System.CodeDom.Compiler.GeneratedCodeAttribute$</Attribute>
+                <Attribute>^System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute$</Attribute>
+              </Exclude>
+            </Attributes>
+
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

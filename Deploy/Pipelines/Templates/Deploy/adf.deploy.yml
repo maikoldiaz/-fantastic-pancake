@@ -1,0 +1,38 @@
+steps:
+- task: DownloadBuildArtifacts@0
+  displayName: Download Build Artifacts
+  inputs:
+    artifactName: Drop
+    downloadPath: '$(System.ArtifactsDirectory)'
+  condition: and(succeeded(), eq('${{parameters.downloadArtifacts}}', 'true'))
+
+- template: ../Infra/fetchSecrets.yml
+  parameters:
+    azureSubscriptionName : '${{parameters.serviceConnection}}'
+    keyVaultName: '$(keyVault)'
+    secretsFilter: '*'
+
+- task: AzurePowerShell@4
+  displayName: Data Factory Pre-deployment
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/DataFactory/Cleanup-DataFactory.ps1'
+    ScriptArguments: '-armTemplate "$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json" -DataFactoryName "$(dataFactoryName)" -ResourceGroupName "$(sharedResourceGroupName)"'
+    azurePowerShellVersion: LatestVersion
+
+- task: AzureResourceGroupDeployment@2
+  displayName: Data Factory Deployment
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    resourceGroupName: "$(sharedResourceGroupName)"
+    location: "${{ parameters.deployLocation }}"
+    csmFile: '$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json'
+    overrideParameters: '-factoryName "$(dataFactoryName)" -AzureBlobStorage_connectionString "$(storageconnectionstring)" -LS_AzureSqlDB_connectionString "$(msisqlconnectionstring)"'
+
+- task: AzurePowerShell@4
+  displayName: Data Factory Post-deployment
+  inputs:
+    azureSubscription: "${{ parameters.serviceConnection }}"
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/DataFactory/Cleanup-DataFactory.ps1'
+    ScriptArguments: '-armTemplate "$(System.ArtifactsDirectory)/Drop/Templates/Data Factory/factory.json" -DataFactoryName "$(dataFactoryName)" -ResourceGroupName "$(sharedResourceGroupName)" -predeployment $false -objectsToBeDeleted "$(adfObjectsToDelete)"'
+    azurePowerShellVersion: LatestVersion

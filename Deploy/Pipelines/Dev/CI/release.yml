@@ -1,0 +1,56 @@
+﻿variables:
+  - group: true-release-threshold
+  - template: ../../Templates/Variables/package.yml
+
+trigger: none
+stages:
+- stage: Build
+  jobs:
+  - job: UI
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        ui: 'true'
+
+  - job: API
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        api: 'true'
+
+  - job: APP
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        app: 'true'
+
+  - job: DB
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        db: 'true'
+
+  - job: Blockchain
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        blockchain: 'true'
+
+  - job: Config
+    pool:
+     vmImage: 'windows-latest'
+    steps:
+    - template: ../../Templates/Build/build.yml
+      parameters:
+        config: 'true'
+        infra: 'true'

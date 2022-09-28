@@ -1,0 +1,142 @@
+steps:
+- task: AzureCLI@2
+  displayName: AKS - Get Creds
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az aks get-credentials --resource-group "$(sharedResourceGroupName)" --name "$(aksClusterName)" --admin
+
+- task: AzureCLI@2
+  displayName: Mic Restart
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl rollout restart deployment mic
+
+- task: AzureCLI@2
+  displayName: AKS - Admin API Pod Restart
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(apiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - Flow API Pod Restart
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(flowApiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - SAP API Pod Restart
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(sapApiProjectName)"
+
+- task: AzureCLI@2
+  displayName: AKS - Analytics API Pod Restart
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      kubectl -n "$(namespace)" rollout restart deployment "$(analyticsProjectName)"
+
+- task: AzurePowerShell@4
+  displayName: Restart Transform FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(transformFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Calculation FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(calFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Blockchain FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(bcFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Ownership FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(ownershipFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Deadletter FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(dlFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Delta FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(deltaFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Sap FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(sapFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Reporting FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(reportingFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Restart Availability FA
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "RESTART" -appName "$(availabilityFunctionAppName)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Stop Web App
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "STOP" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion
+
+- task: AzurePowerShell@4
+  displayName: Start Web App
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Restart-AppService.ps1'
+    ScriptArguments: '-action "START" -appName "$(appServiceNameUI)" -resourceGroupName "$(resourceGroupName)"'
+    azurePowerShellVersion: latestVersion

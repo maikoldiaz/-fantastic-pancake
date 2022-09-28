@@ -1,0 +1,30 @@
+﻿// _colorPicker.scss
+
+#{$ep}-col-picker {
+    position: relative;
+    height: pxToRem(37);
+    width: 100%;
+
+    &__control {
+        border:solid 1px $control-border;
+        border-radius: pxToRem(4);
+        color: $control-text;
+        height: pxToRem(37);
+        width: 100%;
+        cursor: pointer;
+    }
+
+    &__overlay{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+    }
+
+    &__colors{
+        position: absolute;
+        z-index: 10000;
+    }
+}

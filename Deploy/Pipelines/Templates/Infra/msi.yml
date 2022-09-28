@@ -1,0 +1,180 @@
+steps:
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(availabilityFunctionAppName)" -outputKeyName "Ava"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Availability FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityAva)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(reportingFunctionAppName)" -outputKeyName "Rep"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Reporting FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityRep)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(bcFunctionAppName)" -outputKeyName "Bc"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Blockchain FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityBc)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(calFunctionAppName)" -outputKeyName "Cal"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Calculate FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityCal)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(dlFunctionAppName)" -outputKeyName "Dl"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Deadletter FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityDl)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(deltaFunctionAppName)" -outputKeyName "Delta"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Delta FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityDelta)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(ownershipFunctionAppName)" -outputKeyName "Own"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Ownership FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityOwn)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(sapFunctionAppName)" -outputKeyName "Sap"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Sap FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identitySap)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Scaling/Set-MSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -resourceName "$(transformFunctionAppName)" -outputKeyName "Tfm"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set MSI for Service Bus Homologate FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(identityTfm)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Get AKS MSI Object ID
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Get-MSIId.ps1'
+      ScriptArguments: '-msiDisplayName "MSI-AKS-$(suffixHyphenated)"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))
+
+  - task: AzurePowerShell@4
+    displayName: Set AKS MSI for Service Bus Homologate FA
+    inputs:
+      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+      ScriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Add-RoleAssignmentMSI.ps1'
+      ScriptArguments: '-resourceGroup "$(resourceGroupName)" -objectId "$(msiAksServicePrincipal)" -resourceName "$(serviceBusNamespaceNameInt)-PREMIUM" -roleDefinitionName "Azure Service Bus Data Sender" -resourceType "Microsoft.ServiceBus/Namespaces"'
+      azurePowerShellVersion: LatestVersion
+    condition: and(succeeded(), eq('${{parameters.scaleup}}', 'true'))

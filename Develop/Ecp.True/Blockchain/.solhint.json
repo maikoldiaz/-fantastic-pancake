@@ -1,0 +1,12 @@
+{
+  "extends": "solhint:recommended",
+  "plugins": [],
+  "rules": {
+    "avoid-throw": false,
+    "avoid-suicide": "error",
+    "avoid-sha3": "warn",
+    "mark-callable-contracts": true,
+    "var-name-mixedcase": "error",
+    "prettier/prettier": "error"
+  }
+}

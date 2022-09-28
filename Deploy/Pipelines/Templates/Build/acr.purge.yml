@@ -1,0 +1,23 @@
+steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install dos2unix
+    dos2unix $(System.ArtifactsDirectory)/Drop/Scripts/Bash/purgehelmcharts.sh
+    dos2unix $(System.ArtifactsDirectory)/Drop/Scripts/Bash/purgeacrtags.sh
+  displayName: Convert EOL to Unix
+
+- task: AzureCLI@2
+  displayName: 'Purge older helm charts'
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'bash'
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bash/purgehelmcharts.sh'
+    arguments: '${{ parameters.registryName }} ${{ parameters.projectName }} ${{ parameters.skip }} ${{ parameters.top }}'
+
+- task: AzureCLI@2
+  displayName: 'Purge older registry images'
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'bash'
+    scriptPath: '$(System.ArtifactsDirectory)/Drop/Scripts/Bash/purgeacrtags.sh'
+    arguments: '${{ parameters.registryName }} ${{ parameters.projectName }} ${{ parameters.skip }} ${{ parameters.top }}'
